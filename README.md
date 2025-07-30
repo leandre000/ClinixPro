@@ -1,99 +1,172 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ClinixPro - Hospital Pharmacy Management System
 
-## Hospital Pharmacy Management System
+A comprehensive, full-stack hospital pharmacy management system built with modern technologies and best practices.
 
-This project contains both the frontend and backend for the Hospital Pharmacy Management System.
+## 🏥 Overview
 
-### Getting Started
+ClinixPro is a professional-grade hospital pharmacy management system that streamlines healthcare operations, patient care, and pharmaceutical inventory management. Built with enterprise-level architecture and security standards.
 
-#### Prerequisites
+## 🚀 Tech Stack
 
-- Java 17 or higher
-- Maven
-- Node.js 18 or higher
-- PostgreSQL database
+### Frontend
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Modern, responsive UI
+- **Chart.js** - Data visualization and analytics
+- **Axios** - HTTP client for API communication
 
-#### Database Setup
+### Backend
+- **Spring Boot 3.1.5** - Enterprise Java framework
+- **Spring Security** - Authentication and authorization
+- **Spring Data JPA** - Database operations
+- **PostgreSQL** - Reliable database system
+- **JWT** - Secure token-based authentication
+- **Flyway** - Database migration management
 
-1. Install PostgreSQL if you haven't already
-2. Create a new database named `pharmacydb`
-3. Configure the database connection in `backend/src/main/resources/application.properties`
+## 🏗️ Architecture
 
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/pharmacydb
-spring.datasource.username=postgres
-spring.datasource.password=your_password
+```
+ClinixPro/
+├── frontend/          # Next.js application
+│   ├── src/
+│   │   ├── app/      # App router pages
+│   │   ├── components/ # Reusable components
+│   │   ├── services/   # API services
+│   │   └── utils/      # Utility functions
+│   └── public/       # Static assets
+├── backend/           # Spring Boot application
+│   ├── src/main/java/
+│   │   ├── controller/ # REST API controllers
+│   │   ├── service/    # Business logic
+│   │   ├── repository/ # Data access layer
+│   │   ├── model/      # Entity models
+│   │   └── config/     # Configuration classes
+│   └── src/main/resources/
+└── docs/             # Documentation
 ```
 
-#### Starting the Backend
+## 👥 User Roles
 
-1. Open a terminal in the project root directory
-2. Run the startup script:
+### Admin
+- System administration and user management
+- Hospital-wide analytics and reporting
+- Staff and department management
+
+### Doctor
+- Patient consultation and medical records
+- Prescription management
+- Appointment scheduling
+
+### Pharmacist
+- Medicine inventory management
+- Prescription processing
+- Supplier and distributor management
+
+### Receptionist
+- Patient registration and billing
+- Appointment scheduling
+- Payment processing
+
+## 🔧 Installation
+
+### Prerequisites
+- Java 17+
+- Node.js 18+
+- PostgreSQL 12+
+- Maven 3.6+
+
+### Quick Start
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/leandre000/ClinixPro.git
+   cd ClinixPro
    ```
-   start-backend.bat
-   ```
-   Or manually:
-   ```
+
+2. **Backend Setup**
+   ```bash
    cd backend
+   mvn clean install
    mvn spring-boot:run
    ```
-3. The backend will start on http://localhost:8080
 
-#### Starting the Frontend
-
-1. Open a new terminal in the project root directory
-2. Install dependencies:
-   ```
+3. **Frontend Setup**
+   ```bash
    npm install
-   ```
-3. Start the development server:
-   ```
    npm run dev
    ```
-4. The frontend will start on http://localhost:3000
 
-### Testing the API Connection
+4. **Database Setup**
+   ```sql
+   CREATE DATABASE clinixpro;
+   ```
 
-1. Start both the backend and frontend as described above
-2. Navigate to http://localhost:3000/api-test in your browser
-3. The page will show the status of the API connection, dashboard stats, and sample medicine data
+## 🔐 Security Features
 
-### Troubleshooting
+- JWT-based authentication
+- Role-based access control (RBAC)
+- Password encryption with BCrypt
+- CORS configuration
+- Input validation and sanitization
 
-- If the API connection fails, ensure the backend is running at http://localhost:8080
-- Check the PostgreSQL database connection in the backend application.properties
-- Verify that the Next.js rewrites in next.config.js are correctly configured
-- Look for errors in the browser console and backend logs
+## 📊 Features
 
-### API Proxy Configuration
+### Core Functionality
+- ✅ User authentication and authorization
+- ✅ Patient management system
+- ✅ Medicine inventory tracking
+- ✅ Prescription management
+- ✅ Appointment scheduling
+- ✅ Billing and payment processing
+- ✅ Medical records management
+- ✅ Analytics and reporting
 
-The frontend uses Next.js API routes to proxy requests to the backend, avoiding CORS issues:
+### Advanced Features
+- ✅ Real-time stock monitoring
+- ✅ Expiry date tracking
+- ✅ Supplier management
+- ✅ Multi-role dashboard
+- ✅ Responsive design
+- ✅ Data visualization
 
-```javascript
-// next.config.js
-module.exports = {
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "http://localhost:8081/:path*",
-      },
-    ];
-  },
-};
+## 🧪 Testing
+
+```bash
+# Backend tests
+mvn test
+
+# Frontend tests
+npm test
 ```
 
-## Learn More
+## 📈 Performance
 
-To learn more about Next.js, take a look at the following resources:
+- Optimized database queries
+- Efficient caching strategies
+- Responsive UI components
+- Fast API responses
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🤝 Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
 
-## Deploy on Vercel
+## 📄 License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 👨‍💻 Author
+
+**Leandre** - Professional Software Developer
+
+## 🆘 Support
+
+For support and questions, please open an issue in the GitHub repository.
+
+---
+
+**ClinixPro** - Empowering Healthcare with Technology
+
