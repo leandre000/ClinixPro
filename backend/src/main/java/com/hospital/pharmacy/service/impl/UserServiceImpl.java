@@ -105,6 +105,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.countByRole(role);
     }
 
+    @Override
+    public Optional<User> findByEmail(String email) {
+        logger.debug("Finding user by email: {}", email);
+        return userRepository.findByEmail(email);
+    }
 
-
+    @Override
+    public boolean existsByEmail(String email) {
+        logger.debug("Checking if user exists by email: {}", email);
+        return userRepository.existsByEmail(email);
+    }
 }
