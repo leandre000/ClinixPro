@@ -1,365 +1,154 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-// import Dr from '../public/images/dr.jpg'
-import Link from "next/link";
-
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Home() {
   const router = useRouter();
-  const [scrolled, setScrolled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const handleGetStarted = () => {
+    setIsLoading(true);
+    router.push('/login');
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
-      {/* Navigation */}
-      <nav className={`fixed w-full z-10 transition-all duration-300 ${scrolled ? "bg-white shadow py-2" : "bg-transparent py-4"}`}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Header */}
+      <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
-              <Image 
-                src="/logo.svg" 
-                alt="HMS Logo" 
-                width={40} 
-                height={40} 
-                className="mr-2"
-              />
-              <span className="text-indigo-800 font-bold text-xl">Hospinix</span>
+              <div className="flex-shrink-0">
+                <h1 className="text-2xl font-bold text-indigo-600">ClinixPro</h1>
+              </div>
             </div>
-            <div className="hidden md:flex space-x-6">
-              <a href="#features" className="text-gray-700 hover:text-indigo-600 transition">Features</a>
-              <a href="#testimonials" className="text-gray-700 hover:text-indigo-600 transition">Testimonials</a>
-              <a href="#pricing" className="text-gray-700 hover:text-indigo-600 transition">Pricing</a>
+            <div className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-4">
+                <a href="#features" className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                  Features
+                </a>
+                <a href="#about" className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                  About
+                </a>
+                <button
+                  onClick={handleGetStarted}
+                  disabled={isLoading}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                >
+                  {isLoading ? 'Loading...' : 'Get Started'}
+                </button>
+              </div>
             </div>
-            <Link 
-              href="/login" 
-              className="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition"
-            >
-              Login
-            </Link>
           </div>
         </div>
-      </nav>
+      </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                Modern Healthcare Management Solution
-              </h1>
-              <p className="text-xl text-gray-600 mb-8">
-                Streamline your hospital operations with our comprehensive management system designed for doctors, pharmacists, and staff.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link 
-                  href="/login" 
-                  className="bg-indigo-600 text-white px-8 py-3 rounded-full text-center hover:bg-indigo-700 transition"
-                >
-                  Get Started
-                </Link>
-                <a
-                  href="#demo"
-                  className="border border-indigo-600 text-indigo-600 px-8 py-3 rounded-full text-center hover:bg-indigo-50 transition"
-                >
-                  Watch Demo
-                </a>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg blur opacity-30"></div>
-              <div className="relative bg-white p-6 rounded-lg shadow-xl">
-                <Image 
-                  src="/doctors.png" 
-                  alt="Dashboard Preview"
-                  width={600} 
-                  height={400}
-                  className="rounded-md"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-white px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Comprehensive Features</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our hospital management system is designed to meet the needs of all healthcare professionals.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Admin Dashboard",
-                description: "Complete overview of hospital operations, staff management, and financial metrics.",
-                icon: "🏥"
-              },
-              {
-                title: "Doctor Portal",
-                description: "Manage patient appointments, medical records, and treatment plans efficiently.",
-                icon: "👨‍⚕️"
-              },
-              {
-                title: "Pharmacy Management",
-                description: "Track inventory, manage prescriptions, and monitor medicine expiration dates.",
-                icon: "💊"
-              },
-              {
-                title: "Reception & Billing",
-                description: "Streamline patient registration, appointment scheduling, and payment processing.",
-                icon: "🧾"
-              },
-              {
-                title: "Patient Records",
-                description: "Maintain comprehensive electronic health records with secure access controls.",
-                icon: "📋"
-              },
-              {
-                title: "Analytics & Reports",
-                description: "Generate detailed reports for informed decision-making and operational improvements.",
-                icon: "📊"
-              }
-            ].map((feature, index) => (
-              <div key={index} className="bg-gray-50 p-6 rounded-lg transition-all hover:shadow-lg">
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 bg-indigo-50 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Trusted by Healthcare Professionals</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              See what our users have to say about our hospital management system.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                quote: "This system has transformed how we manage patient care. Everything is now streamlined and efficient.",
-                name: "Dr. Sarah Johnson",
-                role: "Chief Medical Officer",
-                hospital: "Metro General Hospital"
-              },
-              {
-                quote: "The pharmacy module is intuitive and helps us prevent medication errors. Stock management has never been easier.",
-                name: "Robert Chen",
-                role: "Head Pharmacist",
-                hospital: "City Medical Center"
-              },
-              {
-                quote: "Patient registration and billing are now seamless processes. Our reception staff loves the user-friendly interface.",
-                name: "Emily Rodriguez",
-                role: "Admin Manager",
-                hospital: "Riverside Health"
-              }
-            ].map((testimonial, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow">
-                <div className="text-indigo-600 text-4xl mb-4">"</div>
-                <p className="text-gray-700 mb-6 italic">{testimonial.quote}</p>
-                <div>
-                  <p className="font-bold text-gray-900">{testimonial.name}</p>
-                  <p className="text-gray-600">{testimonial.role}</p>
-                  <p className="text-gray-600">{testimonial.hospital}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-white px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Choose the plan that works for your healthcare facility.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Basic",
-                price: "$299",
-                period: "per month",
-                description: "Perfect for small clinics",
-                features: [
-                  "Up to 5 doctor accounts",
-                  "Patient management",
-                  "Basic appointment scheduling",
-                  "Simple billing system",
-                  "Email support"
-                ]
-              },
-              {
-                name: "Professional",
-                price: "$599",
-                period: "per month",
-                description: "Ideal for growing medical facilities",
-                features: [
-                  "Up to 15 doctor accounts",
-                  "All Basic features",
-                  "Advanced scheduling system",
-                  "Comprehensive billing & insurance",
-                  "Pharmacy management",
-                  "Priority support"
-                ],
-                highlighted: true
-              },
-              {
-                name: "Enterprise",
-                price: "Custom",
-                period: "",
-                description: "For large hospitals & healthcare networks",
-                features: [
-                  "Unlimited accounts",
-                  "All Professional features",
-                  "Custom integrations",
-                  "Advanced analytics & reporting",
-                  "Dedicated support manager",
-                  "Staff training sessions"
-                ]
-              }
-            ].map((plan, index) => (
-              <div 
-                key={index} 
-                className={`p-6 rounded-lg transition-all ${
-                  plan.highlighted 
-                    ? 'bg-indigo-600 text-white shadow-xl relative scale-105' 
-                    : 'bg-gray-50 text-gray-900 hover:shadow-lg'
-                }`}
-              >
-                {plan.highlighted && (
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white px-4 py-1 rounded-full text-sm">
-                    Most Popular
-                  </div>
-                )}
-                <h3 className={`text-2xl font-bold mb-2 ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>
-                  {plan.name}
-                </h3>
-                <div className="mb-4">
-                  <span className="text-3xl font-bold">{plan.price}</span>
-                  <span className={`${plan.highlighted ? 'text-indigo-100' : 'text-gray-600'}`}> {plan.period}</span>
-                </div>
-                <p className={`mb-6 ${plan.highlighted ? 'text-indigo-100' : 'text-gray-600'}`}>
-                  {plan.description}
-                </p>
-                <ul className="mb-8 space-y-2">
-                  {plan.features.map((feature, fIndex) => (
-                    <li key={fIndex} className="flex items-center">
-                      <svg className={`w-5 h-5 mr-2 ${plan.highlighted ? 'text-indigo-200' : 'text-indigo-600'}`} fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
-                      </svg>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/login">
-  <div
-    className={`block text-center w-full py-2 px-4 rounded-full transition focus:outline-none ${
-      plan.highlighted 
-        ? 'bg-white text-indigo-600 hover:bg-indigo-50' 
-        : 'bg-indigo-600 text-white hover:bg-indigo-700'
-    }`}
-  >
-    {plan.price === "Custom" ? "Contact Sales" : "Get Started"}
-  </div>
-</Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-indigo-600 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to transform your healthcare management?</h2>
-          <p className="text-xl text-indigo-100 mb-8 max-w-3xl mx-auto">
-            Join thousands of healthcare professionals who are already using our system to improve patient care.
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center">
+          <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+            <span className="block">Professional Hospital</span>
+            <span className="block text-indigo-600">Pharmacy Management</span>
+          </h1>
+          <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+            Streamline healthcare operations with our comprehensive pharmacy management system. 
+            Built with modern technologies and enterprise-grade security.
           </p>
-          <Link 
-            href="/login" 
-            className="inline-block bg-white text-indigo-600 px-8 py-3 rounded-full font-medium hover:bg-indigo-50 transition"
-          >
-            Get Started Today
-          </Link>
+          <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+            <div className="rounded-md shadow">
+              <button
+                onClick={handleGetStarted}
+                disabled={isLoading}
+                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
+              >
+                {isLoading ? 'Loading...' : 'Start Managing Your Pharmacy'}
+              </button>
+            </div>
+          </div>
         </div>
-      </section>
+
+        {/* Features Section */}
+        <div id="features" className="mt-24">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              Powerful Features for Healthcare Professionals
+            </h2>
+            <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500">
+              Everything you need to manage your hospital pharmacy efficiently
+            </p>
+          </div>
+
+          <div className="mt-20">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {/* Feature 1 */}
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="mt-4 text-lg font-medium text-gray-900">Inventory Management</h3>
+                <p className="mt-2 text-gray-500">
+                  Track medicine stock levels, expiry dates, and reorder points with real-time monitoring.
+                </p>
+              </div>
+
+              {/* Feature 2 */}
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <h3 className="mt-4 text-lg font-medium text-gray-900">Patient Management</h3>
+                <p className="mt-2 text-gray-500">
+                  Comprehensive patient records, medical history, and prescription tracking.
+                </p>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <h3 className="mt-4 text-lg font-medium text-gray-900">Billing & Payments</h3>
+                <p className="mt-2 text-gray-500">
+                  Automated billing, payment processing, and insurance claim management.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* About Section */}
+        <div id="about" className="mt-24 bg-white rounded-lg shadow-lg p-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              About ClinixPro
+            </h2>
+            <p className="mt-4 max-w-3xl mx-auto text-lg text-gray-500">
+              ClinixPro is a professional-grade hospital pharmacy management system designed to streamline 
+              healthcare operations and improve patient care. Built with modern technologies including 
+              Spring Boot, Next.js, and PostgreSQL, it provides enterprise-level security and performance.
+            </p>
+          </div>
+        </div>
+      </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center mb-4">
-                <Image 
-                  src="/logo.svg" 
-                  alt="HMS Logo" 
-                  width={30} 
-                  height={30} 
-                  className="mr-2"
-                />
-                <span className="font-bold text-xl">Hospinix</span>
-              </div>
-              <p className="text-gray-400">
-                Modern healthcare management solution for hospitals and clinics of all sizes.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-4">Product</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white transition">Features</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition">Pricing</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition">Case Studies</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition">Documentation</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-4">Company</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white transition">About Us</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition">Careers</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition">Contact</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition">Blog</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white transition">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition">Terms of Service</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition">HIPAA Compliance</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition">Security</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; {new Date().getFullYear()} Hospinix. All rights reserved.</p>
+      <footer className="bg-gray-800 mt-24">
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h3 className="text-2xl font-bold text-white">ClinixPro</h3>
+            <p className="mt-2 text-gray-400">
+              Empowering Healthcare with Technology
+            </p>
+            <p className="mt-4 text-gray-400">
+              © 2024 ClinixPro. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
