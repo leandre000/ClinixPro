@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <rect width="40" height="40" rx="8" fill="#2563eb"/>
+  <path d="M20 8L22.5 10.5H27.5V15.5L30 17V32H10V17L12.5 15.5V10.5H17.5L20 8Z" fill="white"/>
+  <path d="M17.5 22.5H22.5V27.5H17.5V22.5Z" fill="#2563eb"/>
+  <path d="M15 20H25V22.5H15V20Z" fill="#2563eb"/>
+  <text x="20" y="38" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="8" font-weight="bold">C</text>
+</svg> 
