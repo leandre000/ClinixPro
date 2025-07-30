@@ -1,7 +1,9 @@
 {
-  "name": "frontend2",
-  "version": "0.1.0",
+  "name": "clinixpro",
+  "version": "1.0.0",
   "private": true,
+  "description": "Professional Hospital Pharmacy Management System",
+  "author": "Leandre",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,10 +14,10 @@
     "@next/swc-win32-x64-msvc": "^15.3.1",
     "axios": "^1.8.4",
     "chart.js": "^4.4.9",
-    "next": "^15.4.5",
-    "react": "^19.1.1",
+    "next": "^15.3.1",
+    "react": "^19.0.0",
     "react-chartjs-2": "^5.3.0",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -27,5 +29,14 @@
     "eslint-config-next": "15.3.1",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "keywords": [
+    "hospital",
+    "pharmacy",
+    "management",
+    "healthcare",
+    "nextjs",
+    "spring-boot"
+  ],
+  "license": "MIT"
 }
