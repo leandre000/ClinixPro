@@ -79,27 +79,27 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-sm sm:max-w-md w-full space-y-6 sm:space-y-8">
         {/* Logo and Header */}
         <div className="text-center">
-          <div className="mx-auto h-20 w-20 flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 shadow-xl">
-            <MdLocalHospital className="text-white text-4xl" />
+          <div className="mx-auto h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 shadow-xl">
+            <MdLocalHospital className="text-white text-3xl sm:text-4xl" />
           </div>
-          <h2 className="mt-8 text-4xl font-extrabold text-gray-900">
+          <h2 className="mt-6 sm:mt-8 text-3xl sm:text-4xl font-extrabold text-gray-900">
             Welcome to ClinixPro
           </h2>
-          <p className="mt-4 text-xl text-gray-600">
+          <p className="mt-3 sm:mt-4 text-lg sm:text-xl text-gray-600">
             Sign in to your healthcare management portal
           </p>
         </div>
         
         {/* Login Form */}
-        <form className="mt-12 space-y-8" onSubmit={handleSubmit}>
-          <div className="space-y-6">
+        <form className="mt-8 sm:mt-12 space-y-6 sm:space-y-8" onSubmit={handleSubmit}>
+          <div className="space-y-4 sm:space-y-6">
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="flex items-center space-x-2 text-lg font-semibold text-gray-700 mb-3">
+              <label htmlFor="email" className="flex items-center space-x-2 text-base sm:text-lg font-semibold text-gray-700 mb-2 sm:mb-3">
                 <MdEmail className="w-5 h-5 text-blue-600" />
                 <span>Email Address</span>
               </label>
@@ -110,7 +110,7 @@ export default function LoginPage() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none relative block w-full px-6 py-4 border-2 border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-lg transition-all duration-200"
+                  className="appearance-none relative block w-full px-4 sm:px-6 py-3 sm:py-4 border-2 border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-base sm:text-lg transition-all duration-200"
                   placeholder="Enter your email address"
                   value={formData.email}
                   onChange={handleChange}
@@ -120,7 +120,7 @@ export default function LoginPage() {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="flex items-center space-x-2 text-lg font-semibold text-gray-700 mb-3">
+              <label htmlFor="password" className="flex items-center space-x-2 text-base sm:text-lg font-semibold text-gray-700 mb-2 sm:mb-3">
                 <MdLock className="w-5 h-5 text-blue-600" />
                 <span>Password</span>
               </label>
@@ -131,7 +131,7 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
-                  className="appearance-none relative block w-full px-6 py-4 border-2 border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-lg transition-all duration-200"
+                  className="appearance-none relative block w-full px-4 sm:px-6 py-3 sm:py-4 border-2 border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-base sm:text-lg transition-all duration-200"
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}
@@ -143,9 +143,9 @@ export default function LoginPage() {
                     className="text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     {showPassword ? (
-                      <MdVisibilityOff className="w-6 h-6" />
+                      <MdVisibilityOff className="w-5 h-5 sm:w-6 sm:h-6" />
                     ) : (
-                      <MdVisibility className="w-6 h-6" />
+                      <MdVisibility className="w-5 h-5 sm:w-6 sm:h-6" />
                     )}
                   </button>
                 </div>
@@ -155,13 +155,13 @@ export default function LoginPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="rounded-xl bg-red-50 border-2 border-red-200 p-4">
+            <div className="rounded-xl bg-red-50 border-2 border-red-200 p-3 sm:p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <MdError className="h-6 w-6 text-red-400" />
+                  <MdError className="h-5 w-5 sm:h-6 sm:w-6 text-red-400" />
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-lg font-medium text-red-800">
+                  <h3 className="text-base sm:text-lg font-medium text-red-800">
                     {error}
                   </h3>
                 </div>
@@ -174,11 +174,11 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-4 px-6 border border-transparent text-xl font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="group relative w-full flex justify-center py-3 sm:py-4 px-4 sm:px-6 border border-transparent text-lg sm:text-xl font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               {isLoading ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin -ml-1 mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
@@ -186,7 +186,7 @@ export default function LoginPage() {
                 </>
               ) : (
                 <>
-                  <MdSecurity className="-ml-1 mr-3 h-6 w-6" />
+                  <MdSecurity className="-ml-1 mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
                   Sign In
                 </>
               )}
@@ -194,16 +194,16 @@ export default function LoginPage() {
           </div>
 
           {/* Links */}
-          <div className="flex items-center justify-between">
-            <div className="text-lg">
+          <div className="flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0">
+            <div className="text-base sm:text-lg">
               <Link href="/forgot-password" className="flex items-center space-x-2 font-semibold text-blue-600 hover:text-blue-500 transition-colors">
-                <MdLock className="w-5 h-5" />
+                <MdLock className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Forgot your password?</span>
               </Link>
             </div>
-            <div className="text-lg">
+            <div className="text-base sm:text-lg">
               <Link href="/" className="flex items-center space-x-2 font-semibold text-blue-600 hover:text-blue-500 transition-colors">
-                <MdHome className="w-5 h-5" />
+                <MdHome className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Back to Home</span>
               </Link>
             </div>
@@ -211,10 +211,10 @@ export default function LoginPage() {
         </form>
 
         {/* Security Notice */}
-        <div className="mt-8 text-center">
+        <div className="mt-6 sm:mt-8 text-center">
           <div className="inline-flex items-center space-x-2 text-gray-500">
-            <MdSecurity className="h-5 w-5 text-green-500" />
-            <span className="text-lg">HIPAA Compliant & Secure</span>
+            <MdSecurity className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
+            <span className="text-base sm:text-lg">HIPAA Compliant & Secure</span>
           </div>
         </div>
       </div>
