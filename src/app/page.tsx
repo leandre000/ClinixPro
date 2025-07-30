@@ -3,6 +3,27 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { 
+  MdLocalHospital, 
+  MdLocalPharmacy, 
+  MdPerson, 
+  MdPerson4, 
+  MdAttachMoney, 
+  MdAnalytics,
+  MdFlashOn,
+  MdSecurity,
+  MdPhoneAndroid,
+  MdSync,
+  MdCheckCircle,
+  MdRocketLaunch,
+  MdBusiness,
+  MdSupport,
+  MdSchool,
+  MdUpdate,
+  MdEmail,
+  MdPhone,
+  MdLocationOn
+} from 'react-icons/md';
 
 export default function HomePage() {
   const [currentFeature, setCurrentFeature] = useState(0);
@@ -18,32 +39,32 @@ export default function HomePage() {
 
   const features = [
     {
-      icon: "🏥",
+      icon: <MdLocalHospital className="text-4xl" />,
       title: "Hospital Management",
       description: "Comprehensive hospital administration with real-time monitoring and analytics"
     },
     {
-      icon: "💊",
+      icon: <MdLocalPharmacy className="text-4xl" />,
       title: "Pharmacy Management",
       description: "Advanced inventory tracking, prescription management, and drug safety protocols"
     },
     {
-      icon: "👨‍⚕️",
+      icon: <MdPerson className="text-4xl" />,
       title: "Doctor Portal",
       description: "Patient records, appointment scheduling, and prescription management"
     },
     {
-      icon: "👩‍⚕️",
+      icon: <MdPerson4 className="text-4xl" />,
       title: "Nurse Management",
       description: "Patient care coordination, medication administration, and vital signs monitoring"
     },
     {
-      icon: "💰",
+      icon: <MdAttachMoney className="text-4xl" />,
       title: "Billing & Insurance",
       description: "Automated billing, insurance claims processing, and payment tracking"
     },
     {
-      icon: "📊",
+      icon: <MdAnalytics className="text-4xl" />,
       title: "Analytics & Reports",
       description: "Comprehensive reporting, performance metrics, and data-driven insights"
     }
@@ -58,22 +79,22 @@ export default function HomePage() {
 
   const benefits = [
     {
-      icon: "⚡",
+      icon: <MdFlashOn className="text-5xl" />,
       title: "Lightning Fast",
       description: "Optimized performance with sub-second response times"
     },
     {
-      icon: "🔒",
+      icon: <MdSecurity className="text-5xl" />,
       title: "Enterprise Security",
       description: "HIPAA compliant with end-to-end encryption"
     },
     {
-      icon: "📱",
+      icon: <MdPhoneAndroid className="text-5xl" />,
       title: "Mobile First",
       description: "Responsive design that works on all devices"
     },
     {
-      icon: "🔄",
+      icon: <MdSync className="text-5xl" />,
       title: "Real-time Sync",
       description: "Live data synchronization across all departments"
     }
@@ -87,7 +108,7 @@ export default function HomePage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white text-xl font-bold">C</span>
+                <MdLocalHospital className="text-white text-xl" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 ClinixPro
@@ -119,8 +140,9 @@ export default function HomePage() {
               Empowering healthcare professionals nationwide with cutting-edge technology for seamless patient care, pharmacy management, and hospital administration.
             </p>
             <div className={`flex flex-col sm:flex-row gap-4 justify-center transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <Link href="/login" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                Start Your Journey
+              <Link href="/login" className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2">
+                <MdRocketLaunch className="w-6 h-6" />
+                <span>Start Your Journey</span>
               </Link>
               <button className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300">
                 Watch Demo
@@ -152,7 +174,7 @@ export default function HomePage() {
                     : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-lg'
                 }`}
               >
-                <div className="text-4xl mb-4">{feature.icon}</div>
+                <div className="text-blue-600 mb-4 flex justify-center">{feature.icon}</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">{feature.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{feature.description}</p>
               </div>
@@ -190,7 +212,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {benefits.map((benefit, index) => (
               <div key={index} className="text-center p-6">
-                <div className="text-5xl mb-4">{benefit.icon}</div>
+                <div className="text-blue-600 mb-4 flex justify-center">{benefit.icon}</div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
                 <p className="text-gray-600">{benefit.description}</p>
               </div>
@@ -214,25 +236,25 @@ export default function HomePage() {
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm">✓</span>
+                    <MdCheckCircle className="text-white text-sm" />
                   </div>
                   <span className="text-lg text-gray-700">HIPAA Compliant & Secure</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm">✓</span>
+                    <MdCheckCircle className="text-white text-sm" />
                   </div>
                   <span className="text-lg text-gray-700">24/7 Technical Support</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm">✓</span>
+                    <MdCheckCircle className="text-white text-sm" />
                   </div>
                   <span className="text-lg text-gray-700">Cloud-Based & Scalable</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm">✓</span>
+                    <MdCheckCircle className="text-white text-sm" />
                   </div>
                   <span className="text-lg text-gray-700">Mobile-First Design</span>
                 </div>
@@ -242,20 +264,28 @@ export default function HomePage() {
               <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl p-8">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white rounded-xl p-4 shadow-lg">
-                    <div className="text-2xl mb-2">🏥</div>
-                    <div className="text-sm font-semibold text-gray-700">Hospital Management</div>
+                    <div className="text-blue-600 text-2xl mb-2 flex justify-center">
+                      <MdLocalHospital />
+                    </div>
+                    <div className="text-sm font-semibold text-gray-700 text-center">Hospital Management</div>
                   </div>
                   <div className="bg-white rounded-xl p-4 shadow-lg">
-                    <div className="text-2xl mb-2">💊</div>
-                    <div className="text-sm font-semibold text-gray-700">Pharmacy System</div>
+                    <div className="text-purple-600 text-2xl mb-2 flex justify-center">
+                      <MdLocalPharmacy />
+                    </div>
+                    <div className="text-sm font-semibold text-gray-700 text-center">Pharmacy System</div>
                   </div>
                   <div className="bg-white rounded-xl p-4 shadow-lg">
-                    <div className="text-2xl mb-2">👨‍⚕️</div>
-                    <div className="text-sm font-semibold text-gray-700">Doctor Portal</div>
+                    <div className="text-green-600 text-2xl mb-2 flex justify-center">
+                      <MdPerson />
+                    </div>
+                    <div className="text-sm font-semibold text-gray-700 text-center">Doctor Portal</div>
                   </div>
                   <div className="bg-white rounded-xl p-4 shadow-lg">
-                    <div className="text-2xl mb-2">📊</div>
-                    <div className="text-sm font-semibold text-gray-700">Analytics</div>
+                    <div className="text-orange-600 text-2xl mb-2 flex justify-center">
+                      <MdAnalytics />
+                    </div>
+                    <div className="text-sm font-semibold text-gray-700 text-center">Analytics</div>
                   </div>
                 </div>
               </div>
@@ -274,8 +304,9 @@ export default function HomePage() {
             Join the future of healthcare management today. Start your free trial and see the difference ClinixPro can make.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/login" className="bg-white text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transition-colors">
-              Start Free Trial
+            <Link href="/login" className="bg-white text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center space-x-2">
+              <MdRocketLaunch className="w-6 h-6" />
+              <span>Start Free Trial</span>
             </Link>
             <button className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
               Schedule Demo
@@ -291,7 +322,7 @@ export default function HomePage() {
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">C</span>
+                  <MdLocalHospital className="text-white" />
                 </div>
                 <span className="text-xl font-bold">ClinixPro</span>
               </div>
@@ -320,10 +351,22 @@ export default function HomePage() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Contact</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>info@clinixpro.com</li>
-                <li>+1 (555) 123-4567</li>
-                <li>123 Healthcare Ave</li>
-                <li>Medical District, MD 12345</li>
+                <li className="flex items-center space-x-2">
+                  <MdEmail className="w-4 h-4" />
+                  <span>info@clinixpro.com</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <MdPhone className="w-4 h-4" />
+                  <span>+1 (555) 123-4567</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <MdLocationOn className="w-4 h-4" />
+                  <span>123 Healthcare Ave</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <MdBusiness className="w-4 h-4" />
+                  <span>Medical District, MD 12345</span>
+                </li>
               </ul>
             </div>
           </div>

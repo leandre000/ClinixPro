@@ -1,6 +1,18 @@
 "use client";
 
 import { useState } from 'react';
+import { 
+  MdEmail, 
+  MdLock, 
+  MdPhone, 
+  MdCalendarToday, 
+  MdNumbers, 
+  MdEdit,
+  MdVisibility,
+  MdVisibilityOff,
+  MdCheckCircle,
+  MdError
+} from 'react-icons/md';
 
 interface ModernFormFieldProps {
   label: string;
@@ -10,7 +22,7 @@ interface ModernFormFieldProps {
   value: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   required?: boolean;
-  icon?: string;
+  icon?: React.ReactNode;
   options?: { value: string; label: string }[];
   error?: string;
   disabled?: boolean;
@@ -39,17 +51,17 @@ export default function ModernFormField({
     
     switch (type) {
       case 'email':
-        return '📧';
+        return <MdEmail className="w-5 h-5" />;
       case 'password':
-        return '🔒';
+        return <MdLock className="w-5 h-5" />;
       case 'tel':
-        return '📞';
+        return <MdPhone className="w-5 h-5" />;
       case 'date':
-        return '📅';
+        return <MdCalendarToday className="w-5 h-5" />;
       case 'number':
-        return '🔢';
+        return <MdNumbers className="w-5 h-5" />;
       default:
-        return '✏️';
+        return <MdEdit className="w-5 h-5" />;
     }
   };
 
@@ -129,9 +141,10 @@ export default function ModernFormField({
 
   return (
     <div className="space-y-3">
-      <label htmlFor={name} className="block text-lg font-semibold text-gray-700">
-        {getIcon()} {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+      <label htmlFor={name} className="flex items-center space-x-2 text-lg font-semibold text-gray-700">
+        <span className="text-blue-600">{getIcon()}</span>
+        <span>{label}</span>
+        {required && <span className="text-red-500">*</span>}
       </label>
       
       <div className="relative">
@@ -146,14 +159,9 @@ export default function ModernFormField({
               className="text-gray-400 hover:text-gray-600 transition-colors"
             >
               {showPassword ? (
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                </svg>
+                <MdVisibilityOff className="w-6 h-6" />
               ) : (
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
+                <MdVisibility className="w-6 h-6" />
               )}
             </button>
           </div>
@@ -162,9 +170,7 @@ export default function ModernFormField({
         {/* Success indicator */}
         {isFocused && !error && value && (
           <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-            <svg className="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <MdCheckCircle className="w-6 h-6 text-green-500" />
           </div>
         )}
       </div>
@@ -172,9 +178,7 @@ export default function ModernFormField({
       {/* Error message */}
       {error && (
         <div className="flex items-center space-x-2 text-red-600">
-          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <MdError className="w-5 h-5" />
           <span className="text-lg">{error}</span>
         </div>
       )}
