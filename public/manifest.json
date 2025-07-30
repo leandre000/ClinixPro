@@ -1,16 +1,41 @@
 {
-  "name": "Medicare Pro - Hospital Management System",
-  "short_name": "Medicare Pro",
-  "description": "Modern healthcare management solution for hospitals and clinics of all sizes",
+  "name": "ClinixPro - Hospital Management System",
+  "short_name": "ClinixPro",
+  "description": "Modern healthcare management solution for hospitals and clinics nationwide",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f3f4f6",
-  "theme_color": "#4f46e5",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
   "icons": [
     {
-      "src": "/logo.svg",
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-192x192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml"
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ]
 } 
