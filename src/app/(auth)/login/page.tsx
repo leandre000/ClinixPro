@@ -11,12 +11,7 @@ import {
   MdVisibilityOff, 
   MdError, 
   MdSecurity, 
-  MdHome,
-  MdAdminPanelSettings,
-  MdPerson,
-  MdLocalPharmacy,
-  MdRocketLaunch,
-  MdCheckCircle
+  MdHome
 } from 'react-icons/md';
 
 export default function LoginPage() {
@@ -214,44 +209,6 @@ export default function LoginPage() {
             </div>
           </div>
         </form>
-
-        {/* Demo Credentials */}
-        <div className="mt-12">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t-2 border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-lg">
-              <span className="px-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 text-gray-600 font-semibold flex items-center space-x-2">
-                <MdRocketLaunch className="w-5 h-5" />
-                <span>Demo Credentials</span>
-              </span>
-            </div>
-          </div>
-          <div className="mt-6 space-y-3 text-center">
-            <div className="bg-white rounded-xl p-4 shadow-lg border-2 border-gray-100">
-              <div className="flex items-center justify-center space-x-2 mb-2">
-                <MdAdminPanelSettings className="w-6 h-6 text-blue-600" />
-                <p className="text-lg font-semibold text-gray-800">Admin Access</p>
-              </div>
-              <p className="text-gray-600">admin@clinixpro.com / password</p>
-            </div>
-            <div className="bg-white rounded-xl p-4 shadow-lg border-2 border-gray-100">
-              <div className="flex items-center justify-center space-x-2 mb-2">
-                <MdPerson className="w-6 h-6 text-green-600" />
-                <p className="text-lg font-semibold text-gray-800">Doctor Access</p>
-              </div>
-              <p className="text-gray-600">doctor@clinixpro.com / password</p>
-            </div>
-            <div className="bg-white rounded-xl p-4 shadow-lg border-2 border-gray-100">
-              <div className="flex items-center justify-center space-x-2 mb-2">
-                <MdLocalPharmacy className="w-6 h-6 text-purple-600" />
-                <p className="text-lg font-semibold text-gray-800">Pharmacist Access</p>
-              </div>
-              <p className="text-gray-600">pharmacist@clinixpro.com / password</p>
-            </div>
-          </div>
-        </div>
 
         {/* Security Notice */}
         <div className="mt-8 text-center">
