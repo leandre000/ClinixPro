@@ -45,8 +45,9 @@ export default function LoginPage() {
         body: JSON.stringify(formData),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
@@ -68,11 +69,16 @@ export default function LoginPage() {
             router.push('/');
         }
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Login failed');
+        // Handle specific backend errors
+        if (data.error === 'BACKEND_UNAVAILABLE' || data.error === 'BACKEND_TIMEOUT' || data.error === 'BACKEND_CONNECTION_ERROR') {
+          setError('Backend service is not available. Please ensure the backend server is running and try again.');
+        } else {
+          setError(data.message || 'Login failed. Please check your credentials and try again.');
+        }
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      console.error('Login error:', err);
+      setError('Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
