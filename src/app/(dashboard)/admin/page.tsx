@@ -1,98 +1,86 @@
 "use client";
 
-import DashboardLayout from "@/components/DashboardLayout";
-import { useState, useEffect } from "react";
-import AdminService from "@/services/admin.service";
-import DataService from "@/services/data.service";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import AuthService from "@/services/auth.service";
-import PieChart from "@/components/PieChart";
+import { 
+  FaUsers, 
+  FaUserMd, 
+  FaPills, 
+  FaCalendarAlt, 
+  FaChartLine, 
+  FaHospital,
+  FaUserNurse,
+  FaClipboardList,
+  FaTrash,
+  FaEdit,
+  FaEye,
+  FaPlus,
+  FaSearch,
+  FaFilter,
+  FaBell,
+  FaCog,
+  FaSignOutAlt,
+  FaHome,
+  FaUser,
+  FaShieldAlt,
+  FaExclamationTriangle,
+  FaCheckCircle,
+  FaClock,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt
+} from "react-icons/fa";
+import { 
+  MdDashboard, 
+  MdPeople, 
+  MdLocalHospital, 
+  MdPharmacy,
+  MdReceipt,
+  MdSettings,
+  MdNotifications,
+  MdMenu,
+  MdClose
+} from "react-icons/md";
+import DataService from "@/services/data.service";
+import AdminService from "@/services/admin.service";
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [selectedTab, setSelectedTab] = useState("overview");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [stats, setStats] = useState<{
-    totalDoctors: number;
-    totalPharmacists: number;
-    totalReceptionists: number;
-    totalPatients: number;
-    activePatients: number;
-    dischargedPatients: number;
-    totalAppointments: number;
-    scheduledAppointments: number;
-    completedAppointments: number;
-    cancelledAppointments: number;
-    totalMedicines: number;
-    totalCompanies: number;
-    totalPrescriptions: number;
-    // Facility data from backend
-    totalDepartments: number;
-    hospitalBeds: number;
-    monthlySurgeries: number;
-    patientSatisfaction: string;
-  }>({
-    totalDoctors: 0,
-    totalPharmacists: 0,
-    totalReceptionists: 0,
-    totalPatients: 0,
-    activePatients: 0,
-    dischargedPatients: 0,
-    totalAppointments: 0,
-    scheduledAppointments: 0,
-    completedAppointments: 0,
-    cancelledAppointments: 0,
-    totalMedicines: 0,
-    totalCompanies: 0,
-    totalPrescriptions: 0,
-    // Facility data initialized to zero/empty
-    totalDepartments: 0,
-    hospitalBeds: 0,
-    monthlySurgeries: 0,
-    patientSatisfaction: '',
-  });
+  const [stats, setStats] = useState({});
   const [recentStaff, setRecentStaff] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    // Check if user is authenticated
-    const user = AuthService.getCurrentUser();
-    if (!user || user.role.toLowerCase() !== 'admin') {
-      router.push('/login');
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (!user.role || user.role !== "ADMIN") {
+      router.push("/login");
       return;
-    }
-
-    // Check if a refresh is needed from localStorage flag
-    const refreshNeeded = localStorage.getItem('dashboard_refresh_needed');
-    if (refreshNeeded === 'true') {
-      // Clear the flag
-      localStorage.removeItem('dashboard_refresh_needed');
     }
 
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        // Fetch dashboard statistics from DataService instead of AdminService
+        setError("");
+        
         const dashboardStats = await DataService.getDashboardStats();
         setStats(dashboardStats);
 
-        // Fetch staff for "Recent Staff" widget
         const staffData = await AdminService.getUsers({ active: true });
-        setRecentStaff(staffData.slice(0, 5)); // Just take the first 5
+        setRecentStaff(staffData.slice(0, 5));
 
-        // Fetch appointments data
         try {
           const appointmentsData = await DataService.getAllAppointments();
-          console.log("Raw appointments data:", appointmentsData);
-          setAppointments(appointmentsData.slice(0, 4)); // Just take the first 4
+          setAppointments(appointmentsData.slice(0, 4));
         } catch (err) {
           console.error('Error loading appointments data:', err);
         }
         
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
-        setError("Failed to load dashboard data. Please refresh to try again.");
+        setError("Failed to load dashboard data. Please check your connection and try again.");
       } finally {
         setLoading(false);
       }
@@ -101,420 +89,343 @@ export default function AdminDashboard() {
     fetchDashboardData();
   }, [router]);
 
-  // Fallback data if API fails
-  const fallbackStats = [
-    { name: "Total Patients", value: stats.totalPatients || "0" },
-    { name: "Total Doctors", value: stats.totalDoctors || "0" },
-    { name: "Total Staff", value: (stats.totalPharmacists + stats.totalReceptionists+stats.totalDoctors) || "0" },
-    { name: "Total Medicines", value: stats.totalMedicines || "0" },
-  ];
-
-  const fallbackRecentStaff = [
-    { id: 1, name: "Dr. Sarah Johnson", role: "Cardiologist", status: "Active", joined: "2023-08-15" },
-    { id: 2, name: "Dr. Michael Chen", role: "Neurologist", status: "Active", joined: "2023-09-01" },
-    { id: 3, name: "Emily Rodriguez", role: "Receptionist", status: "Active", joined: "2023-10-12" },
-    { id: 4, name: "Robert Williams", role: "Pharmacist", status: "On Leave", joined: "2023-07-22" },
-    { id: 5, name: "Lisa Thompson", role: "Nurse", status: "Active", joined: "2023-11-05" },
-  ];
-
-  const fallbackAppointments = [
-    { id: 1, patient: "John Doe", doctor: "Dr. Sarah Johnson", department: "Cardiology", time: "09:00 AM", date: "2023-12-15" },
-    { id: 2, patient: "Jane Smith", doctor: "Dr. Michael Chen", department: "Neurology", time: "10:30 AM", date: "2023-12-15" },
-    { id: 3, patient: "Robert Brown", doctor: "Dr. Alex Davis", department: "Orthopedics", time: "02:15 PM", date: "2023-12-16" },
-    { id: 4, patient: "Emily Wilson", doctor: "Dr. Lisa Wong", department: "Pediatrics", time: "11:45 AM", date: "2023-12-16" },
-  ];
-
-  const displayStaff = recentStaff.length > 0 ? recentStaff : fallbackRecentStaff;
-  const displayAppointments = appointments.length > 0 ? appointments : fallbackAppointments;
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
 
   const handleDeleteStaff = async (id) => {
-    if (confirm("Are you sure you want to delete this staff member? This action cannot be undone.")) {
+    if (confirm("Are you sure you want to deactivate this staff member?")) {
       try {
         await AdminService.deleteUser(id);
-        
-        // Refresh both staff data and dashboard statistics
         const staffData = await AdminService.getUsers({ active: true });
-        setRecentStaff(staffData.slice(0, 5)); // Just take the first 5
-        
-        // Refresh dashboard statistics
-        const dashboardStats = await AdminService.getDashboardStats();
+        setRecentStaff(staffData.slice(0, 5));
+        const dashboardStats = await DataService.getDashboardStats();
         setStats(dashboardStats);
       } catch (err) {
         console.error("Error deleting staff:", err);
-        setError("Failed to delete staff. Please try again.");
+        setError("Failed to deactivate staff. Please try again.");
       }
     }
   };
 
-  const handleToggleStaffActivation = async (id, currentActiveStatus) => {
-    try {
-      // Log the current status and what we're changing it to
-      console.log(`Toggling staff activation - Current status: ${currentActiveStatus}, changing to: ${!currentActiveStatus}`);
-      
-      // Use explicit Boolean conversion to avoid any type issues
-      const updateData = { 
-        isActive: Boolean(!currentActiveStatus) 
-      };
-      
-      console.log('Update payload:', updateData);
-      
-      await AdminService.updateUser(id, updateData);
-      
-      // Refresh both staff data and dashboard statistics
-      const staffData = await AdminService.getUsers({ active: true });
-      setRecentStaff(staffData.slice(0, 5)); // Just take the first 5
-      
-      // Refresh dashboard statistics
-      const dashboardStats = await AdminService.getDashboardStats();
-      setStats(dashboardStats);
-    } catch (err) {
-      console.error("Error updating staff status:", err);
-      setError("Failed to update staff status. Please try again.");
+  const getRoleIcon = (role) => {
+    switch (role) {
+      case "ADMIN": return <FaShieldAlt className="text-red-500" />;
+      case "DOCTOR": return <FaUserMd className="text-blue-500" />;
+      case "PHARMACIST": return <FaPills className="text-green-500" />;
+      case "RECEPTIONIST": return <FaUserNurse className="text-purple-500" />;
+      default: return <FaUser className="text-gray-500" />;
     }
   };
 
+  const getRoleColor = (role) => {
+    switch (role) {
+      case "ADMIN": return "bg-red-100 text-red-800 border-red-200";
+      case "DOCTOR": return "bg-blue-100 text-blue-800 border-blue-200";
+      case "PHARMACIST": return "bg-green-100 text-green-800 border-green-200";
+      case "RECEPTIONIST": return "bg-purple-100 text-purple-800 border-purple-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const statCards = [
+    {
+      title: "Total Users",
+      value: stats.totalUsers || 0,
+      icon: <FaUsers className="text-2xl" />,
+      color: "bg-gradient-to-r from-blue-500 to-blue-600",
+      textColor: "text-blue-600"
+    },
+    {
+      title: "Doctors",
+      value: stats.totalDoctors || 0,
+      icon: <FaUserMd className="text-2xl" />,
+      color: "bg-gradient-to-r from-green-500 to-green-600",
+      textColor: "text-green-600"
+    },
+    {
+      title: "Pharmacists",
+      value: stats.totalPharmacists || 0,
+      icon: <FaPills className="text-2xl" />,
+      color: "bg-gradient-to-r from-purple-500 to-purple-600",
+      textColor: "text-purple-600"
+    },
+    {
+      title: "Patients",
+      value: stats.totalPatients || 0,
+      icon: <FaHospital className="text-2xl" />,
+      color: "bg-gradient-to-r from-orange-500 to-orange-600",
+      textColor: "text-orange-600"
+    },
+    {
+      title: "Appointments",
+      value: stats.totalAppointments || 0,
+      icon: <FaCalendarAlt className="text-2xl" />,
+      color: "bg-gradient-to-r from-pink-500 to-pink-600",
+      textColor: "text-pink-600"
+    },
+    {
+      title: "Medicines",
+      value: stats.totalMedicines || 0,
+      icon: <FaClipboardList className="text-2xl" />,
+      color: "bg-gradient-to-r from-indigo-500 to-indigo-600",
+      textColor: "text-indigo-600"
+    }
+  ];
+
   if (loading) {
     return (
-      <DashboardLayout userType="admin" title="Admin Dashboard">
-        <div className="flex items-center justify-center h-96">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-t-indigo-500 border-b-indigo-700 border-l-indigo-500 border-r-indigo-700 rounded-full animate-spin mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading dashboard data...</p>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 text-lg font-medium">Loading Dashboard...</p>
         </div>
-      </DashboardLayout>
+      </div>
     );
   }
 
   return (
-    <DashboardLayout userType="admin" title="Admin Dashboard">
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6">
-          <span className="block">{error}</span>
-        </div>
-      )}
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {fallbackStats.map((stat) => (
-          <div key={stat.name} className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <dt className="text-sm font-medium text-gray-500 truncate">{stat.name}</dt>
-              <dd className="mt-1 text-3xl font-semibold text-gray-900">{stat.value}</dd>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            >
+              {sidebarOpen ? <MdClose size={24} /> : <MdMenu size={24} />}
+            </button>
+
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <FaHospital className="h-8 w-8 text-blue-600" />
+              </div>
+              <h1 className="ml-3 text-xl font-semibold text-gray-900">ClinixPro Admin</h1>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full">
+                <FaBell size={20} />
+              </button>
+              <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full">
+                <FaCog size={20} />
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md"
+              >
+                <FaSignOutAlt className="mr-2" />
+                Logout
+              </button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      </header>
 
-      <div className="mt-8 bg-white shadow rounded-lg overflow-hidden">
-        <div className="border-b border-gray-200">
-          <nav className="flex -mb-px">
-            <button
-              onClick={() => setSelectedTab("overview")}
-              className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
-                selectedTab === "overview"
-                  ? "border-indigo-500 text-indigo-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setSelectedTab("staff")}
-              className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
-                selectedTab === "staff"
-                  ? "border-indigo-500 text-indigo-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              Staff Management
-            </button>
-            <button
-              onClick={() => setSelectedTab("appointments")}
-              className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
-                selectedTab === "appointments"
-                  ? "border-indigo-500 text-indigo-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              Appointments
-            </button>
-          </nav>
+      <div className="flex">
+        {/* Sidebar */}
+        <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0 transition duration-200 ease-in-out`}>
+          <div className="h-full flex flex-col">
+            <nav className="flex-1 px-4 py-6 space-y-2">
+              <a href="#" className="flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-md">
+                <MdDashboard className="mr-3" />
+                Dashboard
+              </a>
+              <a href="#" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md">
+                <MdPeople className="mr-3" />
+                Staff Management
+              </a>
+              <a href="#" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md">
+                <MdLocalHospital className="mr-3" />
+                Patients
+              </a>
+              <a href="#" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md">
+                <MdPharmacy className="mr-3" />
+                Pharmacy
+              </a>
+              <a href="#" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md">
+                <MdReceipt className="mr-3" />
+                Appointments
+              </a>
+              <a href="#" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md">
+                <FaChartLine className="mr-3" />
+                Reports
+              </a>
+              <a href="#" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md">
+                <MdSettings className="mr-3" />
+                Settings
+              </a>
+            </nav>
+          </div>
         </div>
 
-        <div className="p-6">
-          {selectedTab === "overview" && (
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Hospital Overview</h3>
-                <div className="col-span-12 lg:col-span-8 bg-white rounded-md shadow overflow-hidden">
-                  <div className="p-4 sm:p-6 flex justify-between items-center border-b border-gray-100">
+        {/* Main content */}
+        <div className="flex-1 lg:ml-0">
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {error && (
+              <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex">
+                  <FaExclamationTriangle className="text-red-400 mt-0.5 mr-3" />
+                  <p className="text-red-700">{error}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, Admin!</h2>
+              <p className="text-gray-600">Here's what's happening with your hospital today.</p>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {statCards.map((stat, index) => (
+                <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-xl font-semibold text-gray-800">Hospital Overview</h2>
-                      <p className="text-sm text-gray-500">Facility information and resources</p>
+                      <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
+                      <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
                     </div>
-                    <div className="flex space-x-2">
-                      <div className="flex items-center">
-                        <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-1"></span>
-                        <span className="text-xs text-gray-500">Live Data</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 sm:p-6">
-                    <div className="bg-gray-50 p-4 rounded-md">
-                      <p className="text-sm text-gray-500 mb-1">Departments</p>
-                      <div className="flex items-center">
-                        <h3 className="text-2xl font-bold text-gray-800">{stats.totalDepartments}</h3>
-                        <div className="ml-2 bg-green-100 text-green-800 text-xs px-1 rounded flex items-center">
-                          <div className="w-2 h-2 rounded-full bg-green-500 mr-1 animate-pulse"></div>
-                          <span>Live</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-gray-50 p-4 rounded-md">
-                      <p className="text-sm text-gray-500 mb-1">Hospital Beds</p>
-                      <div className="flex items-center">
-                        <h3 className="text-2xl font-bold text-gray-800">{stats.hospitalBeds}</h3>
-                        <div className="ml-2 bg-green-100 text-green-800 text-xs px-1 rounded flex items-center">
-                          <div className="w-2 h-2 rounded-full bg-green-500 mr-1 animate-pulse"></div>
-                          <span>Live</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-gray-50 p-4 rounded-md">
-                      <p className="text-sm text-gray-500 mb-1">Surgeries (This Month)</p>
-                      <div className="flex items-center">
-                        <h3 className="text-2xl font-bold text-gray-800">{stats.monthlySurgeries}</h3>
-                        <div className="ml-2 bg-green-100 text-green-800 text-xs px-1 rounded flex items-center">
-                          <div className="w-2 h-2 rounded-full bg-green-500 mr-1 animate-pulse"></div>
-                          <span>Live</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-gray-50 p-4 rounded-md">
-                      <p className="text-sm text-gray-500 mb-1">Patient Satisfaction</p>
-                      <div className="flex items-center">
-                        <h3 className="text-2xl font-bold text-gray-800">{stats.patientSatisfaction}</h3>
-                        <div className="ml-2 bg-green-100 text-green-800 text-xs px-1 rounded flex items-center">
-                          <div className="w-2 h-2 rounded-full bg-green-500 mr-1 animate-pulse"></div>
-                          <span>Live</span>
-                        </div>
-                      </div>
+                    <div className={`p-3 rounded-lg ${stat.color} text-white`}>
+                      {stat.icon}
                     </div>
                   </div>
                 </div>
-              </div> */}
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Resource Distribution</h3>
-                <PieChart 
-                  data={{
-                    labels: ['Doctors', 'Pharmacists', 'Receptionists', 'Patients', 'Appointments', 'Medicines'],
-                    values: [
-                      stats.totalDoctors,
-                      stats.totalPharmacists,
-                      stats.totalReceptionists,
-                      stats.totalPatients,
-                      stats.totalAppointments,
-                      stats.totalMedicines
-                    ]
-                  }}
-                  title=""
-                />
+              ))}
+            </div>
+
+            {/* Recent Staff and Appointments */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Recent Staff */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Recent Staff</h3>
+                    <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                      View All
+                    </button>
+                  </div>
+                </div>
+                <div className="p-6">
+                  {recentStaff.length > 0 ? (
+                    <div className="space-y-4">
+                      {recentStaff.map((staff) => (
+                        <div key={staff.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                              {getRoleIcon(staff.role)}
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">
+                                {staff.firstName} {staff.lastName}
+                              </p>
+                              <p className="text-sm text-gray-600">{staff.email}</p>
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getRoleColor(staff.role)}`}>
+                                {staff.role}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <button className="p-1 text-gray-400 hover:text-gray-600">
+                              <FaEdit size={14} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteStaff(staff.id)}
+                              className="p-1 text-gray-400 hover:text-red-600"
+                            >
+                              <FaTrash size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <FaUsers className="mx-auto h-12 w-12 text-gray-400" />
+                      <p className="mt-2 text-gray-600">No staff members found</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Recent Appointments */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Recent Appointments</h3>
+                    <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                      View All
+                    </button>
+                  </div>
+                </div>
+                <div className="p-6">
+                  {appointments.length > 0 ? (
+                    <div className="space-y-4">
+                      {appointments.map((appointment) => (
+                        <div key={appointment.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                              <FaCalendarAlt className="text-green-600" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{appointment.patientName || 'Patient Name'}</p>
+                              <p className="text-sm text-gray-600">{appointment.doctorName || 'Doctor Name'}</p>
+                              <div className="flex items-center space-x-2 mt-1">
+                                <FaClock className="text-gray-400 text-xs" />
+                                <span className="text-xs text-gray-600">
+                                  {appointment.appointmentDate || 'Date'} at {appointment.appointmentTime || 'Time'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              Scheduled
+                            </span>
+                            <button className="p-1 text-gray-400 hover:text-gray-600">
+                              <FaEye size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <FaCalendarAlt className="mx-auto h-12 w-12 text-gray-400" />
+                      <p className="mt-2 text-gray-600">No appointments found</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          )}
 
-          {selectedTab === "staff" && (
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-medium text-gray-900">Staff Management</h3>
-                <button 
-                  className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-                  onClick={() => router.push('/admin/staff/new')}
-                >
-                  Add New Staff
+            {/* Quick Actions */}
+            <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <button className="flex items-center justify-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200">
+                  <FaPlus className="mr-2 text-blue-600" />
+                  <span className="text-blue-600 font-medium">Add Staff</span>
+                </button>
+                <button className="flex items-center justify-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors duration-200">
+                  <FaHospital className="mr-2 text-green-600" />
+                  <span className="text-green-600 font-medium">Add Patient</span>
+                </button>
+                <button className="flex items-center justify-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors duration-200">
+                  <FaCalendarAlt className="mr-2 text-purple-600" />
+                  <span className="text-purple-600 font-medium">Schedule Appointment</span>
+                </button>
+                <button className="flex items-center justify-center p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors duration-200">
+                  <FaPills className="mr-2 text-orange-600" />
+                  <span className="text-orange-600 font-medium">Add Medicine</span>
                 </button>
               </div>
-              
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {displayStaff.map((staff) => (
-                      <tr key={staff.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{staff.firstName} {staff.lastName}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{staff.role}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            staff.isActive ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                          }`}>
-                            {staff.isActive ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{staff.createdAt ? new Date(staff.createdAt).toLocaleDateString() : 'N/A'}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <button 
-                            className="text-indigo-600 hover:text-indigo-900 mr-3"
-                            onClick={() => router.push(`/admin/staff/${staff.id}`)}
-                          >
-                            Edit
-                          </button>
-                          <button className="text-red-600 hover:text-red-900" onClick={() => handleDeleteStaff(staff.id)}>Delete</button>
-                          <button 
-                            className="text-indigo-600 hover:text-indigo-900 ml-3"
-                            onClick={() => handleToggleStaffActivation(staff.id, staff.isActive)}
-                          >
-                            {staff.isActive ? 'Deactivate' : 'Activate'}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </div>
-          )}
-
-          {selectedTab === "appointments" && (
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-medium text-gray-900">Upcoming Appointments</h3>
-                <div className="flex space-x-2">
-                  <select className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                    <option>All Departments</option>
-                    <option>Cardiology</option>
-                    <option>Neurology</option>
-                    <option>Orthopedics</option>
-                    <option>Pediatrics</option>
-                  </select>
-                  <button className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-                    Generate Report
-                  </button>
-                </div>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {displayAppointments.map((appointment) => (
-                      <tr key={appointment.id || appointment.appointmentId}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {appointment.patient ? (
-                            // If proper patient object exists
-                            `${appointment.patient.firstName || ''} ${appointment.patient.lastName || ''}`.trim() || 'Unknown Patient'
-                          ) : (
-                            // Fallback display options
-                            appointment.patientName || 
-                            (appointment.firstName && appointment.lastName && 
-                              `${appointment.firstName} ${appointment.lastName}`) || 
-                            "Unknown Patient"
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {appointment.doctor ? (
-                            // If proper doctor object exists
-                            `Dr. ${appointment.doctor.firstName || ''} ${appointment.doctor.lastName || ''}`.trim() || 'Unknown Doctor'
-                          ) : (
-                            // Fallback display options
-                            appointment.doctorName || "Dr. Unknown"
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {appointment.department || 
-                           (appointment.doctor && appointment.doctor.specialization) || 
-                           "General"}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {appointment.appointmentDateTime 
-                            ? new Date(appointment.appointmentDateTime).toLocaleDateString()
-                            : appointment.appointmentDate || new Date().toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {appointment.appointmentDateTime 
-                            ? new Date(appointment.appointmentDateTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-                            : appointment.appointmentTime || "9:00 AM"}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                            ${appointment.status === 'SCHEDULED' ? 'bg-green-100 text-green-800' : 
-                              appointment.status === 'COMPLETED' ? 'bg-blue-100 text-blue-800' : 
-                              appointment.status === 'CANCELLED' ? 'bg-red-100 text-red-800' : 
-                              'bg-gray-100 text-gray-800'}`}>
-                            {appointment.status || 'Scheduled'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <button className="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
-                          <button className="text-red-600 hover:text-red-900">Cancel</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+          </main>
         </div>
       </div>
-
-      <div className="mt-8 bg-white shadow rounded-lg p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <button 
-            className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
-            onClick={() => router.push('/admin/doctors')}
-          >
-            <h3 className="font-medium">Manage Doctors</h3>
-            <p className="text-sm text-gray-500">Add or update doctor information</p>
-          </button>
-          <button 
-            className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
-            onClick={() => router.push('/admin/staff')}
-          >
-            <h3 className="font-medium">Staff Management</h3>
-            <p className="text-sm text-gray-500">Add or manage all staff members</p>
-          </button>
-          <button 
-            className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
-            onClick={() => router.push('/admin/patients')}
-          >
-            <h3 className="font-medium">Patient Management</h3>
-            <p className="text-sm text-gray-500">Register and manage patients</p>
-          </button>
-          <button 
-            className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
-            onClick={() => router.push('/admin/departments')}
-          >
-            <h3 className="font-medium">Department Settings</h3>
-            <p className="text-sm text-gray-500">Manage hospital departments</p>
-          </button>
-          <button 
-            className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
-            onClick={() => router.push('/admin/settings')}
-          >
-            <h3 className="font-medium">System Settings</h3>
-            <p className="text-sm text-gray-500">Update system configurations</p>
-          </button>
-        </div>
-      </div>
-    </DashboardLayout>
+    </div>
   );
 } 
