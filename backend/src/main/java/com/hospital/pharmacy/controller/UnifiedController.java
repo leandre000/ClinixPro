@@ -43,8 +43,7 @@ public class UnifiedController {
     @Autowired
     private PrescriptionRepository prescriptionRepository;
 
-    @Autowired
-    private CompanyRepository companyRepository;
+    // CompanyRepository removed to avoid conflicts with CompanyController
 
     @Autowired
     private BillingRepository billingRepository;
@@ -400,69 +399,8 @@ public class UnifiedController {
     }
 
     // ==================== COMPANIES ENDPOINTS ====================
-
-    @GetMapping("/companies")
-    public ResponseEntity<List<Company>> getCompanies() {
-        try {
-            List<Company> companies = companyRepository.findAll();
-            return ResponseEntity.ok(companies);
-        } catch (Exception e) {
-            logger.error("Error fetching companies: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @GetMapping("/companies/{id}")
-    public ResponseEntity<Company> getCompanyById(@PathVariable Long id) {
-        try {
-            Optional<Company> company = companyRepository.findById(id);
-            return company.map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            logger.error("Error fetching company by ID {}: {}", id, e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @PostMapping("/companies")
-    public ResponseEntity<Company> createCompany(@RequestBody Company company) {
-        try {
-            Company savedCompany = companyRepository.save(company);
-            return ResponseEntity.ok(savedCompany);
-        } catch (Exception e) {
-            logger.error("Error creating company: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @PutMapping("/companies/{id}")
-    public ResponseEntity<Company> updateCompany(@PathVariable Long id, @RequestBody Company company) {
-        try {
-            if (companyRepository.existsById(id)) {
-                company.setId(id);
-                Company updatedCompany = companyRepository.save(company);
-                return ResponseEntity.ok(updatedCompany);
-            }
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            logger.error("Error updating company with ID {}: {}", id, e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @DeleteMapping("/companies/{id}")
-    public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
-        try {
-            if (companyRepository.existsById(id)) {
-                companyRepository.deleteById(id);
-                return ResponseEntity.ok().build();
-            }
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            logger.error("Error deleting company with ID {}: {}", id, e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
+    // Note: Company endpoints are handled by CompanyController to avoid conflicts
+    // This section is intentionally left empty to prevent duplicate mappings
 
     // ==================== BILLING ENDPOINTS ====================
 
