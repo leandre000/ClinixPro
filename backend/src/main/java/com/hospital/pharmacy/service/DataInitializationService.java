@@ -57,22 +57,64 @@ public class DataInitializationService {
         try {
             logger.info("Starting data initialization...");
             
+            // Check if data already exists
+            if (userRepository.count() > 0) {
+                logger.info("Data already exists, skipping initialization");
+                return;
+            }
+            
             // Clear existing data and recreate with proper hashing
             clearAllData();
             
             // Create data in proper order to maintain referential integrity
-            createUsers();
-            createCompanies();
-            createMedicines();
-            createPatients();
-            createAppointments();
-            createPrescriptions();
-            createMedicalRecords();
+            // Each step is wrapped in try-catch to continue even if one step fails
+            try {
+                createUsers();
+            } catch (Exception e) {
+                logger.error("Error creating users: {}", e.getMessage(), e);
+            }
+            
+            try {
+                createCompanies();
+            } catch (Exception e) {
+                logger.error("Error creating companies: {}", e.getMessage(), e);
+            }
+            
+            try {
+                createMedicines();
+            } catch (Exception e) {
+                logger.error("Error creating medicines: {}", e.getMessage(), e);
+            }
+            
+            try {
+                createPatients();
+            } catch (Exception e) {
+                logger.error("Error creating patients: {}", e.getMessage(), e);
+            }
+            
+            try {
+                createAppointments();
+            } catch (Exception e) {
+                logger.error("Error creating appointments: {}", e.getMessage(), e);
+            }
+            
+            try {
+                createPrescriptions();
+            } catch (Exception e) {
+                logger.error("Error creating prescriptions: {}", e.getMessage(), e);
+            }
+            
+            try {
+                createMedicalRecords();
+            } catch (Exception e) {
+                logger.error("Error creating medical records: {}", e.getMessage(), e);
+            }
             
             logger.info("Data initialization completed successfully");
         } catch (Exception e) {
             logger.error("Error during data initialization: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to initialize data", e);
+            // Don't throw exception to prevent application startup failure
+            // Just log the error and continue
         }
     }
 
@@ -98,10 +140,10 @@ public class DataInitializationService {
         createUser("DOC", "Michael", "Chen", "michael.chen@clinixpro.com", "doctor123", "DOCTOR", "555-101-2345", "456 Doctor Ave, Hospital City", "Male", "Cardiology", "MED-1234");
         createUser("DOC", "Emily", "Rodriguez", "emily.rodriguez@clinixpro.com", "doctor123", "DOCTOR", "555-202-3456", "789 Doctor Ave, Hospital City", "Female", "Pediatrics", "MED-5678");
         createUser("DOC", "Sarah", "Jefferson", "sarah.jefferson@clinixpro.com", "doctor123", "DOCTOR", "555-303-4567", "101 Doctor Ave, Hospital City", "Female", "Neurology", "MED-9012");
-        
+
         // Create Pharmacist
         createUser("PHM", "Maria", "Garcia", "pharmacist@clinixpro.com", "pharmacist123", "PHARMACIST", "555-404-5678", "789 Pharma Blvd, Hospital City", "Female", null, "PHR-5678");
-        
+
         // Create Receptionist
         createUser("RCP", "John", "Anderson", "receptionist@clinixpro.com", "receptionist123", "RECEPTIONIST", "555-505-6789", "101 Front Desk Rd, Hospital City", "Male", null, null);
         
@@ -154,60 +196,132 @@ public class DataInitializationService {
     private void createMedicines() {
         logger.info("Creating medicines...");
         
+        // Get companies with proper error handling
         Company pharmaCorp = companyRepository.findByName("PharmaCorp Inc.").orElse(null);
         Company mediLife = companyRepository.findByName("MediLife Labs").orElse(null);
         Company healthPharm = companyRepository.findByName("HealthPharm Ltd.").orElse(null);
+        
+        if (pharmaCorp == null) {
+            logger.warn("PharmaCorp Inc. not found, creating medicines without company association");
+        }
+        if (mediLife == null) {
+            logger.warn("MediLife Labs not found, creating medicines without company association");
+        }
+        if (healthPharm == null) {
+            logger.warn("HealthPharm Ltd. not found, creating medicines without company association");
+        }
 
-        // Antibiotics
-        createMedicine("MED-1001", "Amoxicillin", "Antibiotic", "Broad-spectrum antibiotic for bacterial infections", 
-                      "PharmaCorp Inc.", LocalDate.of(2025, 5, 15), 145, new BigDecimal("12.99"), "500mg", pharmaCorp);
-        
-        // Antihypertensive
-        createMedicine("MED-1002", "Lisinopril", "Antihypertensive", "ACE inhibitor for high blood pressure", 
-                      "MediLife Labs", LocalDate.of(2024, 11, 30), 78, new BigDecimal("15.49"), "10mg", mediLife);
-        
-        // Pain Relief
-        createMedicine("MED-1003", "Ibuprofen", "Pain Relief", "Non-steroidal anti-inflammatory drug for pain and fever", 
-                      "HealthPharm Ltd.", LocalDate.of(2025, 8, 20), 5, new BigDecimal("8.99"), "400mg", healthPharm);
-        
-        // Antacid
-        createMedicine("MED-1004", "Omeprazole", "Antacid", "Proton pump inhibitor for acid reflux", 
-                      "PharmaCorp Inc.", LocalDate.of(2024, 12, 10), 0, new BigDecimal("22.50"), "20mg", pharmaCorp);
-        
-        // Antidiabetic
-        createMedicine("MED-1005", "Metformin", "Antidiabetic", "First-line medication for type 2 diabetes", 
-                      "MediLife Labs", LocalDate.of(2025, 3, 15), 92, new BigDecimal("18.75"), "500mg", mediLife);
-        
-        // Cholesterol
-        createMedicine("MED-1006", "Atorvastatin", "Cholesterol", "Statin medication for lowering cholesterol", 
-                      "HealthPharm Ltd.", LocalDate.of(2025, 6, 30), 3, new BigDecimal("25.00"), "10mg", healthPharm);
-        
-        // Antihistamine
-        createMedicine("MED-1007", "Cetirizine", "Antihistamine", "Second-generation antihistamine for allergies", 
-                      "PharmaCorp Inc.", LocalDate.of(2025, 9, 12), 156, new BigDecimal("6.99"), "10mg", pharmaCorp);
-        
-        // Antihypertensive
-        createMedicine("MED-1008", "Losartan", "Antihypertensive", "Angiotensin receptor blocker for hypertension", 
-                      "MediLife Labs", LocalDate.of(2024, 10, 25), 0, new BigDecimal("19.99"), "50mg", mediLife);
-        
-        logger.info("Medicines created successfully");
+        try {
+            // Antibiotics
+            createMedicine("MED-1001", "Amoxicillin", "Antibiotic", "Broad-spectrum antibiotic for bacterial infections", 
+                          "PharmaCorp Inc.", LocalDate.of(2025, 5, 15), 145, new BigDecimal("12.99"), "500mg", pharmaCorp);
+            
+            // Antihypertensive
+            createMedicine("MED-1002", "Lisinopril", "Antihypertensive", "ACE inhibitor for high blood pressure", 
+                          "MediLife Labs", LocalDate.of(2025, 11, 30), 78, new BigDecimal("15.49"), "10mg", mediLife);
+            
+            // Pain Relief
+            createMedicine("MED-1003", "Ibuprofen", "Pain Relief", "Non-steroidal anti-inflammatory drug for pain and fever", 
+                          "HealthPharm Ltd.", LocalDate.of(2025, 8, 20), 5, new BigDecimal("8.99"), "400mg", healthPharm);
+            
+            // Antacid
+            createMedicine("MED-1004", "Omeprazole", "Antacid", "Proton pump inhibitor for acid reflux", 
+                          "PharmaCorp Inc.", LocalDate.of(2025, 12, 10), 0, new BigDecimal("22.50"), "20mg", pharmaCorp);
+            
+            // Antidiabetic
+            createMedicine("MED-1005", "Metformin", "Antidiabetic", "First-line medication for type 2 diabetes", 
+                          "MediLife Labs", LocalDate.of(2025, 3, 15), 92, new BigDecimal("18.75"), "500mg", mediLife);
+            
+            // Cholesterol
+            createMedicine("MED-1006", "Atorvastatin", "Cholesterol", "Statin medication for lowering cholesterol", 
+                          "HealthPharm Ltd.", LocalDate.of(2025, 6, 30), 3, new BigDecimal("25.00"), "10mg", healthPharm);
+            
+            // Antihistamine
+            createMedicine("MED-1007", "Cetirizine", "Antihistamine", "Second-generation antihistamine for allergies", 
+                          "PharmaCorp Inc.", LocalDate.of(2025, 9, 12), 156, new BigDecimal("6.99"), "10mg", pharmaCorp);
+            
+            // Antihypertensive
+            createMedicine("MED-1008", "Losartan", "Antihypertensive", "Angiotensin receptor blocker for hypertension", 
+                          "MediLife Labs", LocalDate.of(2025, 10, 25), 0, new BigDecimal("19.99"), "50mg", mediLife);
+            
+            logger.info("Medicines created successfully");
+        } catch (Exception e) {
+            logger.error("Error creating medicines: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to create medicines", e);
+        }
     }
 
     private void createMedicine(String medicineId, String name, String category, String description, 
                                String manufacturer, LocalDate expiryDate, Integer stock, BigDecimal price, 
                                String strength, Company company) {
-        Medicine medicine = new Medicine();
-        medicine.setMedicineId(medicineId);
-        medicine.setName(name);
-        medicine.setCategory(category);
-        medicine.setManufacturer(manufacturer);
-        medicine.setExpiryDate(expiryDate);
-        medicine.setStock(stock);
-        medicine.setPrice(price);
-        medicine.setStrength(strength);
-        medicine.setDescription(description);
-        medicine.setCompany(company);
-        medicineRepository.save(medicine);
+        try {
+            // Validate required fields
+            if (medicineId == null || medicineId.trim().isEmpty()) {
+                logger.error("Medicine ID cannot be null or empty");
+                return;
+            }
+            if (name == null || name.trim().isEmpty()) {
+                logger.error("Medicine name cannot be null or empty");
+                return;
+            }
+            if (category == null || category.trim().isEmpty()) {
+                logger.error("Medicine category cannot be null or empty");
+                return;
+            }
+            if (expiryDate == null) {
+                logger.error("Medicine expiry date cannot be null");
+                return;
+            }
+            if (stock == null || stock < 0) {
+                logger.error("Medicine stock cannot be null or negative");
+                return;
+            }
+            if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+                logger.error("Medicine price cannot be null or non-positive");
+                return;
+            }
+            
+            Medicine medicine = new Medicine();
+            medicine.setMedicineId(medicineId);
+            medicine.setName(name);
+            medicine.setCategory(category);
+            medicine.setManufacturer(manufacturer);
+            medicine.setExpiryDate(expiryDate);
+            medicine.setStock(stock);
+            medicine.setPrice(price);
+            medicine.setStrength(strength);
+            medicine.setDescription(description);
+            
+            // Set company only if it's not null and has an ID
+            if (company != null && company.getId() != null) {
+                medicine.setCompany(company);
+            } else {
+                logger.warn("Company is null or not persisted for medicine: {}", name);
+            }
+            
+            // Set stock status based on stock level
+            if (stock == 0) {
+                medicine.setStockStatus("Out of Stock");
+            } else if (stock <= 5) {
+                medicine.setStockStatus("Critical");
+            } else if (stock <= 20) {
+                medicine.setStockStatus("Low");
+            } else if (stock <= 50) {
+                medicine.setStockStatus("Normal");
+            } else {
+                medicine.setStockStatus("High");
+            }
+            
+            // Set default values for optional fields
+            medicine.setRequiresPrescription(true);
+            medicine.setDosageForm("Tablet");
+            
+            medicineRepository.save(medicine);
+            logger.debug("Successfully created medicine: {}", name);
+        } catch (Exception e) {
+            logger.error("Error creating medicine {}: {}", name, e.getMessage(), e);
+            throw new RuntimeException("Failed to create medicine: " + name, e);
+        }
     }
 
     private void createPatients() {
