@@ -15,6 +15,50 @@ export async function POST(request: NextRequest) {
     // Check if backend is available
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
     const loginUrl = `${backendUrl}/auth/login`;
+    
+    // For development, try multiple ports if backend is not available
+    const fallbackPorts = [8080, 8081, 8082];
+    let backendResponse;
+    let lastError;
+    
+    for (const port of fallbackPorts) {
+      try {
+        const testUrl = `http://localhost:${port}/api/auth/login`;
+        console.log(`Trying backend at: ${testUrl}`);
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout per attempt
+        
+        backendResponse = await fetch(testUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeoutId);
+        
+        // If we get here, the backend is responding
+        break;
+      } catch (error) {
+        lastError = error;
+        console.log(`Backend not available on port ${port}:`, error.message);
+        continue;
+      }
+    }
+    
+    if (!backendResponse) {
+      console.error('Backend not available on any port:', lastError);
+      return NextResponse.json(
+        { 
+          message: 'Backend service is not available. Please ensure the backend server is running and try again.',
+          error: 'BACKEND_UNAVAILABLE'
+        },
+        { status: 503 }
+      );
+    }
 
     console.log('Attempting to connect to backend:', loginUrl);
 
