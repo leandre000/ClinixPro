@@ -252,7 +252,7 @@ export default function StaffListingPage() {
       
       // Try API call first
       try {
-        await AdminService.updateUser(id, updateData);
+      await AdminService.updateUser(id, updateData);
       } catch (apiError) {
         console.error("API error updating staff:", apiError);
         // Update local state for demo
@@ -276,8 +276,8 @@ export default function StaffListingPage() {
     if (confirm("Are you sure you want to delete this staff member? This action cannot be undone.")) {
       try {
         // Try API call first
-        try {
-          await AdminService.deleteUser(id);
+      try {
+        await AdminService.deleteUser(id);
         } catch (apiError) {
           console.error("API error deleting staff:", apiError);
           // Update local state for demo
@@ -353,13 +353,13 @@ export default function StaffListingPage() {
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-3">Staff Management</h1>
         <p className="text-xl text-gray-600">Manage and track all hospital staff members</p>
-      </div>
+        </div>
 
-      {error && (
+        {error && (
         <div className="bg-red-100 border-2 border-red-400 text-red-700 px-6 py-4 rounded-lg relative mb-6">
           <span className="block text-lg font-semibold">{error}</span>
-        </div>
-      )}
+          </div>
+        )}
 
       {/* Search and Filter Section */}
       <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg p-6 mb-8">
@@ -446,8 +446,8 @@ export default function StaffListingPage() {
                 All
               </button>
             </div>
+            </div>
           </div>
-        </div>
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center mt-6 pt-6 border-t-2 border-gray-200">
@@ -466,23 +466,23 @@ export default function StaffListingPage() {
               <FaPrint className="mr-2" />
               Print Directory
             </button>
-            <button
+              <button
               onClick={() => window.location.reload()}
               className="flex items-center px-6 py-3 bg-blue-600 text-white text-lg font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
-            >
+              >
               <FaRefresh className="mr-2" />
               Refresh Data
-            </button>
+              </button>
           </div>
           <div className="text-lg font-bold text-gray-700">
             Total: {staff.length} staff members
           </div>
         </div>
-      </div>
+          </div>
 
       {/* Staff Table */}
       <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg overflow-hidden">
-        <div className="overflow-x-auto">
+          <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b-2 border-gray-200">
               <tr>
@@ -492,64 +492,64 @@ export default function StaffListingPage() {
                 <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">SPECIALIZATION</th>
                 <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">STATUS</th>
                 <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">ACTIONS</th>
-              </tr>
-            </thead>
+                </tr>
+              </thead>
             <tbody className="divide-y-2 divide-gray-200">
               {currentStaff.map((member) => (
                 <tr key={member.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <div>
                       <div className="text-lg font-bold text-gray-900">
-                        {member.firstName} {member.lastName}
+                          {member.firstName} {member.lastName}
                       </div>
                       <div className="text-sm text-gray-600">ID: {member.id}</div>
-                    </div>
-                  </td>
+                      </div>
+                    </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       {getRoleIcon(member.role)}
                       <div className="ml-3">
                         <div className="text-lg font-bold text-gray-900">
-                          {member.role === "DOCTOR" && "Doctor"}
-                          {member.role === "PHARMACIST" && "Pharmacist"}
-                          {member.role === "RECEPTIONIST" && "Receptionist"}
-                          {member.role === "ADMIN" && "Administrator"}
-                        </div>
+                        {member.role === "DOCTOR" && "Doctor"}
+                        {member.role === "PHARMACIST" && "Pharmacist"}
+                        {member.role === "RECEPTIONIST" && "Receptionist"}
+                        {member.role === "ADMIN" && "Administrator"}
+                      </div>
                         {member.department && (
                           <div className="text-sm text-gray-600">
                             {member.department}
-                          </div>
-                        )}
+                        </div>
+                      )}
                       </div>
                     </div>
-                  </td>
+                    </td>
                   <td className="px-6 py-4">
                     <div>
                       <div className="text-lg text-gray-900 flex items-center">
                         <FaEnvelope className="mr-2 text-indigo-600" />
-                        {member.email}
+                      {member.email}
                       </div>
                       <div className="text-lg text-gray-700 flex items-center mt-1">
                         <FaPhone className="mr-2 text-green-600" />
                         {member.phoneNumber}
                       </div>
                     </div>
-                  </td>
+                    </td>
                   <td className="px-6 py-4">
                     <span className="text-lg font-semibold text-gray-900">
                       {member.specialization || "General"}
                     </span>
-                  </td>
+                    </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-lg font-bold border-2 ${
-                      member.isActive
+                          member.isActive
                         ? "bg-green-100 text-green-800 border-green-200"
                         : "bg-red-100 text-red-800 border-red-200"
                     }`}>
                       {member.isActive ? <FaCheckCircle className="mr-1" /> : <FaTimesCircle className="mr-1" />}
-                      {member.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </td>
+                        {member.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </td>
                   <td className="px-6 py-4">
                     <div className="flex space-x-2">
                       <button
@@ -585,11 +585,11 @@ export default function StaffListingPage() {
                         <FaTrash className="text-xl" />
                       </button>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
         </div>
         
         {/* Empty State */}

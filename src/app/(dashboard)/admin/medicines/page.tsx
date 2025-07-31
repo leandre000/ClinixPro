@@ -216,7 +216,7 @@ export default function MedicinesPage() {
         
       } catch (err) {
         console.error("Error processing medicines data:", err);
-        setError("Failed to process medicines data. Please try again.");
+          setError("Failed to process medicines data. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -357,16 +357,16 @@ export default function MedicinesPage() {
               <FaFilter className="inline mr-2 text-indigo-600" />
               Category
             </label>
-            <select
+              <select
               className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white"
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              <option value="all">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
+                <option value="all">All Categories</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
           </div>
 
           {/* Manufacturer Filter */}
@@ -393,29 +393,29 @@ export default function MedicinesPage() {
               <FaBox className="inline mr-2 text-indigo-600" />
               Stock Status
             </label>
-            <select
+              <select
               className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white"
-              value={stockFilter}
-              onChange={(e) => setStockFilter(e.target.value)}
-            >
-              <option value="all">All Stock Status</option>
-              <option value="In Stock">In Stock</option>
-              <option value="Low Stock">Low Stock</option>
-              <option value="Out of Stock">Out of Stock</option>
-            </select>
+                value={stockFilter}
+                onChange={(e) => setStockFilter(e.target.value)}
+              >
+                <option value="all">All Stock Status</option>
+                <option value="In Stock">In Stock</option>
+                <option value="Low Stock">Low Stock</option>
+                <option value="Out of Stock">Out of Stock</option>
+              </select>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center mt-6 pt-6 border-t-2 border-gray-200">
           <div className="flex space-x-4">
-            <button
-              onClick={() => router.push('/pharmacist/medicines/add')}
+              <button 
+                onClick={() => router.push('/pharmacist/medicines/add')}
               className="flex items-center px-6 py-3 bg-indigo-600 text-white text-lg font-bold rounded-lg hover:bg-indigo-700 transition-colors shadow-lg"
-            >
+              >
               <FaPlus className="mr-2" />
-              Add Medicine
-            </button>
+                Add Medicine
+              </button>
             <button
               onClick={() => router.push('/pharmacist/inventory')}
               className="flex items-center px-6 py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 transition-colors shadow-lg"
@@ -440,13 +440,13 @@ export default function MedicinesPage() {
           </div>
           <div className="text-lg font-bold text-gray-700">
             Total: {filteredMedicines.length} medicines
+            </div>
           </div>
         </div>
-      </div>
         
       {/* Medicines Table */}
       <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg overflow-hidden">
-        <div className="overflow-x-auto">
+            <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b-2 border-gray-200">
               <tr>
@@ -460,8 +460,8 @@ export default function MedicinesPage() {
                 <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">EXPIRY DATE</th>
                 <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">STATUS</th>
                 <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">ACTIONS</th>
-              </tr>
-            </thead>
+                  </tr>
+                </thead>
             <tbody className="divide-y-2 divide-gray-200">
               {currentMedicines.map((medicine) => (
                 <tr key={medicine.id} className="hover:bg-gray-50 transition-colors">
@@ -516,9 +516,9 @@ export default function MedicinesPage() {
                       {medicine.status === "In Stock" && <FaCheckCircle className="mr-1" />}
                       {medicine.status === "Low Stock" && <FaExclamationTriangle className="mr-1" />}
                       {medicine.status === "Out of Stock" && <FaTimesCircle className="mr-1" />}
-                      {medicine.status}
-                    </span>
-                  </td>
+                          {medicine.status}
+                        </span>
+                      </td>
                   <td className="px-6 py-4">
                     <div className="flex space-x-2">
                       <button
@@ -535,35 +535,35 @@ export default function MedicinesPage() {
                       >
                         <FaEdit className="text-xl" />
                       </button>
-                      <button
+                        <button 
                         onClick={() => handleOrderMedicine(medicine)}
                         className="px-3 py-2 bg-orange-600 text-white text-lg font-bold rounded-lg hover:bg-orange-700 transition-colors"
                         title="Order Medicine"
-                      >
+                        >
                         <FaShoppingCart className="text-xl" />
-                      </button>
-                      <button
+                        </button>
+                        <button 
                         onClick={() => handleViewHistory(medicine)}
                         className="px-3 py-2 bg-purple-600 text-white text-lg font-bold rounded-lg hover:bg-purple-700 transition-colors"
                         title="View History"
-                      >
+                        >
                         <FaHistory className="text-xl" />
-                      </button>
-                      <button
+                        </button>
+                        <button 
                         onClick={() => handleDeleteMedicine(medicine)}
                         className="px-3 py-2 bg-red-600 text-white text-lg font-bold rounded-lg hover:bg-red-700 transition-colors"
                         title="Delete Medicine"
-                      >
+                        >
                         <FaTrash className="text-xl" />
-                      </button>
+                        </button>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
         {/* Empty State */}
         {currentMedicines.length === 0 && (
           <div className="text-center py-12">
@@ -586,9 +586,9 @@ export default function MedicinesPage() {
                 Add First Medicine
               </button>
             )}
-          </div>
-        )}
-        
+              </div>
+            )}
+            
         {/* Pagination */}
         {currentMedicines.length > 0 && (
           <div className="px-6 py-4 bg-gray-50 border-t-2 border-gray-200">

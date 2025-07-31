@@ -233,7 +233,7 @@ export default function PatientsPage() {
         
       } catch (err) {
         console.error("Error processing patients data:", err);
-        setError("Failed to process patients data. Please try again.");
+          setError("Failed to process patients data. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -376,18 +376,18 @@ export default function PatientsPage() {
               <FaUser className="inline mr-2 text-indigo-600" />
               Age Range
             </label>
-            <select
+              <select
               className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white"
-              value={ageFilter}
-              onChange={(e) => setAgeFilter(e.target.value)}
-            >
-              <option value="all">All Ages</option>
-              <option value="0-18">0-18 years</option>
-              <option value="19-35">19-35 years</option>
-              <option value="36-50">36-50 years</option>
-              <option value="51-65">51-65 years</option>
-              <option value="65+">65+ years</option>
-            </select>
+                value={ageFilter}
+                onChange={(e) => setAgeFilter(e.target.value)}
+              >
+                <option value="all">All Ages</option>
+                <option value="0-18">0-18 years</option>
+                <option value="19-35">19-35 years</option>
+                <option value="36-50">36-50 years</option>
+                <option value="51-65">51-65 years</option>
+                <option value="65+">65+ years</option>
+              </select>
           </div>
 
           {/* Gender Filter */}
@@ -413,16 +413,16 @@ export default function PatientsPage() {
               <FaFilter className="inline mr-2 text-indigo-600" />
               Status
             </label>
-            <select
+              <select
               className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="all">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
               <option value="Discharged">Discharged</option>
-            </select>
+              </select>
           </div>
         </div>
 
@@ -430,11 +430,11 @@ export default function PatientsPage() {
         <div className="flex justify-between items-center mt-6 pt-6 border-t-2 border-gray-200">
           <div className="flex space-x-4">
             <button
-              onClick={() => router.push('/admin/patients/register')}
+                onClick={() => router.push('/admin/patients/register')}
               className="flex items-center px-6 py-3 bg-indigo-600 text-white text-lg font-bold rounded-lg hover:bg-indigo-700 transition-colors shadow-lg"
-            >
+              >
               <FaUserPlus className="mr-2" />
-              Register New Patient
+                Register New Patient
             </button>
             <button
               onClick={() => window.print()}
@@ -453,13 +453,13 @@ export default function PatientsPage() {
           </div>
           <div className="text-lg font-bold text-gray-700">
             Total: {filteredPatients.length} patients
+            </div>
           </div>
         </div>
-      </div>
         
       {/* Patients Table */}
       <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg overflow-hidden">
-        <div className="overflow-x-auto">
+            <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b-2 border-gray-200">
               <tr>
@@ -472,8 +472,8 @@ export default function PatientsPage() {
                 <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">DOCTOR</th>
                 <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">STATUS</th>
                 <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">ACTIONS</th>
-              </tr>
-            </thead>
+                  </tr>
+                </thead>
             <tbody className="divide-y-2 divide-gray-200">
               {currentPatients.map((patient) => (
                 <tr key={patient.id} className="hover:bg-gray-50 transition-colors">
@@ -518,13 +518,13 @@ export default function PatientsPage() {
                       <FaCalendar className="mr-2 text-blue-600" />
                       <span className="text-lg text-gray-900">{patient.lastVisit}</span>
                     </div>
-                  </td>
+                      </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <FaUserMd className="mr-2 text-green-600" />
                       <span className="text-lg text-gray-900">{patient.doctor}</span>
                     </div>
-                  </td>
+                      </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-lg font-bold border-2 ${
                       patient.status === 'Active' ? 'bg-green-100 text-green-800 border-green-200' : 
@@ -534,9 +534,9 @@ export default function PatientsPage() {
                       {patient.status === "Active" && <FaCheckCircle className="mr-1" />}
                       {patient.status === "Inactive" && <FaTimesCircle className="mr-1" />}
                       {patient.status === "Discharged" && <FaExclamationTriangle className="mr-1" />}
-                      {patient.status}
-                    </span>
-                  </td>
+                          {patient.status}
+                        </span>
+                      </td>
                   <td className="px-6 py-4">
                     <div className="flex space-x-2">
                       <button
@@ -553,35 +553,35 @@ export default function PatientsPage() {
                       >
                         <FaEdit className="text-xl" />
                       </button>
-                      <button
+                        <button 
                         onClick={() => handleViewHistory(patient)}
                         className="px-3 py-2 bg-purple-600 text-white text-lg font-bold rounded-lg hover:bg-purple-700 transition-colors"
                         title="View History"
-                      >
+                        >
                         <FaHistory className="text-xl" />
-                      </button>
-                      <button
+                        </button>
+                        <button 
                         onClick={() => handleAddRecord(patient)}
                         className="px-3 py-2 bg-orange-600 text-white text-lg font-bold rounded-lg hover:bg-orange-700 transition-colors"
                         title="Add Medical Record"
-                      >
+                        >
                         <FaUserEdit className="text-xl" />
-                      </button>
-                      <button
+                        </button>
+                        <button 
                         onClick={() => handleDeletePatient(patient)}
                         className="px-3 py-2 bg-red-600 text-white text-lg font-bold rounded-lg hover:bg-red-700 transition-colors"
                         title="Delete Patient"
-                      >
+                        >
                         <FaTrash className="text-xl" />
-                      </button>
+                        </button>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
         {/* Empty State */}
         {currentPatients.length === 0 && (
           <div className="text-center py-12">
@@ -604,9 +604,9 @@ export default function PatientsPage() {
                 Register First Patient
               </button>
             )}
-          </div>
-        )}
-        
+              </div>
+            )}
+            
         {/* Pagination */}
         {currentPatients.length > 0 && (
           <div className="px-6 py-4 bg-gray-50 border-t-2 border-gray-200">
