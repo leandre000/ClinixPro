@@ -259,9 +259,9 @@ export default function AdminDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {statCards.map((stat, index) => (
-          <div key={index} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-all duration-300">
+          <div key={index} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
             <div className="flex items-center justify-between mb-4">
-              <div className={`p-3 rounded-lg ${stat.color} text-white`}>
+              <div className={`p-3 rounded-lg ${stat.color} text-white shadow-lg`}>
                 {stat.icon}
               </div>
               <div className="text-right">
@@ -280,7 +280,7 @@ export default function AdminDashboard() {
       {/* Recent Staff and Appointments */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Recent Staff */}
-        <div className="bg-white rounded-lg border border-gray-200">
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div>
@@ -289,7 +289,7 @@ export default function AdminDashboard() {
               </div>
               <button 
                 onClick={() => router.push('/admin/staff')}
-                className="text-indigo-600 hover:text-indigo-700 font-semibold"
+                className="text-indigo-600 hover:text-indigo-700 font-semibold text-base"
               >
                 View All
               </button>
@@ -305,10 +305,10 @@ export default function AdminDashboard() {
                         {getRoleIcon(staff.role)}
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900">
+                        <p className="font-bold text-gray-900 text-base">
                           {staff.firstName} {staff.lastName}
                         </p>
-                        <p className="text-gray-600">{staff.email}</p>
+                        <p className="text-gray-600 text-sm">{staff.email}</p>
                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold border ${getRoleColor(staff.role)}`}>
                           {staff.role}
                         </span>
@@ -317,13 +317,15 @@ export default function AdminDashboard() {
                     <div className="flex items-center space-x-2">
                       <button 
                         onClick={() => router.push(`/admin/staff/${staff.id}`)}
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
+                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit Staff"
                       >
                         <FaEdit size={16} />
                       </button>
                       <button
                         onClick={() => handleDeleteStaff(staff.id)}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete Staff"
                       >
                         <FaTrash size={16} />
                       </button>
@@ -342,7 +344,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Appointments */}
-        <div className="bg-white rounded-lg border border-gray-200">
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div>
@@ -351,7 +353,7 @@ export default function AdminDashboard() {
               </div>
               <button 
                 onClick={() => router.push('/admin/appointments')}
-                className="text-indigo-600 hover:text-indigo-700 font-semibold"
+                className="text-indigo-600 hover:text-indigo-700 font-semibold text-base"
               >
                 View All
               </button>
@@ -367,8 +369,8 @@ export default function AdminDashboard() {
                         <FaCalendarAlt className="text-green-600 text-xl" />
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900">{appointment.patientName || 'Patient Name'}</p>
-                        <p className="text-gray-600">{appointment.doctorName || 'Doctor Name'}</p>
+                        <p className="font-bold text-gray-900 text-base">{appointment.patientName || 'Patient Name'}</p>
+                        <p className="text-gray-600 text-sm">{appointment.doctorName || 'Doctor Name'}</p>
                         <div className="flex items-center space-x-2 mt-1">
                           <FaClock className="text-gray-400 text-sm" />
                           <span className="text-sm text-gray-600">
@@ -383,7 +385,8 @@ export default function AdminDashboard() {
                       </span>
                       <button 
                         onClick={() => router.push(`/admin/appointments/${appointment.id}`)}
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
+                        className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        title="View Appointment"
                       >
                         <FaEye size={16} />
                       </button>
@@ -403,36 +406,36 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <button 
             onClick={() => handleQuickAction('add-staff')}
-            className="flex flex-col items-center justify-center p-6 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1"
+            className="flex flex-col items-center justify-center p-6 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-blue-200"
           >
             <FaPlus className="text-2xl text-blue-600 mb-2" />
-            <span className="text-blue-600 font-bold">Add Staff</span>
+            <span className="text-blue-600 font-bold text-base">Add Staff</span>
           </button>
           <button 
             onClick={() => handleQuickAction('add-patient')}
-            className="flex flex-col items-center justify-center p-6 bg-green-50 hover:bg-green-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1"
+            className="flex flex-col items-center justify-center p-6 bg-green-50 hover:bg-green-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-green-200"
           >
             <FaHospital className="text-2xl text-green-600 mb-2" />
-            <span className="text-green-600 font-bold">Add Patient</span>
+            <span className="text-green-600 font-bold text-base">Add Patient</span>
           </button>
           <button 
             onClick={() => handleQuickAction('schedule-appointment')}
-            className="flex flex-col items-center justify-center p-6 bg-purple-50 hover:bg-purple-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1"
+            className="flex flex-col items-center justify-center p-6 bg-purple-50 hover:bg-purple-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-purple-200"
           >
             <FaCalendarAlt className="text-2xl text-purple-600 mb-2" />
-            <span className="text-purple-600 font-bold">Schedule Appointment</span>
+            <span className="text-purple-600 font-bold text-base">Schedule Appointment</span>
           </button>
           <button 
             onClick={() => handleQuickAction('add-medicine')}
-            className="flex flex-col items-center justify-center p-6 bg-orange-50 hover:bg-orange-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1"
+            className="flex flex-col items-center justify-center p-6 bg-orange-50 hover:bg-orange-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-orange-200"
           >
             <FaPills className="text-2xl text-orange-600 mb-2" />
-            <span className="text-orange-600 font-bold">Add Medicine</span>
+            <span className="text-orange-600 font-bold text-base">Add Medicine</span>
           </button>
         </div>
       </div>
@@ -441,7 +444,7 @@ export default function AdminDashboard() {
       {showLogoutConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black bg-opacity-50" onClick={cancelLogout}></div>
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 border border-gray-200">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 border border-gray-200 shadow-xl">
             <div className="flex items-center mb-4">
               <div className="flex-shrink-0">
                 <FaExclamationTriangle className="h-6 w-6 text-red-600" />

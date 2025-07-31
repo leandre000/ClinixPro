@@ -101,7 +101,7 @@ export default function DashboardLayout({
       
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-30 w-64 transform bg-indigo-800 transition duration-300 ease-in-out lg:static lg:translate-x-0
+        fixed inset-y-0 left-0 z-30 w-72 transform bg-indigo-800 transition duration-300 ease-in-out lg:static lg:translate-x-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <Sidebar userType={userType} />
@@ -110,34 +110,38 @@ export default function DashboardLayout({
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white border-b border-gray-200 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-6">
             <div className="flex justify-between items-center">
               {/* Left section with logo and title */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-6">
                 {/* Sidebar toggle for mobile */}
                 <button 
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="lg:hidden text-gray-500 focus:outline-none"
+                  className="lg:hidden text-gray-600 hover:text-gray-900 focus:outline-none p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
                 
-                <h2 className="text-lg font-medium text-gray-700 hidden md:block">{title}</h2>
+                <h2 className="text-2xl font-bold text-gray-900 hidden md:block">{title}</h2>
               </div>
               
               {/* Right section with icons and profile */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-6">
                 {/* Bell icon for notifications */}
-                <button className="text-gray-500 hover:text-gray-700 focus:outline-none transition-colors">
+                <button className="text-gray-600 hover:text-gray-900 focus:outline-none p-3 rounded-lg hover:bg-gray-100 transition-colors relative">
                   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-5 5v-5zM10.5 3.75a6 6 0 0 1 6 6v3.75a2.25 2.25 0 0 0 4.5 0V9.75a6 6 0 0 0-12 0v3.75a2.25 2.25 0 0 0 4.5 0V9.75Z" />
                   </svg>
+                  {/* Notification badge */}
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                    3
+                  </span>
                 </button>
 
                 {/* Gear icon for settings */}
-                <button className="text-gray-500 hover:text-gray-700 focus:outline-none transition-colors">
+                <button className="text-gray-600 hover:text-gray-900 focus:outline-none p-3 rounded-lg hover:bg-gray-100 transition-colors">
                   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 0 1 0 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 0 1 0-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281Z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -147,63 +151,63 @@ export default function DashboardLayout({
                 {/* Logout button */}
                 <button 
                   onClick={handleLogout}
-                  className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors focus:outline-none"
+                  className="flex items-center space-x-3 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors focus:outline-none font-semibold text-base"
                 >
                   <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                   </svg>
-                  <span className="font-medium">Logout</span>
+                  <span className="font-semibold">Logout</span>
                 </button>
 
                 {/* Profile dropdown */}
                 <div className="relative">
                   <button 
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="flex items-center space-x-2 group focus:outline-none"
+                    className="flex items-center space-x-3 group focus:outline-none p-2 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <div className="relative">
                       {user.profileImage ? (
                         <Image 
                           src={user.profileImage} 
                           alt="Profile" 
-                          width={40} 
-                          height={40} 
-                          className="rounded-full object-cover"
+                          width={48} 
+                          height={48} 
+                          className="rounded-full object-cover border-2 border-gray-200"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+                        <div className="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-xl border-2 border-gray-200">
                           {user.firstName.charAt(0).toUpperCase()}
                         </div>
                       )}
-                      <label className="absolute bottom-0 right-0 bg-indigo-500 rounded-full p-1 cursor-pointer hover:bg-indigo-600 transition-colors">
+                      <label className="absolute bottom-0 right-0 bg-indigo-500 rounded-full p-1.5 cursor-pointer hover:bg-indigo-600 transition-colors">
                         <input
                           type="file"
                           accept="image/*"
                           className="hidden"
                           onChange={handleImageUpload}
                         />
-                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
                       </label>
                     </div>
-                    <div className="hidden md:block">
-                      <span className="text-sm font-medium text-gray-700 block">{fullName}</span>
-                      <span className="text-xs text-gray-500 block">{user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}</span>
+                    <div className="hidden md:block text-left">
+                      <span className="text-base font-semibold text-gray-900 block">{fullName}</span>
+                      <span className="text-sm text-gray-600 block">{user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}</span>
                     </div>
-                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
 
                   {/* Profile dropdown menu */}
                   {isProfileOpen && (
-                    <div className="absolute right-0 mt-2 w-48 rounded-md border border-gray-200 bg-white">
-                      <div className="py-1" role="menu" aria-orientation="vertical">
+                    <div className="absolute right-0 mt-3 w-56 rounded-lg border border-gray-200 bg-white shadow-lg">
+                      <div className="py-2" role="menu" aria-orientation="vertical">
                         <button
                           onClick={handleLogout}
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          className="w-full text-left px-4 py-3 text-base text-gray-700 hover:bg-gray-50 font-medium"
                           role="menuitem"
                         >
                           Sign out
@@ -217,7 +221,7 @@ export default function DashboardLayout({
           </div>
         </header>
         
-        <main className="flex-1 overflow-y-auto bg-white p-4 sm:p-6">
+        <main className="flex-1 overflow-y-auto bg-white p-6 sm:p-8 lg:p-10">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
@@ -228,32 +232,32 @@ export default function DashboardLayout({
       {showLogoutConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black bg-opacity-50" onClick={cancelLogout}></div>
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 border border-gray-200">
-            <div className="flex items-center mb-4">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 border border-gray-200 shadow-xl">
+            <div className="flex items-center mb-6">
               <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
               </div>
-              <div className="ml-3">
-                <h3 className="text-lg font-medium text-gray-900">Confirm Logout</h3>
+              <div className="ml-4">
+                <h3 className="text-xl font-bold text-gray-900">Confirm Logout</h3>
               </div>
             </div>
-            <div className="mb-6">
-              <p className="text-sm text-gray-500">
+            <div className="mb-8">
+              <p className="text-base text-gray-600 leading-relaxed">
                 Are you sure you want to logout? You will need to sign in again to access your account.
               </p>
             </div>
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end space-x-4">
               <button
                 onClick={cancelLogout}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                className="px-6 py-3 text-base font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmLogout}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+                className="px-6 py-3 text-base font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
               >
                 Logout
               </button>
