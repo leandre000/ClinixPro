@@ -43,16 +43,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        logger.info("doFilterInternal");
+        
         final String authorizationHeader = request.getHeader("Authorization");
 
         String username = null;
         String jwt = null;
-        logger.info("Authorization header: " + authorizationHeader);
+        
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             try {
-                logger.info("found jwt token");
                 username = jwtUtil.extractUsername(jwt);
             } catch (Exception e) {
                 logger.error("Error extracting username from token", e);
@@ -60,20 +59,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 return;
             }
         }
-        logger.info("username: " + username);
+        
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            logger.info("found user before searching");
             Optional<User> userOptional = userRepository.findByEmail(username);
-            logger.info("found user: " + userOptional.isPresent());
+            
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                logger.info("found user after searching");
                 if (jwtUtil.validateToken(jwt, user)) {
-                    // Set request attributes (optional, if needed elsewhere)
+                    // Set request attributes
                     request.setAttribute("user", user);
                     request.setAttribute("role", user.getRole());
 
-                    // Create authorities (e.g., ROLE_RECEPTIONIST)
+                    // Create authorities
                     List<SimpleGrantedAuthority> authorities = Arrays.stream(user.getRole().split(","))
                             .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                             .collect(Collectors.toList());
@@ -85,14 +82,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                     // Set authentication in SecurityContext
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    logger.info("Authentication set for user: " + username + ", role: " + user.getRole());
                 } else {
-                    logger.info("Token validation failed");
+                    logger.warn("Token validation failed for user: " + username);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
             } else {
-                logger.info("User not found in database");
+                logger.warn("User not found in database: " + username);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
@@ -103,7 +99,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getServletPath();
+        String path = request.getRequestURI();
         return excludedPaths.stream().anyMatch(path::startsWith);
     }
 }

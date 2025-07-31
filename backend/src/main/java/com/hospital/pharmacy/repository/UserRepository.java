@@ -12,62 +12,32 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-        Optional<User> findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
-        Optional<User> findByUserId(String userId);
+    Optional<User> findByUserId(String userId);
 
-        List<User> findByRole(String role);
+    List<User> findByRole(String role);
 
-        boolean existsByEmail(String email);
+    boolean existsByEmail(String email);
 
-        // Method to find users by role and isActive status
-        List<User> findByRoleAndIsActive(String role, Boolean isActive);
+    // Method to find users by role and isActive status
+    List<User> findByRoleAndIsActive(String role, Boolean isActive);
 
-        // Method to find users by role with firstName, lastName, or email containing
-        // searchTerm
-        List<User> findByRoleAndFirstNameContainingIgnoreCaseOrRoleAndLastNameContainingIgnoreCaseOrRoleAndEmailContainingIgnoreCase(
-                        String role1, String firstName,
-                        String role2, String lastName,
-                        String role3, String email);
+    // Method to find active users by role
+    List<User> findByRoleAndIsActiveTrue(String role);
 
-        // Custom implementation for findByFilters to replace the problematic JPQL query
-        default List<User> findByFilters(String role, Boolean isActive, String searchTerm) {
-                if (searchTerm != null && !searchTerm.isEmpty()) {
-                        if (role != null) {
-                                // Search with role filter
-                                return findByRoleAndFirstNameContainingIgnoreCaseOrRoleAndLastNameContainingIgnoreCaseOrRoleAndEmailContainingIgnoreCase(
-                                                role, searchTerm, role, searchTerm, role, searchTerm);
-                        } else {
-                                // Search without role filter
-                                return findAll().stream()
-                                                .filter(user -> (isActive == null || (user.isActive() == isActive)) &&
-                                                                (user.getFirstName().toLowerCase()
-                                                                                .contains(searchTerm.toLowerCase()) ||
-                                                                                user.getLastName().toLowerCase()
-                                                                                                .contains(searchTerm
-                                                                                                                .toLowerCase())
-                                                                                ||
-                                                                                user.getEmail().toLowerCase().contains(
-                                                                                                searchTerm.toLowerCase())))
-                                                .toList();
-                        }
-                } else if (role != null && isActive != null) {
-                        // Filter by role and active status
-                        return findByRoleAndIsActive(role, isActive);
-                } else if (role != null) {
-                        // Filter by role only
-                        return findByRole(role);
-                } else if (isActive != null) {
-                        // Filter by active status only
-                        return findAll().stream()
-                                        .filter(user -> user.isActive() == isActive)
-                                        .toList();
-                } else {
-                        // No filters, return all
-                        return findAll();
-                }
-        }
+    // Method to find users by firstName, lastName, or email containing search term
+    @Query("SELECT u FROM User u WHERE " +
+           "(:role IS NULL OR u.role = :role) AND " +
+           "(:isActive IS NULL OR u.isActive = :isActive) AND " +
+           "(:searchTerm IS NULL OR " +
+           "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(u.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+    List<User> findByFilters(@Param("role") String role, 
+                           @Param("isActive") Boolean isActive, 
+                           @Param("searchTerm") String searchTerm);
 
-        @Query("SELECT COUNT(u) FROM User u WHERE u.role = :role")
-        long countByRole(@Param("role") String role);
+    @Query("SELECT COUNT(u) FROM User u WHERE u.role = :role")
+    long countByRole(@Param("role") String role);
 }

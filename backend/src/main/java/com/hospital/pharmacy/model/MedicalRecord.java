@@ -54,13 +54,14 @@ public class MedicalRecord {
     @Column(length = 1000)
     private String notes;
 
-    @ElementCollection
-    @CollectionTable(name = "medical_record_vitals", joinColumns = @JoinColumn(name = "record_id"))
-    private List<Vital> vitals = new ArrayList<>();
+    // Temporarily commented out to fix database schema issues
+    // @ElementCollection
+    // @CollectionTable(name = "medical_record_vitals", joinColumns = @JoinColumn(name = "record_id"))
+    // private List<Vital> vitals = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "medical_record_lab_results", joinColumns = @JoinColumn(name = "record_id"))
-    private List<LabResult> labResults = new ArrayList<>();
+    // @ElementCollection
+    // @CollectionTable(name = "medical_record_lab_results", joinColumns = @JoinColumn(name = "record_id"))
+    // private List<LabResult> labResults = new ArrayList<>();
 
     private String attachmentsUrl;
 

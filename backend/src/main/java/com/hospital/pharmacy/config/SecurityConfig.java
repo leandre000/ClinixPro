@@ -63,22 +63,6 @@ public class SecurityConfig {
         }
 
         @Bean
-        public JavaMailSender getJavaMailSender() {
-                JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-                mailSender.setHost("smtp.gmail.com");
-                mailSender.setPort(587);
-                mailSender.setUsername("izabayonadine08@gmail.com");
-                mailSender.setPassword("fvxm mixt bqpy dgfv");
-
-                Properties props = mailSender.getJavaMailProperties();
-                props.put("mail.smtp.auth", "true");
-                props.put("mail.smtp.starttls.enable", "true");
-                props.put("mail.debug", "true");
-
-                return mailSender;
-        }
-
-        @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
                 configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000"));
