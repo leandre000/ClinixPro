@@ -96,7 +96,7 @@ export default function PharmacistProfile() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Personal Information */}
-          <Card className="col-span-1 p-6">
+          <div className="col-span-1 p-6 bg-white rounded-lg shadow-md border border-gray-200">
             <div className="flex flex-col items-center mb-6">
               <div className="w-32 h-32 rounded-full overflow-hidden mb-4">
                 <img 
@@ -153,10 +153,10 @@ export default function PharmacistProfile() {
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
 
           {/* Professional Credentials */}
-          <Card className="col-span-1 lg:col-span-2 p-6">
+          <div className="col-span-1 lg:col-span-2 p-6 bg-white rounded-lg shadow-md border border-gray-200">
             <h2 className="text-lg font-semibold mb-4">Professional Information</h2>
             
             <div className="mb-6">
@@ -214,10 +214,10 @@ export default function PharmacistProfile() {
                 </div>
               ))}
             </div>
-          </Card>
+          </div>
 
           {/* Settings and Preferences */}
-          <Card className="col-span-1 lg:col-span-3 p-6">
+          <div className="col-span-1 lg:col-span-3 p-6 bg-white rounded-lg shadow-md border border-gray-200">
             <h2 className="text-lg font-semibold mb-4">Settings & Preferences</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -370,7 +370,7 @@ export default function PharmacistProfile() {
                 Save Preferences
               </Button>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </DashboardLayout>

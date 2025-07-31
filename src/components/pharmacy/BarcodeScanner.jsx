@@ -154,7 +154,7 @@ const BarcodeScanner = ({ onScan, onClose, scannerActive = true }) => {
   };
 
   return (
-    <Card className="overflow-hidden">
+    <div className="overflow-hidden bg-white rounded-lg shadow-md border border-gray-200">
       <div className="p-4 bg-gray-100 border-b flex items-center justify-between">
         <h3 className="text-lg font-semibold">Barcode Scanner</h3>
         <div>
@@ -263,7 +263,7 @@ const BarcodeScanner = ({ onScan, onClose, scannerActive = true }) => {
           animation: scanline 3s ease-in-out infinite;
         }
       `}</style>
-    </Card>
+    </div>
   );
 };
 

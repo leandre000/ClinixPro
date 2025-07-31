@@ -48,10 +48,7 @@ const MedicationCard = ({
   
   if (compact) {
     return (
-      <Card 
-        className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-        onClick={onClick}
-      >
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onClick={onClick}>
         <div className="p-3 flex items-center">
           <div className="w-12 h-12 rounded overflow-hidden flex-shrink-0 bg-gray-100">
             <img 
@@ -83,15 +80,12 @@ const MedicationCard = ({
             <div className="text-xs text-gray-500">{stock} units</div>
           </div>
         </div>
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card 
-      className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-      onClick={onClick}
-    >
+    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onClick={onClick}>
       <div className="relative">
         <div className="h-40 bg-gray-100">
           <img 
@@ -151,7 +145,7 @@ const MedicationCard = ({
           <p className="text-lg font-bold">${parseFloat(price).toFixed(2)}</p>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 

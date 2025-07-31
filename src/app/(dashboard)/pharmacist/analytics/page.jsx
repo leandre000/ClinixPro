@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import DashboardLayout from '@/components/DashboardLayout';
+import ModernButton from '@/components/ModernButton';
 import { 
   BarChart, 
   Bar, 
@@ -85,7 +84,7 @@ export default function PharmacyAnalytics() {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
   const renderStatCard = (title, value, icon, trend, description) => (
-    <Card className="p-6">
+    <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
       <div className="flex justify-between items-start">
         <div>
           <p className="text-sm text-gray-500">{title}</p>
@@ -102,7 +101,7 @@ export default function PharmacyAnalytics() {
           {icon}
         </div>
       </div>
-    </Card>
+    </div>
   );
 
   return (
@@ -187,7 +186,7 @@ export default function PharmacyAnalytics() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Dispensed Medications by Category</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -211,9 +210,9 @@ export default function PharmacyAnalytics() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
 
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Inventory Stock Levels</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -230,11 +229,11 @@ export default function PharmacyAnalytics() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6">
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Drug Request Trends (Monthly)</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -253,7 +252,7 @@ export default function PharmacyAnalytics() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
                 </div>
               </>
             )}
@@ -268,7 +267,7 @@ export default function PharmacyAnalytics() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Most Requested Medications</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -286,9 +285,9 @@ export default function PharmacyAnalytics() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
 
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Expiring Medications Timeline</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -305,11 +304,11 @@ export default function PharmacyAnalytics() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6">
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Inventory Category Distribution</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -340,7 +339,7 @@ export default function PharmacyAnalytics() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
                 </div>
               </>
             )}
@@ -355,7 +354,7 @@ export default function PharmacyAnalytics() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 mb-8">
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Request Status Breakdown</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -382,11 +381,11 @@ export default function PharmacyAnalytics() {
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Requests by Urgency</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -414,9 +413,9 @@ export default function PharmacyAnalytics() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
 
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Requests by Doctor</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -439,7 +438,7 @@ export default function PharmacyAnalytics() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
                 </div>
               </>
             )}
@@ -454,7 +453,7 @@ export default function PharmacyAnalytics() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 mb-8">
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Revenue Trends</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -471,11 +470,11 @@ export default function PharmacyAnalytics() {
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Revenue by Category</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -505,9 +504,9 @@ export default function PharmacyAnalytics() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
 
-                  <Card className="p-6">
+                  <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="font-semibold mb-4">Top 5 Revenue-Generating Medications</h3>
                     <div className="h-80">
                       <ResponsiveContainer width="100%" height="100%">
@@ -531,7 +530,7 @@ export default function PharmacyAnalytics() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card>
+                  </div>
                 </div>
               </>
             )}
