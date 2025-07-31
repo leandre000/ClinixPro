@@ -63,27 +63,24 @@ public class AdminController {
 
     // Dashboard Statistics
     @GetMapping("/dashboard")
-    public ResponseEntity<?> getDashboardStats(HttpServletRequest request) {
-        // Check if user is admin
-        User user = (User) request.getAttribute("user");
-        String role = (String) request.getAttribute("role");
+    public ResponseEntity<?> getDashboardStats(Authentication authentication) {
+        try {
+            Map<String, Object> stats = new HashMap<>();
+            stats.put("totalUsers", userRepository.count());
+            stats.put("totalDoctors", userRepository.countByRole("DOCTOR"));
+            stats.put("totalPharmacists", userRepository.countByRole("PHARMACIST"));
+            stats.put("totalReceptionists", userRepository.countByRole("RECEPTIONIST"));
+            stats.put("totalPatients", patientRepository.countTotalPatients());
+            stats.put("totalAppointments", appointmentRepository.countTotalAppointments());
+            stats.put("totalMedicines", medicineRepository.count());
+            stats.put("activeUsers", userRepository.count());
 
-        if (user == null || !role.equals("ADMIN")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("message", "Access denied"));
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            logger.error("Error fetching dashboard stats", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error fetching dashboard statistics"));
         }
-
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("totalDoctors", userRepository.countByRole("DOCTOR"));
-        stats.put("totalPharmacists", userRepository.countByRole("PHARMACIST"));
-        stats.put("totalReceptionists", userRepository.countByRole("RECEPTIONIST"));
-        stats.put("totalPatients", patientRepository.countTotalPatients());
-        stats.put("totalAppointments", appointmentRepository.countTotalAppointments());
-        stats.put("totalMedicines", medicineRepository.count());
-
-        // Additional statistics can be added here
-
-        return ResponseEntity.ok(stats);
     }
 
     // User Management - Get all users by role
@@ -249,22 +246,16 @@ public class AdminController {
 
     // User Management - Delete user
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, Authentication authentication) {
         try {
             logger.info("Deleting user with ID: {}", id);
 
-            User admin = (User) request.getAttribute("user");
-            String adminRole = (String) request.getAttribute("role");
-
-            if (admin == null || !adminRole.equals("ADMIN")) {
-                logger.warn("Access denied for user deletion attempt");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body(Map.of("message", "Access denied"));
-            }
+            // Get current authenticated user
+            User currentUser = (User) authentication.getPrincipal();
 
             // Check if user is trying to delete their own account
-            if (admin.getId().equals(id)) {
-                logger.warn("Admin attempt to delete own account: {}", admin.getUserId());
+            if (currentUser.getId().equals(id)) {
+                logger.warn("Admin attempt to delete own account: {}", currentUser.getUserId());
                 return ResponseEntity.badRequest()
                         .body(Map.of("message", "You cannot delete your own account"));
             }
@@ -272,13 +263,15 @@ public class AdminController {
             return userRepository.findById(id)
                     .map(user -> {
                         try {
-                            userRepository.delete(user);
-                            logger.info("User deleted successfully: {}", user.getUserId());
-                            return ResponseEntity.ok().body(Map.of("message", "User deleted successfully"));
+                            // Soft delete by setting isActive to false
+                            user.setActive(false);
+                            userRepository.save(user);
+                            logger.info("User deactivated successfully: {}", user.getUserId());
+                            return ResponseEntity.ok().body(Map.of("message", "User deactivated successfully"));
                         } catch (Exception e) {
-                            logger.error("Error deleting user: {}", e.getMessage(), e);
+                            logger.error("Error deactivating user: {}", e.getMessage(), e);
                             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                    .body(Map.of("message", "Error deleting user: " + e.getMessage()));
+                                    .body(Map.of("message", "Error deactivating user: " + e.getMessage()));
                         }
                     })
                     .orElse(ResponseEntity.notFound().build());
@@ -291,21 +284,19 @@ public class AdminController {
 
     // Simple test endpoint to check authentication
     @GetMapping("/test-auth")
-    public ResponseEntity<?> testAuth(HttpServletRequest request) {
-        User user = (User) request.getAttribute("user");
-        String role = (String) request.getAttribute("role");
-
-        if (user == null) {
-            logger.warn("Auth test: No user found in request");
+    public ResponseEntity<?> testAuth(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            logger.info("Auth test: User authenticated - userId: {}, role: {}", user.getUserId(), user.getRole());
+            return ResponseEntity.ok(Map.of(
+                    "message", "Authentication successful",
+                    "userId", user.getUserId(),
+                    "role", user.getRole()));
+        } catch (Exception e) {
+            logger.error("Auth test failed", e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "No user found in request, authentication failed"));
+                    .body(Map.of("message", "Authentication failed"));
         }
-
-        logger.info("Auth test: User authenticated - userId: {}, role: {}", user.getUserId(), role);
-        return ResponseEntity.ok(Map.of(
-                "message", "Authentication successful",
-                "userId", user.getUserId(),
-                "role", role));
     }
 
     // Patient Management - Get patient by ID
@@ -319,82 +310,69 @@ public class AdminController {
 
     // Register a new patient
     @PostMapping("/patients")
-    public ResponseEntity<?> registerPatient(
-            @RequestBody Patient patient,
-            HttpServletRequest request) {
+    public ResponseEntity<?> registerPatient(@RequestBody Patient patient) {
+        try {
+            // Generate a unique patient ID
+            patient.setPatientId("PAT-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
 
-        User admin = (User) request.getAttribute("user");
-        String role = (String) request.getAttribute("role");
+            // Set default properties if not provided
+            if (patient.getStatus() == null) {
+                patient.setStatus("Active");
+            }
 
-        if (admin == null || !role.equals("ADMIN")) {
-            logger.warn("Access denied for registering patient as admin");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("message", "Access denied"));
+            // Set registration date
+            patient.setRegistrationDate(LocalDateTime.now());
+
+            Patient savedPatient = patientRepository.save(patient);
+            logger.info("Patient registered successfully: {}", savedPatient.getPatientId());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedPatient);
+        } catch (Exception e) {
+            logger.error("Error registering patient", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error registering patient: " + e.getMessage()));
         }
-
-        // Generate a unique patient ID
-        patient.setPatientId("PAT-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-
-        // Set default properties if not provided
-        if (patient.getStatus() == null) {
-            patient.setStatus("Active");
-        }
-
-        // Set registration date
-        patient.setRegistrationDate(LocalDateTime.now());
-
-        Patient savedPatient = patientRepository.save(patient);
-        logger.info("Patient registered successfully by admin: {}", savedPatient.getPatientId());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedPatient);
     }
 
     // Update a patient
     @PutMapping("/patients/{id}")
-    public ResponseEntity<?> updatePatient(
-            @PathVariable Long id,
-            @RequestBody Patient updatedPatient,
-            HttpServletRequest request) {
+    public ResponseEntity<?> updatePatient(@PathVariable Long id, @RequestBody Patient updatedPatient) {
+        try {
+            return patientRepository.findById(id)
+                    .map(patient -> {
+                        // Update fields but keep ID and patientId intact
+                        patient.setFirstName(updatedPatient.getFirstName());
+                        patient.setLastName(updatedPatient.getLastName());
+                        patient.setDateOfBirth(updatedPatient.getDateOfBirth());
+                        patient.setGender(updatedPatient.getGender());
+                        patient.setEmail(updatedPatient.getEmail());
+                        patient.setPhoneNumber(updatedPatient.getPhoneNumber());
+                        patient.setAddress(updatedPatient.getAddress());
+                        patient.setBloodGroup(updatedPatient.getBloodGroup());
+                        patient.setHeight(updatedPatient.getHeight());
+                        patient.setWeight(updatedPatient.getWeight());
+                        patient.setAllergies(updatedPatient.getAllergies());
+                        patient.setChronicDiseases(updatedPatient.getChronicDiseases());
+                        patient.setEmergencyContactName(updatedPatient.getEmergencyContactName());
+                        patient.setEmergencyContactPhone(updatedPatient.getEmergencyContactPhone());
+                        patient.setEmergencyContactRelation(updatedPatient.getEmergencyContactRelation());
+                        patient.setInsuranceProvider(updatedPatient.getInsuranceProvider());
+                        patient.setInsurancePolicyNumber(updatedPatient.getInsurancePolicyNumber());
+                        patient.setInsuranceExpiryDate(updatedPatient.getInsuranceExpiryDate());
+                        patient.setOccupation(updatedPatient.getOccupation());
+                        patient.setMaritalStatus(updatedPatient.getMaritalStatus());
+                        patient.setAssignedDoctor(updatedPatient.getAssignedDoctor());
+                        patient.setMedicalHistory(updatedPatient.getMedicalHistory());
+                        patient.setStatus(updatedPatient.getStatus());
 
-        User admin = (User) request.getAttribute("user");
-        String role = (String) request.getAttribute("role");
-
-        if (admin == null || !role.equals("ADMIN")) {
-            logger.warn("Access denied for updating patient as admin");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("message", "Access denied"));
+                        logger.info("Patient updated successfully: {}", patient.getPatientId());
+                        return ResponseEntity.ok(patientRepository.save(patient));
+                    })
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            logger.error("Error updating patient", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error updating patient: " + e.getMessage()));
         }
-
-        return patientRepository.findById(id)
-                .map(patient -> {
-                    // Update fields but keep ID and patientId intact
-                    patient.setFirstName(updatedPatient.getFirstName());
-                    patient.setLastName(updatedPatient.getLastName());
-                    patient.setDateOfBirth(updatedPatient.getDateOfBirth());
-                    patient.setGender(updatedPatient.getGender());
-                    patient.setEmail(updatedPatient.getEmail());
-                    patient.setPhoneNumber(updatedPatient.getPhoneNumber());
-                    patient.setAddress(updatedPatient.getAddress());
-                    patient.setBloodGroup(updatedPatient.getBloodGroup());
-                    patient.setHeight(updatedPatient.getHeight());
-                    patient.setWeight(updatedPatient.getWeight());
-                    patient.setAllergies(updatedPatient.getAllergies());
-                    patient.setChronicDiseases(updatedPatient.getChronicDiseases());
-                    patient.setEmergencyContactName(updatedPatient.getEmergencyContactName());
-                    patient.setEmergencyContactPhone(updatedPatient.getEmergencyContactPhone());
-                    patient.setEmergencyContactRelation(updatedPatient.getEmergencyContactRelation());
-                    patient.setInsuranceProvider(updatedPatient.getInsuranceProvider());
-                    patient.setInsurancePolicyNumber(updatedPatient.getInsurancePolicyNumber());
-                    patient.setInsuranceExpiryDate(updatedPatient.getInsuranceExpiryDate());
-                    patient.setOccupation(updatedPatient.getOccupation());
-                    patient.setMaritalStatus(updatedPatient.getMaritalStatus());
-                    patient.setAssignedDoctor(updatedPatient.getAssignedDoctor());
-                    patient.setMedicalHistory(updatedPatient.getMedicalHistory());
-                    patient.setStatus(updatedPatient.getStatus());
-
-                    logger.info("Patient updated successfully: {}", patient.getPatientId());
-                    return ResponseEntity.ok(patientRepository.save(patient));
-                })
-                .orElse(ResponseEntity.notFound().build());
     }
 }
