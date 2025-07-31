@@ -85,7 +85,8 @@ import {
   FaUserShield as FaUserShieldIcon2,
   FaUserTie as FaUserTieIcon2,
   FaUserTimes as FaUserTimesIcon2,
-  FaUserUnlock as FaUserUnlockIcon2
+  FaUserUnlock as FaUserUnlockIcon2,
+  FaInfoCircle
 } from "react-icons/fa";
 import DashboardLayout from "@/components/DashboardLayout";
 import DataService from "@/services/data.service";
@@ -102,6 +103,8 @@ export default function AppointmentsManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
 
   // Sample data for demonstration
   const sampleAppointments = [
@@ -204,17 +207,11 @@ export default function AppointmentsManagement() {
     const fetchAppointments = async () => {
       try {
         setLoading(true);
-        // Try to fetch from API first
-        try {
-          const data = await DataService.getAllAppointments();
-          setAppointments(data);
-        } catch (error) {
-          console.log('Using sample appointments data');
-          setAppointments(sampleAppointments);
-        }
+        const data = await DataService.getAllAppointments();
+        setAppointments(data);
       } catch (error) {
         console.error('Error fetching appointments:', error);
-        setAppointments(sampleAppointments);
+        setAppointments([]);
       } finally {
         setLoading(false);
       }
@@ -285,22 +282,27 @@ export default function AppointmentsManagement() {
     router.push(`/admin/appointments/${appointment.id}/edit`);
   };
 
-  const handleCancelAppointment = async (appointment) => {
-    if (confirm(`Are you sure you want to cancel appointment ${appointment.id}?`)) {
-      try {
-        // API call to cancel appointment
-        // await DataService.cancelAppointment(appointment.id);
-        console.log('Appointment cancelled:', appointment.id);
-        
-        // Update local state
-        setAppointments(prev => prev.map(apt => 
-          apt.id === appointment.id 
-            ? { ...apt, status: 'Cancelled' }
-            : apt
-        ));
-      } catch (error) {
-        console.error('Error cancelling appointment:', error);
-      }
+  const handleCancelAppointment = (appointment) => {
+    setSelectedAppointment(appointment);
+    setShowCancelConfirm(true);
+  };
+
+  const confirmCancelAppointment = async () => {
+    try {
+      // API call to cancel appointment
+      // await DataService.cancelAppointment(selectedAppointment.id);
+      console.log('Appointment cancelled:', selectedAppointment.id);
+      
+      // Update local state
+      setAppointments(prev => prev.map(apt => 
+        apt.id === selectedAppointment.id 
+          ? { ...apt, status: 'Cancelled' }
+          : apt
+      ));
+      setShowCancelConfirm(false);
+      setSelectedAppointment(null);
+    } catch (error) {
+      console.error('Error cancelling appointment:', error);
     }
   };
 
@@ -579,6 +581,43 @@ export default function AppointmentsManagement() {
           </div>
         </div>
       </div>
+
+      {/* Cancel Appointment Confirmation Modal */}
+      {showCancelConfirm && selectedAppointment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowCancelConfirm(false)}></div>
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 border-2 border-gray-200 shadow-2xl">
+            <div className="flex items-center mb-6">
+              <div className="flex-shrink-0">
+                <FaExclamationTriangle className="h-8 w-8 text-red-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-2xl font-bold text-gray-900">Cancel Appointment</h3>
+              </div>
+            </div>
+            <div className="mb-8">
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Are you sure you want to cancel appointment <strong>{selectedAppointment.id}</strong> for 
+                <strong> {selectedAppointment.patient.name}</strong>? This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowCancelConfirm(false)}
+                className="px-6 py-3 text-lg font-bold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmCancelAppointment}
+                className="px-6 py-3 text-lg font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Cancel Appointment
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (

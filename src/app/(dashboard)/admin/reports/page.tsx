@@ -12,7 +12,8 @@ import {
   FaDollarSign,
   FaDownload,
   FaFilter,
-  FaEye
+  FaEye,
+  FaInfoCircle
 } from 'react-icons/fa';
 import DataService from '@/services/data.service';
 
@@ -29,15 +30,12 @@ export default function ReportsPage() {
         const dashboardStats = await DataService.getDashboardStats();
         setStats(dashboardStats);
         
-        // Mock recent activity data
-        setRecentActivity([
-          { id: 1, action: 'New patient registered', user: 'Dr. Smith', time: '2 hours ago', type: 'patient' },
-          { id: 2, action: 'Appointment scheduled', user: 'Receptionist', time: '3 hours ago', type: 'appointment' },
-          { id: 3, action: 'Medicine added to inventory', user: 'Pharmacist', time: '5 hours ago', type: 'medicine' },
-          { id: 4, action: 'Staff member added', user: 'Admin', time: '1 day ago', type: 'staff' },
-        ]);
+        // For now, we'll use empty activity data until backend provides it
+        setRecentActivity([]);
       } catch (error) {
         console.error('Error fetching report data:', error);
+        setStats({});
+        setRecentActivity([]);
       } finally {
         setLoading(false);
       }
@@ -119,6 +117,14 @@ export default function ReportsPage() {
               <FaDownload className="h-5 w-5" />
               <span>Export Report</span>
             </button>
+          </div>
+        </div>
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center">
+            <FaInfoCircle className="text-blue-600 mr-2" />
+            <span className="text-blue-800 text-sm">
+              <strong>Demo Mode:</strong> You're viewing sample data. Start the backend server to connect to real data.
+            </span>
           </div>
         </div>
       </div>

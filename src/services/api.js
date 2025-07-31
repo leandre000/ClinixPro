@@ -135,10 +135,12 @@ api.interceptors.response.use(
     } else if (error.request) {
       // The request was made but no response was received
       // Network error or server not running
-      console.error(
-        `No response received: ${error.config.url}`,
-        error.message || "Network Error"
-      );
+      if (process.env.NODE_ENV === "development") {
+        console.warn(
+          `Backend not available: ${error.config.url}`,
+          error.message || "Network Error"
+        );
+      }
 
       // Log additional context about the error
       if (error.code === "ECONNABORTED") {

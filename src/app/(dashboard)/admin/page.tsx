@@ -35,7 +35,8 @@ import {
   FaPrescriptionBottle,
   FaClipboardCheck,
   FaChartBar,
-  FaCog as FaSettings
+  FaCog as FaSettings,
+  FaInfoCircle
 } from "react-icons/fa";
 import { 
   MdDashboard, 
@@ -379,7 +380,15 @@ export default function AdminDashboard() {
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, Administrator!</h2>
         <p className="text-lg text-gray-600">Here's what's happening with your hospital today.</p>
-            </div>
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center">
+            <FaInfoCircle className="text-blue-600 mr-2" />
+            <span className="text-blue-800 text-sm">
+              <strong>Demo Mode:</strong> You're viewing sample data. Start the backend server to connect to real data.
+            </span>
+          </div>
+        </div>
+      </div>
 
             {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">

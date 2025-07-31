@@ -53,7 +53,8 @@ import {
   FaUserInjuredIcon,
   FaUserFriendsIcon,
   FaUserClockIcon,
-  FaUserCogIcon
+  FaUserCogIcon,
+  FaInfoCircle
 } from "react-icons/fa";
 
 export default function StaffListingPage() {
@@ -62,6 +63,9 @@ export default function StaffListingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false);
+  const [selectedStaff, setSelectedStaff] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [filters, setFilters] = useState({
@@ -100,104 +104,17 @@ export default function StaffListingPage() {
   const fetchStaff = async () => {
     try {
       setIsLoading(true);
-      let data;
-      try {
-        data = await AdminService.getUsers(filters);
-        setError("");
-      } catch (apiError) {
-        console.error("API error fetching staff:", apiError);
-        // Provide sample data for testing
-        data = [
-          {
-            id: 1,
-            firstName: "Dr. Michael",
-            lastName: "Chen",
-            email: "michael.chen@clinixpro.com",
-            phoneNumber: "555-101-2345",
-            role: "DOCTOR",
-            specialization: "Cardiology",
-            isActive: true,
-            department: "Cardiology"
-          },
-          {
-            id: 2,
-            firstName: "Dr. Emily",
-            lastName: "Rodriguez",
-            email: "emily.rodriguez@clinixpro.com",
-            phoneNumber: "555-202-3456",
-            role: "DOCTOR",
-            specialization: "Pediatrics",
-            isActive: true,
-            department: "Pediatrics"
-          },
-          {
-            id: 3,
-            firstName: "Dr. Sarah",
-            lastName: "Jefferson",
-            email: "sarah.jefferson@clinixpro.com",
-            phoneNumber: "555-303-4567",
-            role: "DOCTOR",
-            specialization: "Neurology",
-            isActive: true,
-            department: "Neurology"
-          },
-          {
-            id: 4,
-            firstName: "Dr. James",
-            lastName: "Wilson",
-            email: "james.wilson@clinixpro.com",
-            phoneNumber: "555-404-5678",
-            role: "DOCTOR",
-            specialization: "Orthopedics",
-            isActive: true,
-            department: "Orthopedics"
-          },
-          {
-            id: 5,
-            firstName: "Dr. Olivia",
-            lastName: "Parker",
-            email: "olivia.parker@clinixpro.com",
-            phoneNumber: "555-505-6789",
-            role: "DOCTOR",
-            specialization: "Dermatology",
-            isActive: true,
-            department: "Dermatology"
-          },
-          {
-            id: 6,
-            firstName: "Maria",
-            lastName: "Garcia",
-            email: "maria.garcia@clinixpro.com",
-            phoneNumber: "555-606-7890",
-            role: "PHARMACIST",
-            specialization: "Clinical Pharmacy",
-            isActive: true,
-            department: "Pharmacy"
-          },
-          {
-            id: 7,
-            firstName: "John",
-            lastName: "Anderson",
-            email: "john.anderson@clinixpro.com",
-            phoneNumber: "555-707-8901",
-            role: "RECEPTIONIST",
-            specialization: "Patient Services",
-            isActive: true,
-            department: "Reception"
-          },
-          {
-            id: 8,
-            firstName: "Lisa",
-            lastName: "Thompson",
-            email: "lisa.thompson@clinixpro.com",
-            phoneNumber: "555-808-9012",
-            role: "ADMIN",
-            specialization: "Hospital Administration",
-            isActive: false,
-            department: "Administration"
-          }
-        ];
-        setError("Using sample data for demonstration. API connection not available.");
+      const data = await AdminService.getUsers(filters);
+      setStaff(data);
+      setError("");
+    } catch (apiError) {
+      console.error("API error fetching staff:", apiError);
+      setStaff([]);
+      setError("No staff data available. Please check your connection.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
       }
       setStaff(data);
     } catch (err) {
@@ -240,57 +157,43 @@ export default function StaffListingPage() {
     router.push(`/admin/staff/${id}`);
   };
 
-  const handleDeactivateStaff = async (id, currentActiveStatus) => {
+  const handleDeactivateStaff = (staff) => {
+    setSelectedStaff(staff);
+    setShowDeactivateConfirm(true);
+  };
+
+  const confirmDeactivateStaff = async () => {
     try {
-      console.log(`Attempting to change status from ${currentActiveStatus} to ${!currentActiveStatus}`);
-      
       const updateData = { 
-        isActive: Boolean(!currentActiveStatus) 
+        isActive: !selectedStaff.isActive 
       };
       
-      console.log('Update payload:', updateData);
-      
-      // Try API call first
-      try {
-      await AdminService.updateUser(id, updateData);
-      } catch (apiError) {
-        console.error("API error updating staff:", apiError);
-        // Update local state for demo
-        setStaff(prev => prev.map(member => 
-          member.id === id 
-            ? { ...member, isActive: !currentActiveStatus }
-            : member
-        ));
-      }
-      
+      await AdminService.updateUser(selectedStaff.id, updateData);
+      setShowDeactivateConfirm(false);
+      setSelectedStaff(null);
       await fetchStaff();
-      localStorage.setItem('dashboard_refresh_needed', 'true');
       setError("");
     } catch (err) {
       console.error("Error updating staff status:", err);
-      setError("Failed to update staff status. Please try again: " + (err.response?.data?.message || err.message));
+      setError("Failed to update staff status. Please try again.");
     }
   };
 
-  const handleDeleteStaff = async (id) => {
-    if (confirm("Are you sure you want to delete this staff member? This action cannot be undone.")) {
-      try {
-        // Try API call first
-      try {
-        await AdminService.deleteUser(id);
-        } catch (apiError) {
-          console.error("API error deleting staff:", apiError);
-          // Update local state for demo
-          setStaff(prev => prev.filter(member => member.id !== id));
-        }
-        
-        await fetchStaff();
-        setError("");
-        localStorage.setItem('dashboard_refresh_needed', 'true');
-      } catch (err) {
-        console.error("Error deleting staff:", err);
-        setError("Failed to delete staff. Please try again: " + (err.response?.data?.message || err.message));
-      }
+  const handleDeleteStaff = (staff) => {
+    setSelectedStaff(staff);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteStaff = async () => {
+    try {
+      await AdminService.deleteUser(selectedStaff.id);
+      setShowDeleteConfirm(false);
+      setSelectedStaff(null);
+      await fetchStaff();
+      setError("");
+    } catch (err) {
+      console.error("Error deleting staff:", err);
+      setError("Failed to delete staff. Please try again.");
     }
   };
 
@@ -567,10 +470,10 @@ export default function StaffListingPage() {
                         <FaEdit className="text-xl" />
                       </button>
                       <button
-                        onClick={() => handleDeactivateStaff(member.id, member.isActive)}
+                        onClick={() => handleDeactivateStaff(member)}
                         className={`px-3 py-2 text-white text-lg font-bold rounded-lg transition-colors ${
                           member.isActive
-                            ? "bg-red-600 hover:bg-red-700"
+                            ? "bg-yellow-600 hover:bg-yellow-700"
                             : "bg-green-600 hover:bg-green-700"
                         }`}
                         title={member.isActive ? "Deactivate" : "Activate"}
@@ -578,7 +481,7 @@ export default function StaffListingPage() {
                         {member.isActive ? <FaUserTimes className="text-xl" /> : <FaUserCheck className="text-xl" />}
                       </button>
                       <button
-                        onClick={() => handleDeleteStaff(member.id)}
+                        onClick={() => handleDeleteStaff(member)}
                         className="px-3 py-2 bg-red-600 text-white text-lg font-bold rounded-lg hover:bg-red-700 transition-colors"
                         title="Delete Staff"
                       >
@@ -654,6 +557,90 @@ export default function StaffListingPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && selectedStaff && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowDeleteConfirm(false)}></div>
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 border-2 border-gray-200 shadow-2xl">
+            <div className="flex items-center mb-6">
+              <div className="flex-shrink-0">
+                <FaExclamationTriangle className="h-8 w-8 text-red-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-2xl font-bold text-gray-900">Delete Staff Member</h3>
+              </div>
+            </div>
+            <div className="mb-8">
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Are you sure you want to delete <strong>{selectedStaff.firstName} {selectedStaff.lastName}</strong>? 
+                This action cannot be undone and will permanently remove this staff member from the system.
+              </p>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-6 py-3 text-lg font-bold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteStaff}
+                className="px-6 py-3 text-lg font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Deactivate Confirmation Modal */}
+      {showDeactivateConfirm && selectedStaff && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowDeactivateConfirm(false)}></div>
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 border-2 border-gray-200 shadow-2xl">
+            <div className="flex items-center mb-6">
+              <div className="flex-shrink-0">
+                <FaExclamationTriangle className="h-8 w-8 text-yellow-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-2xl font-bold text-gray-900">
+                  {selectedStaff.isActive ? 'Deactivate' : 'Activate'} Staff Member
+                </h3>
+              </div>
+            </div>
+            <div className="mb-8">
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Are you sure you want to {selectedStaff.isActive ? 'deactivate' : 'activate'} 
+                <strong> {selectedStaff.firstName} {selectedStaff.lastName}</strong>? 
+                {selectedStaff.isActive 
+                  ? ' This will prevent them from accessing the system.'
+                  : ' This will restore their access to the system.'
+                }
+              </p>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowDeactivateConfirm(false)}
+                className="px-6 py-3 text-lg font-bold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeactivateStaff}
+                className={`px-6 py-3 text-lg font-bold text-white rounded-lg transition-colors ${
+                  selectedStaff.isActive 
+                    ? 'bg-yellow-600 hover:bg-yellow-700' 
+                    : 'bg-green-600 hover:bg-green-700'
+                }`}
+              >
+                {selectedStaff.isActive ? 'Deactivate' : 'Activate'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (

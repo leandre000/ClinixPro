@@ -100,45 +100,9 @@ export default function PharmacistMedicines() {
         setError("");
       } catch (err) {
         console.error("Error fetching medicines:", err);
-        setError(getErrorMessage(err as Error) || "Failed to load medicines data.");
-
-        // fallback
-        setMedicines([
-          {
-            id: 1,
-            name: "Amoxicillin 500mg",
-            category: "Antibiotics",
-            company: "PharmaCorp Inc.",
-            stock: 12,
-            stockStatus: "Low",
-            price: 12.5,
-            requiresPrescription: true,
-            expiry: "2024-08-15",
-          },
-          {
-            id: 2,
-            name: "Lisinopril 10mg",
-            category: "Antihypertensive",
-            company: "MediLife Labs",
-            stock: 8,
-            stockStatus: "Critical",
-            price: 15.99,
-            requiresPrescription: true,
-            expiry: "2024-06-30",
-          },
-          {
-            id: 3,
-            name: "Metformin 850mg",
-            category: "Antidiabetic",
-            company: "Global Meds",
-            stock: 45,
-            stockStatus: "Normal",
-            price: 9.99,
-            requiresPrescription: true,
-            expiry: "2024-07-22",
-          },
-        ]);
-        setCategories(["all", "Antibiotics", "Antihypertensive", "Antidiabetic"]);
+        setError("No medicine data available. Please check your connection.");
+        setMedicines([]);
+        setCategories(["all"]);
       } finally {
         setLoading(false);
       }

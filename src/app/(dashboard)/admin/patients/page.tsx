@@ -56,7 +56,8 @@ import {
   FaUserInjuredIcon,
   FaUserFriendsIcon,
   FaUserClockIcon,
-  FaUserCogIcon
+  FaUserCogIcon,
+  FaInfoCircle
 } from "react-icons/fa";
 
 export default function PatientsPage() {
@@ -70,6 +71,8 @@ export default function PatientsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   
@@ -90,93 +93,20 @@ export default function PatientsPage() {
     const fetchPatients = async () => {
       try {
         setLoading(true);
-        console.log("Fetching patients...");
-        
-        let response;
-        try {
-          // Attempt to fetch from API
-          response = await AdminService.getPatients();
-          setError("");
-        } catch (apiError) {
-          console.error("API error fetching patients:", apiError);
-          // Provide consistent mock data for testing
-          response = [
-            { 
-              patientId: "P-1001", 
-              firstName: "Sarah",
-              lastName: "Johnson",
-              email: "sarah.johnson@example.com", 
-              phoneNumber: "555-101-2345", 
-              dateOfBirth: "1988-06-15",
-              gender: "Female",
-              bloodGroup: "A+",
-              status: "Active",
-              lastVisitDate: "2023-11-15",
-              doctorName: "Dr. Michael Chen"
-            },
-            { 
-              patientId: "P-1002", 
-              firstName: "Robert",
-              lastName: "Smith",
-              email: "robert.smith@example.com", 
-              phoneNumber: "555-202-3456", 
-              dateOfBirth: "1961-03-22",
-              gender: "Male",
-              bloodGroup: "O-",
-              status: "Active",
-              lastVisitDate: "2023-11-20",
-              doctorName: "Dr. Emily Rodriguez"
-            },
-            { 
-              patientId: "P-1003", 
-              firstName: "James",
-              lastName: "Williams",
-              email: "james.williams@example.com", 
-              phoneNumber: "555-303-4567", 
-              dateOfBirth: "1975-09-10",
-              gender: "Male",
-              bloodGroup: "B+",
-              status: "Discharged",
-              lastVisitDate: "2023-10-30",
-              doctorName: "Dr. Sarah Jefferson"
-            },
-            { 
-              patientId: "P-1004", 
-              firstName: "Emily",
-              lastName: "Brown",
-              email: "emily.brown@example.com", 
-              phoneNumber: "555-404-5678", 
-              dateOfBirth: "1992-12-05",
-              gender: "Female",
-              bloodGroup: "AB-",
-              status: "Active",
-              lastVisitDate: "2023-11-25",
-              doctorName: "Dr. James Wilson"
-            },
-            { 
-              patientId: "P-1005", 
-              firstName: "Michael",
-              lastName: "Davis",
-              email: "michael.davis@example.com", 
-              phoneNumber: "555-505-6789", 
-              dateOfBirth: "1983-04-18",
-              gender: "Male",
-              bloodGroup: "O+",
-              status: "Active",
-              lastVisitDate: "2023-11-18",
-              doctorName: "Dr. Olivia Parker"
-            },
-            { 
-              patientId: "P-1006", 
-              firstName: "Jennifer",
-              lastName: "Lee",
-              email: "jennifer.lee@example.com", 
-              phoneNumber: "555-606-7890", 
-              dateOfBirth: "1990-07-12",
-              gender: "Female",
-              bloodGroup: "A-",
-              status: "Active",
-              lastVisitDate: "2023-11-22",
+        const response = await AdminService.getPatients();
+        setPatients(response);
+        setError("");
+      } catch (apiError) {
+        console.error("API error fetching patients:", apiError);
+        setPatients([]);
+        setError("No patient data available. Please check your connection.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPatients();
+  }, []);
               doctorName: "Dr. Michael Chen"
             },
             { 
@@ -286,19 +216,24 @@ export default function PatientsPage() {
     router.push(`/admin/patients/${patient.id}/add-record`);
   };
 
-  const handleDeletePatient = async (patient) => {
-    if (confirm(`Are you sure you want to delete patient ${patient.name}? This action cannot be undone.`)) {
-      try {
-        // API call to delete patient
-        // await AdminService.deletePatient(patient.id);
-        console.log('Patient deleted:', patient.id);
-        
-        // Update local state
-        setPatients(prev => prev.filter(p => p.id !== patient.id));
-      } catch (error) {
-        console.error('Error deleting patient:', error);
-        setError("Failed to delete patient. Please try again.");
-      }
+  const handleDeletePatient = (patient) => {
+    setSelectedPatient(patient);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeletePatient = async () => {
+    try {
+      // API call to delete patient
+      // await AdminService.deletePatient(selectedPatient.id);
+      console.log('Patient deleted:', selectedPatient.id);
+      
+      // Update local state
+      setPatients(prev => prev.filter(p => p.id !== selectedPatient.id));
+      setShowDeleteConfirm(false);
+      setSelectedPatient(null);
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      setError("Failed to delete patient. Please try again.");
     }
   };
 
@@ -644,6 +579,43 @@ export default function PatientsPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Patient Confirmation Modal */}
+      {showDeleteConfirm && selectedPatient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowDeleteConfirm(false)}></div>
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 border-2 border-gray-200 shadow-2xl">
+            <div className="flex items-center mb-6">
+              <div className="flex-shrink-0">
+                <FaExclamationTriangle className="h-8 w-8 text-red-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-2xl font-bold text-gray-900">Delete Patient</h3>
+              </div>
+            </div>
+            <div className="mb-8">
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Are you sure you want to delete <strong>{selectedPatient.name}</strong>? 
+                This action cannot be undone and will permanently remove this patient from the system.
+              </p>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-6 py-3 text-lg font-bold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeletePatient}
+                className="px-6 py-3 text-lg font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (
