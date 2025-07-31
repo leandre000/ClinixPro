@@ -20,12 +20,10 @@ export default function Sidebar({ userType, userName = 'User', userImage, onImag
     { href: '/admin/pharmacists', label: 'Pharmacists', icon: 'pills' },
     { href: '/admin/receptionists', label: 'Receptionists', icon: 'user' },
     { href: '/admin/patients', label: 'Patients', icon: 'procedures' },
-    // { href: '/admin/medicines', label: 'Medicines', icon: 'capsules' },
-    // { href: '/admin/companies', label: 'Companies', icon: 'building' },
-    // { href: '/admin/distributors', label: 'Distributors', icon: 'truck' },
-
-    // { href: '/doctor/rooms', label: 'Rooms', icon: 'door-open' },
-    
+    { href: '/admin/medicines', label: 'Medicines', icon: 'capsules' },
+    { href: '/admin/companies', label: 'Companies', icon: 'building' },
+    { href: '/admin/distributors', label: 'Distributors', icon: 'truck' },
+    { href: '/admin/rooms', label: 'Rooms', icon: 'door-open' },
   ];
   
   const doctorLinks = [
@@ -34,7 +32,9 @@ export default function Sidebar({ userType, userName = 'User', userImage, onImag
     { href: '/doctor/appointments', label: 'Appointments', icon: 'calendar' },
     { href: '/doctor/prescriptions', label: 'Prescriptions', icon: 'pills' },
     { href: '/doctor/beds', label: 'Beds', icon: 'bed' },
-    // { href: '/doctor/rooms', label: 'Rooms', icon: 'door-open' },
+    { href: '/doctor/rooms', label: 'Rooms', icon: 'door-open' },
+    { href: '/doctor/schedule', label: 'Schedule', icon: 'calendar' },
+    { href: '/doctor/medical-records', label: 'Medical Records', icon: 'file-text' },
   ];
   
   const pharmacistLinks = [
@@ -42,6 +42,10 @@ export default function Sidebar({ userType, userName = 'User', userImage, onImag
     { href: '/pharmacist/medicines', label: 'Medicines', icon: 'capsules' },
     { href: '/pharmacist/companies', label: 'Companies', icon: 'building' },
     { href: '/pharmacist/distributors', label: 'Distributors', icon: 'truck' },
+    { href: '/pharmacist/inventory', label: 'Inventory', icon: 'box' },
+    { href: '/pharmacist/analytics', label: 'Analytics', icon: 'chart-bar' },
+    { href: '/pharmacist/orders', label: 'Orders', icon: 'shopping-cart' },
+    { href: '/pharmacist/prescriptions', label: 'Prescriptions', icon: 'file-text' },
   ];
   
   const receptionistLinks = [
@@ -135,6 +139,30 @@ export default function Sidebar({ userType, userName = 'User', userImage, onImag
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
           </svg>
         );
+      case 'file-text':
+        return (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        );
+      case 'box':
+        return (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+          </svg>
+        );
+      case 'chart-bar':
+        return (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+        );
+      case 'shopping-cart':
+        return (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+          </svg>
+        );
       default:
         return (
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -145,17 +173,19 @@ export default function Sidebar({ userType, userName = 'User', userImage, onImag
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <Link href={`/${userType}`} className="px-4 py-6 flex items-center border-b border-indigo-700 hover:bg-indigo-800 transition-colors">
-        <div className="relative h-10 w-10 mr-3">
+    <div className="flex flex-col h-full bg-indigo-800">
+      {/* Logo Section */}
+      <Link href={`/${userType}`} className="px-4 py-6 flex items-center border-b border-indigo-700 hover:bg-indigo-700 transition-colors">
+        <div className="relative h-10 w-10 mr-3 flex-shrink-0">
           <Image src="/logo.svg" alt="ClinixPro Logo" fill className="rounded-lg" />
         </div>
-        <div>
-          <h1 className="text-white text-lg font-bold">ClinixPro</h1>
-          <p className="text-indigo-200 text-xs">{userType.charAt(0).toUpperCase() + userType.slice(1)} Portal</p>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-white text-lg font-bold truncate">ClinixPro</h1>
+          <p className="text-indigo-200 text-xs truncate">{userType.charAt(0).toUpperCase() + userType.slice(1)} Portal</p>
         </div>
       </Link>
       
+      {/* Navigation Links */}
       <div className="flex-1 overflow-y-auto py-4">
         <nav className="px-2 space-y-1">
           {links[userType].map((link) => {
@@ -164,58 +194,32 @@ export default function Sidebar({ userType, userName = 'User', userImage, onImag
               <Link
                 key={link.href}
                 href={link.href}
-                className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
+                className={`group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                   isActive
-                    ? 'bg-indigo-900 text-white'
-                    : 'text-indigo-100 hover:bg-indigo-700'
+                    ? 'bg-indigo-900 text-white shadow-sm'
+                    : 'text-indigo-100 hover:bg-indigo-700 hover:text-white'
                 }`}
               >
-                <div className={`mr-3 ${isActive ? 'text-white' : 'text-indigo-300 group-hover:text-white'}`}>
+                <div className={`mr-3 flex-shrink-0 ${isActive ? 'text-white' : 'text-indigo-300 group-hover:text-white'}`}>
                   {renderIcon(link.icon)}
                 </div>
-                {link.label}
+                <span className="truncate">{link.label}</span>
               </Link>
             );
           })}
         </nav>
       </div>
       
+      {/* Bottom Section */}
       <div className="p-4 border-t border-indigo-700">
-        {/* <div className="flex items-center mb-4">
-          <div className="relative h-12 w-12 mr-3">
-            {userImage ? (
-              <Image src={userImage} alt="Profile" fill className="rounded-full object-cover" />
-            ) : (
-              <div className="h-full w-full rounded-full bg-indigo-600 flex items-center justify-center text-white text-lg font-bold">
-                {userName.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <label className="absolute bottom-0 right-0 bg-indigo-500 rounded-full p-1 cursor-pointer hover:bg-indigo-600 transition-colors">
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
-              />
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              </svg>
-            </label>
-          </div>
-          <div>
-            <p className="text-white font-medium">{userName}</p>
-            <p className="text-indigo-200 text-xs">{userType.charAt(0).toUpperCase() + userType.slice(1)}</p>
-          </div>
-        </div> */}
         <Link
           href="/login"
-          className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-indigo-100 hover:bg-indigo-700 transition-colors"
+          className="flex items-center px-3 py-3 text-sm font-medium rounded-lg text-indigo-100 hover:bg-indigo-700 hover:text-white transition-all duration-200"
         >
-          <svg className="mr-3 h-5 w-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="mr-3 h-5 w-5 text-indigo-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
           </svg>
-          Logout
+          <span className="truncate">Logout</span>
         </Link>
       </div>
     </div>
