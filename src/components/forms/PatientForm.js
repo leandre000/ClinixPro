@@ -2,11 +2,8 @@ import { useState, useEffect } from "react";
 import ReceptionistService from "../../services/receptionist.service";
 import AdminService from "../../services/admin.service";
 import { formatDateForBackend } from "../../utils/dateUtils";
-import {
-  formatApiError,
-  validateForm,
-  validationRules,
-} from "../../utils/errorHandler";
+import ErrorModal from "../ErrorModal";
+import { validateForm, patientFormRules } from "../../utils/formValidation";
 
 const PatientForm = ({
   patient = null,
@@ -38,6 +35,8 @@ const PatientForm = ({
   const [isEdit, setIsEdit] = useState(false);
   const [doctors, setDoctors] = useState([]);
   const [loadingDoctors, setLoadingDoctors] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -100,15 +99,18 @@ const PatientForm = ({
   };
 
   const validate = () => {
-    const rules = {
-      firstName: validationRules.required,
-      lastName: validationRules.required,
-      phoneNumber: validationRules.required,
-      dateOfBirth: validationRules.required,
-      email: (value) => (value ? validationRules.email(value) : null),
-    };
-
-    const newErrors = validateForm(formData, rules);
+    const newErrors = validateForm(formData, patientFormRules);
+    
+    // Additional custom validations
+    if (formData.dateOfBirth) {
+      const birthDate = new Date(formData.dateOfBirth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      if (age > 120) {
+        newErrors.dateOfBirth = "Please enter a valid date of birth";
+      }
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -172,28 +174,20 @@ const PatientForm = ({
     } catch (err) {
       console.error("Error saving patient:", err);
 
+      let errorMsg = `Failed to ${isEdit ? "update" : "register"} patient. Please try again.`;
+      
+      if (err.response && err.response.data && err.response.data.message) {
+        errorMsg = err.response.data.message;
+      } else if (err.message) {
+        errorMsg = err.message;
+      }
+      
+      setErrorMessage(errorMsg);
+      setShowErrorModal(true);
+      
       if (onError && typeof onError === "function") {
         onError(err);
       }
-
-      setErrors((prev) => {
-        const errorMessage = formatApiError(
-          err,
-          `Failed to ${
-            isEdit ? "update" : "register"
-          } patient. Please try again.`
-        );
-
-        return {
-          ...prev,
-          form:
-            typeof errorMessage === "string"
-              ? errorMessage
-              : `Failed to ${
-                  isEdit ? "update" : "register"
-                } patient. Please try again.`,
-        };
-      });
     } finally {
       setLoading(false);
     }
@@ -483,6 +477,16 @@ const PatientForm = ({
           </button>
         </div>
       </form>
+      
+      <ErrorModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Error Saving Patient"
+        message={errorMessage}
+        type="error"
+        showRetry={true}
+        onRetry={() => setShowErrorModal(false)}
+      />
     </div>
   );
 };

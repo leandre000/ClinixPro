@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import DataService from "../../services/data.service";
 import ReceptionistService from "../../services/receptionist.service";
+import ErrorModal from "../ErrorModal";
+import { validateForm, appointmentFormRules } from "../../utils/formValidation";
 
 const AppointmentForm = ({ appointment = null, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -20,6 +22,8 @@ const AppointmentForm = ({ appointment = null, onSuccess, onCancel }) => {
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,17 +87,17 @@ const AppointmentForm = ({ appointment = null, onSuccess, onCancel }) => {
   };
 
   const validate = () => {
-    const newErrors = {};
-
-    if (!formData.patientId) newErrors.patientId = "Patient is required";
-    if (!formData.doctorId) newErrors.doctorId = "Doctor is required";
-    if (!formData.appointmentDate)
-      newErrors.appointmentDate = "Appointment date is required";
-    if (!formData.appointmentTime)
-      newErrors.appointmentTime = "Appointment time is required";
-    if (!formData.reason.trim())
-      newErrors.reason = "Reason for appointment is required";
-
+    const newErrors = validateForm(formData, appointmentFormRules);
+    
+    // Additional custom validations
+    if (formData.appointmentDate && formData.appointmentTime) {
+      const appointmentDateTime = new Date(`${formData.appointmentDate}T${formData.appointmentTime}`);
+      const now = new Date();
+      if (appointmentDateTime < now) {
+        newErrors.appointmentDate = "Appointment cannot be scheduled in the past";
+      }
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -136,18 +140,16 @@ const AppointmentForm = ({ appointment = null, onSuccess, onCancel }) => {
     } catch (err) {
       console.error("Error saving appointment:", err);
 
-      // Handle specific error messages from the API
+      let errorMsg = "An error occurred while saving the appointment. Please try again.";
+      
       if (err.response && err.response.data && err.response.data.message) {
-        setErrors((prev) => ({
-          ...prev,
-          form: err.response.data.message,
-        }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          form: "An error occurred while saving the appointment. Please try again.",
-        }));
+        errorMsg = err.response.data.message;
+      } else if (err.message) {
+        errorMsg = err.message;
       }
+      
+      setErrorMessage(errorMsg);
+      setShowErrorModal(true);
     } finally {
       setLoading(false);
     }
@@ -359,6 +361,16 @@ const AppointmentForm = ({ appointment = null, onSuccess, onCancel }) => {
           </button>
         </div>
       </form>
+      
+      <ErrorModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Error Saving Appointment"
+        message={errorMessage}
+        type="error"
+        showRetry={true}
+        onRetry={() => setShowErrorModal(false)}
+      />
     </div>
   );
 };

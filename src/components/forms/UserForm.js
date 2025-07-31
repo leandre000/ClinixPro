@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import DataService from "../../services/data.service";
 import AdminService from "../../services/admin.service";
+import ErrorModal from "../ErrorModal";
+import { validateForm, userFormRules } from "../../utils/formValidation";
 
 const UserForm = ({ user = null, role = null, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -31,6 +33,8 @@ const UserForm = ({ user = null, role = null, onSuccess, onCancel }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     // Fetch available roles
@@ -97,33 +101,34 @@ const UserForm = ({ user = null, role = null, onSuccess, onCancel }) => {
   };
 
   const validate = () => {
-    const newErrors = {};
-
-    if (!formData.firstName.trim())
-      newErrors.firstName = "First name is required";
-    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    if (!isEdit && !formData.password)
-      newErrors.password = "Password is required";
-    if (!isEdit && formData.password !== formData.confirmPassword) {
+    const newErrors = validateForm(formData, userFormRules);
+    
+    // Additional custom validations
+    if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
-    if (!formData.role) newErrors.role = "Role is required";
-    if (!formData.phoneNumber.trim())
-      newErrors.phoneNumber = "Phone number is required";
-
-    if (formData.role === "DOCTOR" && !formData.specialization.trim()) {
+    
+    if (formData.role === "DOCTOR" && !formData.specialization) {
       newErrors.specialization = "Specialization is required for doctors";
     }
-
-    if (
-      (formData.role === "DOCTOR" || formData.role === "PHARMACIST") &&
-      !formData.licenseNumber.trim()
-    ) {
-      newErrors.licenseNumber = "License number is required";
+    
+    if ((formData.role === "DOCTOR" || formData.role === "PHARMACIST") && !formData.licenseNumber) {
+      newErrors.licenseNumber = "License number is required for doctors and pharmacists";
     }
+    
+    return newErrors;
+  };
 
-    if (formData.role === "PHARMACIST" && !formData.qualification.trim()) {
+    // Additional custom validations for edit mode
+    if (isEdit && formData.password && formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+    
+    if (!isEdit && !formData.password) {
+      newErrors.password = "Password is required";
+    }
+    
+    if (formData.role === "PHARMACIST" && !formData.qualification) {
       newErrors.qualification = "Qualification is required for pharmacists";
     }
 
@@ -164,17 +169,16 @@ const UserForm = ({ user = null, role = null, onSuccess, onCancel }) => {
       console.error("Error saving user:", err);
 
       // Handle specific error messages from the API
+      let errorMsg = "An error occurred while saving the user. Please try again.";
+      
       if (err.response && err.response.data && err.response.data.message) {
-        setErrors((prev) => ({
-          ...prev,
-          form: err.response.data.message,
-        }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          form: "An error occurred while saving the user. Please try again.",
-        }));
+        errorMsg = err.response.data.message;
+      } else if (err.message) {
+        errorMsg = err.message;
       }
+      
+      setErrorMessage(errorMsg);
+      setShowErrorModal(true);
     } finally {
       setLoading(false);
     }
@@ -592,6 +596,16 @@ const UserForm = ({ user = null, role = null, onSuccess, onCancel }) => {
           </button>
         </div>
       </form>
+      
+      <ErrorModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Error Saving User"
+        message={errorMessage}
+        type="error"
+        showRetry={true}
+        onRetry={() => setShowErrorModal(false)}
+      />
     </div>
   );
 };

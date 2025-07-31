@@ -277,7 +277,14 @@ export default function AdminDashboard() {
       case 'add-medicine':
         router.push('/admin/medicines/add');
         break;
+      case 'view-reports':
+        router.push('/admin/reports');
+        break;
+      case 'manage-settings':
+        router.push('/admin/settings');
+        break;
       default:
+        console.log('Unknown action:', action);
         break;
     }
   };
@@ -526,35 +533,49 @@ export default function AdminDashboard() {
             {/* Quick Actions */}
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           <button 
             onClick={() => handleQuickAction('add-staff')}
             className="flex flex-col items-center justify-center p-6 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-blue-200"
           >
             <FaPlus className="text-2xl text-blue-600 mb-2" />
             <span className="text-blue-600 font-bold text-base">Add Staff</span>
-                </button>
+          </button>
           <button 
             onClick={() => handleQuickAction('add-patient')}
             className="flex flex-col items-center justify-center p-6 bg-green-50 hover:bg-green-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-green-200"
           >
             <FaHospital className="text-2xl text-green-600 mb-2" />
             <span className="text-green-600 font-bold text-base">Add Patient</span>
-                </button>
+          </button>
           <button 
             onClick={() => handleQuickAction('schedule-appointment')}
             className="flex flex-col items-center justify-center p-6 bg-purple-50 hover:bg-purple-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-purple-200"
           >
             <FaCalendarAlt className="text-2xl text-purple-600 mb-2" />
             <span className="text-purple-600 font-bold text-base">Schedule Appointment</span>
-                </button>
+          </button>
           <button 
             onClick={() => handleQuickAction('add-medicine')}
             className="flex flex-col items-center justify-center p-6 bg-orange-50 hover:bg-orange-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-orange-200"
           >
             <FaPills className="text-2xl text-orange-600 mb-2" />
             <span className="text-orange-600 font-bold text-base">Add Medicine</span>
-                </button>
+          </button>
+          <button 
+            onClick={() => handleQuickAction('view-reports')}
+            className="flex flex-col items-center justify-center p-6 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-indigo-200"
+          >
+            <FaChartBar className="text-2xl text-indigo-600 mb-2" />
+            <span className="text-indigo-600 font-bold text-base">View Reports</span>
+          </button>
+          <button 
+            onClick={() => handleQuickAction('manage-settings')}
+            className="flex flex-col items-center justify-center p-6 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-gray-200"
+          >
+            <FaCog className="text-2xl text-gray-600 mb-2" />
+            <span className="text-gray-600 font-bold text-base">Settings</span>
+          </button>
         </div>
       </div>
 

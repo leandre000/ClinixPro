@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import PharmacistService from "../../services/pharmacist.service";
+import ErrorModal from "../ErrorModal";
+import { validateForm, medicineFormRules } from "../../utils/formValidation";
 
 const MedicineForm = ({ onSuccess, onCancel, medicine = null }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [companies, setCompanies] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     name: "",
@@ -76,13 +81,10 @@ const MedicineForm = ({ onSuccess, onCancel, medicine = null }) => {
 
     try {
       // Validate form
-      if (
-        !formData.name ||
-        !formData.companyId ||
-        !formData.price ||
-        !formData.stock
-      ) {
-        throw new Error("Please fill all required fields");
+      const validationErrors = validateForm(formData, medicineFormRules);
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        throw new Error("Please fix the validation errors");
       }
 
       // Format data
@@ -109,7 +111,8 @@ const MedicineForm = ({ onSuccess, onCancel, medicine = null }) => {
       }
     } catch (err) {
       console.error("Failed to save medicine:", err);
-      setError(err.message || "Failed to save medicine. Please try again.");
+      setErrorMessage(err.message || "Failed to save medicine. Please try again.");
+      setShowErrorModal(true);
     } finally {
       setLoading(false);
     }
@@ -357,6 +360,16 @@ const MedicineForm = ({ onSuccess, onCancel, medicine = null }) => {
           </button>
         </div>
       </form>
+      
+      <ErrorModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Error Saving Medicine"
+        message={errorMessage}
+        type="error"
+        showRetry={true}
+        onRetry={() => setShowErrorModal(false)}
+      />
     </div>
   );
 };
