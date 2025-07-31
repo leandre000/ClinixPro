@@ -222,15 +222,21 @@ export default function Sidebar({ userType, userName = 'User', userImage, onImag
       
       {/* Bottom Section */}
       <div className="p-6 border-t border-indigo-700">
-        <Link
-          href="/login"
-          className="flex items-center px-4 py-4 text-base font-semibold rounded-xl text-indigo-100 hover:bg-indigo-700 hover:text-white transition-all duration-200"
+        <button
+          onClick={() => {
+            if (confirm("Are you sure you want to logout? You will need to sign in again to access your account.")) {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "/login";
+            }
+          }}
+          className="w-full flex items-center px-4 py-4 text-base font-semibold rounded-xl text-indigo-100 hover:bg-indigo-700 hover:text-white transition-all duration-200"
         >
           <svg className="mr-4 h-6 w-6 text-indigo-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
           </svg>
           <span className="truncate font-medium">Logout</span>
-        </Link>
+        </button>
       </div>
     </div>
   );

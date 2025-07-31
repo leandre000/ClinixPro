@@ -89,8 +89,8 @@ export default function AdminDashboard() {
         
         // Try to fetch dashboard stats
         try {
-          const dashboardStats = await DataService.getDashboardStats();
-          setStats(dashboardStats);
+        const dashboardStats = await DataService.getDashboardStats();
+        setStats(dashboardStats);
         } catch (err) {
           console.log('Using fallback dashboard stats');
           // Use fallback data if API fails
@@ -106,8 +106,8 @@ export default function AdminDashboard() {
 
         // Try to fetch staff data
         try {
-          const staffData = await AdminService.getUsers({ active: true });
-          setRecentStaff(staffData.slice(0, 5));
+        const staffData = await AdminService.getUsers({ active: true });
+        setRecentStaff(staffData.slice(0, 5));
         } catch (err) {
           console.log('Using fallback staff data');
           // Use fallback staff data
@@ -357,7 +357,7 @@ export default function AdminDashboard() {
     return (
       <DashboardLayout userType="admin" title="Dashboard">
         <div className="flex items-center justify-center h-64">
-          <div className="text-center">
+        <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent mx-auto"></div>
             <p className="mt-4 text-gray-700 text-lg font-semibold">Loading Your Dashboard...</p>
             <p className="mt-2 text-gray-500">Please wait while we prepare everything for you</p>
@@ -372,66 +372,66 @@ export default function AdminDashboard() {
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, Administrator!</h2>
         <p className="text-lg text-gray-600">Here's what's happening with your hospital today.</p>
-      </div>
+            </div>
 
-      {/* Stats Grid */}
+            {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {statCards.map((stat, index) => (
+              {statCards.map((stat, index) => (
           <div key={index} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
-            <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-4">
               <div className={`p-3 rounded-lg ${stat.color} text-white shadow-lg`}>
-                {stat.icon}
-              </div>
-              <div className="text-right">
+                      {stat.icon}
+                    </div>
+                    <div className="text-right">
                 <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                <p className="text-sm text-gray-500">{stat.description}</p>
-              </div>
-            </div>
+                      <p className="text-sm text-gray-500">{stat.description}</p>
+                    </div>
+                  </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">{stat.title}</h3>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className={`h-2 rounded-full ${stat.color.replace('bg-gradient-to-br', 'bg')}`} style={{width: `${Math.min((stat.value / 10) * 100, 100)}%`}}></div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className={`h-2 rounded-full ${stat.color.replace('bg-gradient-to-br', 'bg')}`} style={{width: `${Math.min((stat.value / 10) * 100, 100)}%`}}></div>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Recent Staff and Appointments */}
+            {/* Recent Staff and Appointments */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        {/* Recent Staff */}
+              {/* Recent Staff */}
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
           <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
+                  <div className="flex items-center justify-between">
+                    <div>
                 <h3 className="text-xl font-bold text-gray-900">Recent Staff</h3>
-                <p className="text-gray-600">Latest registered team members</p>
-              </div>
+                      <p className="text-gray-600">Latest registered team members</p>
+                    </div>
               <button 
                 onClick={() => router.push('/admin/staff')}
                 className="text-indigo-600 hover:text-indigo-700 font-semibold text-base"
               >
-                View All
-              </button>
-            </div>
-          </div>
+                      View All
+                    </button>
+                  </div>
+                </div>
           <div className="p-6">
-            {recentStaff.length > 0 ? (
+                  {recentStaff.length > 0 ? (
               <div className="space-y-4">
-                {recentStaff.map((staff) => (
+                      {recentStaff.map((staff) => (
                   <div key={staff.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        {getRoleIcon(staff.role)}
-                      </div>
-                      <div>
+                              {getRoleIcon(staff.role)}
+                            </div>
+                            <div>
                         <p className="font-bold text-gray-900 text-base">
-                          {staff.firstName} {staff.lastName}
-                        </p>
+                                {staff.firstName} {staff.lastName}
+                              </p>
                         <p className="text-gray-600 text-sm">{staff.email}</p>
                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold border ${getRoleColor(staff.role)}`}>
-                          {staff.role}
-                        </span>
-                      </div>
-                    </div>
+                                {staff.role}
+                              </span>
+                            </div>
+                          </div>
                     <div className="flex items-center space-x-2">
                       <button 
                         onClick={() => router.push(`/admin/staff/${staff.id}`)}
@@ -439,91 +439,91 @@ export default function AdminDashboard() {
                         title="Edit Staff"
                       >
                         <FaEdit size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteStaff(staff.id)}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            </button>
+                            <button
+                              onClick={() => handleDeleteStaff(staff.id)}
+                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Delete Staff"
-                      >
+                            >
                         <FaTrash size={16} />
-                      </button>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
+                  ) : (
               <div className="text-center py-8">
                 <FaUsers className="mx-auto h-12 w-12 text-gray-400 mb-3" />
                 <p className="text-lg text-gray-600 font-semibold">No staff members found</p>
-                <p className="text-gray-500">Add your first team member to get started</p>
+                      <p className="text-gray-500">Add your first team member to get started</p>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-        </div>
 
-        {/* Recent Appointments */}
+              {/* Recent Appointments */}
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
           <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
+                  <div className="flex items-center justify-between">
+                    <div>
                 <h3 className="text-xl font-bold text-gray-900">Recent Appointments</h3>
-                <p className="text-gray-600">Latest scheduled visits</p>
-              </div>
+                      <p className="text-gray-600">Latest scheduled visits</p>
+                    </div>
               <button 
                 onClick={() => router.push('/admin/appointments')}
                 className="text-indigo-600 hover:text-indigo-700 font-semibold text-base"
               >
-                View All
-              </button>
-            </div>
-          </div>
+                      View All
+                    </button>
+                  </div>
+                </div>
           <div className="p-6">
-            {appointments.length > 0 ? (
+                  {appointments.length > 0 ? (
               <div className="space-y-4">
-                {appointments.map((appointment) => (
+                      {appointments.map((appointment) => (
                   <div key={appointment.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                         <FaCalendarAlt className="text-green-600 text-xl" />
-                      </div>
-                      <div>
+                            </div>
+                            <div>
                         <p className="font-bold text-gray-900 text-base">{appointment.patientName || 'Patient Name'}</p>
                         <p className="text-gray-600 text-sm">{appointment.doctorName || 'Doctor Name'}</p>
                         <div className="flex items-center space-x-2 mt-1">
                           <FaClock className="text-gray-400 text-sm" />
                           <span className="text-sm text-gray-600">
-                            {appointment.appointmentDate || 'Date'} at {appointment.appointmentTime || 'Time'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+                                  {appointment.appointmentDate || 'Date'} at {appointment.appointmentTime || 'Time'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
                     <div className="flex items-center space-x-2">
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
-                        Scheduled
-                      </span>
+                              Scheduled
+                            </span>
                       <button 
                         onClick={() => router.push(`/admin/appointments/${appointment.id}`)}
                         className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                         title="View Appointment"
                       >
                         <FaEye size={16} />
-                      </button>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
+                  ) : (
               <div className="text-center py-8">
                 <FaCalendarAlt className="mx-auto h-12 w-12 text-gray-400 mb-3" />
                 <p className="text-lg text-gray-600 font-semibold">No appointments found</p>
-                <p className="text-gray-500">Schedule appointments to see them here</p>
+                      <p className="text-gray-500">Schedule appointments to see them here</p>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-        </div>
-      </div>
+            </div>
 
-      {/* Quick Actions */}
+            {/* Quick Actions */}
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -533,28 +533,28 @@ export default function AdminDashboard() {
           >
             <FaPlus className="text-2xl text-blue-600 mb-2" />
             <span className="text-blue-600 font-bold text-base">Add Staff</span>
-          </button>
+                </button>
           <button 
             onClick={() => handleQuickAction('add-patient')}
             className="flex flex-col items-center justify-center p-6 bg-green-50 hover:bg-green-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-green-200"
           >
             <FaHospital className="text-2xl text-green-600 mb-2" />
             <span className="text-green-600 font-bold text-base">Add Patient</span>
-          </button>
+                </button>
           <button 
             onClick={() => handleQuickAction('schedule-appointment')}
             className="flex flex-col items-center justify-center p-6 bg-purple-50 hover:bg-purple-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-purple-200"
           >
             <FaCalendarAlt className="text-2xl text-purple-600 mb-2" />
             <span className="text-purple-600 font-bold text-base">Schedule Appointment</span>
-          </button>
+                </button>
           <button 
             onClick={() => handleQuickAction('add-medicine')}
             className="flex flex-col items-center justify-center p-6 bg-orange-50 hover:bg-orange-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-orange-200"
           >
             <FaPills className="text-2xl text-orange-600 mb-2" />
             <span className="text-orange-600 font-bold text-base">Add Medicine</span>
-          </button>
+                </button>
         </div>
       </div>
 
@@ -589,9 +589,9 @@ export default function AdminDashboard() {
               >
                 Logout
               </button>
-            </div>
-          </div>
         </div>
+      </div>
+    </div>
       )}
     </DashboardLayout>
   );
