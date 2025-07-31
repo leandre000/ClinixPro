@@ -29,8 +29,9 @@ public class DataInitializationService {
         admin.setUserId("ADM-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         admin.setFirstName("Admin");
         admin.setLastName("User");
-        admin.setEmail("admin@hospital.com");
+        admin.setEmail("admin@clinixpro.com");
         admin.setPassword("admin123");
+        admin.setRole("ADMIN");
         admin.setPhoneNumber("1234567890");
         admin.setAddress("123 Admin St, Hospital City");
         admin.setGender("Male");

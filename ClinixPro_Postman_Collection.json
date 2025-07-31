@@ -1,0 +1,121 @@
+{
+	"info": {
+		"name": "ClinixPro - Hospital Management System",
+		"description": "Complete API collection for ClinixPro Hospital Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "🔐 Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"email\": \"admin@clinixpro.com\", \"password\": \"password\"}"},
+						"url": {"raw": "{{baseUrl}}/api/auth/login"}
+					}
+				},
+				{
+					"name": "Verify Token",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": {"raw": "{{baseUrl}}/api/auth/verify"}
+					}
+				}
+			]
+		},
+		{
+			"name": "👨‍⚕️ Admin",
+			"item": [
+				{
+					"name": "Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": {"raw": "{{baseUrl}}/api/admin/dashboard"}
+					}
+				},
+				{
+					"name": "Get Users",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": {"raw": "{{baseUrl}}/api/admin/users"}
+					}
+				}
+			]
+		},
+		{
+			"name": "💊 Pharmacist",
+			"item": [
+				{
+					"name": "Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": {"raw": "{{baseUrl}}/api/pharmacist/dashboard"}
+					}
+				},
+				{
+					"name": "Get Medicines",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": {"raw": "{{baseUrl}}/api/pharmacist/medicines"}
+					}
+				},
+				{
+					"name": "Low Stock Medicines",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": {"raw": "{{baseUrl}}/api/pharmacist/medicines/low-stock"}
+					}
+				},
+				{
+					"name": "Expired Medicines",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": {"raw": "{{baseUrl}}/api/pharmacist/medicines/expired"}
+					}
+				},
+				{
+					"name": "Inventory Summary",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": {"raw": "{{baseUrl}}/api/pharmacist/inventory"}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{"key": "baseUrl", "value": "http://localhost:8080"},
+		{"key": "token", "value": "your-jwt-token-here"}
+	]
+} 
