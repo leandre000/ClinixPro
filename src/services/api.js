@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Configure API URL based on environment - use proxy through Next.js to avoid CORS issues
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
 console.log("API URL:", API_URL);
 
@@ -23,7 +23,7 @@ api.pingServer = async () => {
       `${API_URL}/health`,
       `${API_URL}/doctor/dashboard`, // Doctor dashboard is more likely to exist
       `${API_URL}/doctor/rooms`, // This endpoint should exist in our application
-      `${API_URL}/login`, // Login endpoint is usually available
+      `${API_URL}/auth/login`, // Login endpoint is usually available
     ];
 
     const startTime = Date.now();
