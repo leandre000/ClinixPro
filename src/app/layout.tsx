@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,12 +12,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "ClinixPro - Hospital Management System",
   description: "Modern healthcare management solution for hospitals and clinics nationwide",
   manifest: "/manifest.json",
   themeColor: "#2563eb",
-  viewport: "width=device-width, initial-scale=1",
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
