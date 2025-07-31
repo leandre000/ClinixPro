@@ -4,6 +4,7 @@ import com.hospital.pharmacy.model.User;
 import com.hospital.pharmacy.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,8 @@ public class DataInitializationService {
 
     @Autowired
     private UserRepository userRepository;
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @PostConstruct
     public void initData() {
@@ -30,7 +33,7 @@ public class DataInitializationService {
         admin.setFirstName("Admin");
         admin.setLastName("User");
         admin.setEmail("admin@clinixpro.com");
-        admin.setPassword("admin123");
+        admin.setPassword(passwordEncoder.encode("admin123"));
         admin.setRole("ADMIN");
         admin.setPhoneNumber("1234567890");
         admin.setAddress("123 Admin St, Hospital City");
@@ -45,8 +48,8 @@ public class DataInitializationService {
         doctor.setUserId("DOC-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         doctor.setFirstName("John");
         doctor.setLastName("Smith");
-        doctor.setEmail("doctor@hospital.com");
-        doctor.setPassword("doctor123");
+        doctor.setEmail("doctor@clinixpro.com");
+        doctor.setPassword(passwordEncoder.encode("doctor123"));
         doctor.setRole("DOCTOR");
         doctor.setPhoneNumber("1234567891");
         doctor.setAddress("456 Doctor Ave, Hospital City");
@@ -63,8 +66,8 @@ public class DataInitializationService {
         pharmacist.setUserId("PHM-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         pharmacist.setFirstName("Emily");
         pharmacist.setLastName("Johnson");
-        pharmacist.setEmail("pharmacist@hospital.com");
-        pharmacist.setPassword("pharmacist123");
+        pharmacist.setEmail("pharmacist@clinixpro.com");
+        pharmacist.setPassword(passwordEncoder.encode("pharmacist123"));
         pharmacist.setRole("PHARMACIST");
         pharmacist.setPhoneNumber("1234567892");
         pharmacist.setAddress("789 Pharma Blvd, Hospital City");
@@ -80,8 +83,8 @@ public class DataInitializationService {
         receptionist.setUserId("RCP-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         receptionist.setFirstName("Sarah");
         receptionist.setLastName("Williams");
-        receptionist.setEmail("receptionist@hospital.com");
-        receptionist.setPassword("receptionist123");
+        receptionist.setEmail("receptionist@clinixpro.com");
+        receptionist.setPassword(passwordEncoder.encode("receptionist123"));
         receptionist.setRole("RECEPTIONIST");
         receptionist.setPhoneNumber("1234567893");
         receptionist.setAddress("101 Front Desk Rd, Hospital City");
