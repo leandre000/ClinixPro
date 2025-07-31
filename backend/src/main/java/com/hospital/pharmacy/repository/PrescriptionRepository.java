@@ -27,6 +27,9 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
 
     List<Prescription> findByStatus(String status);
 
+    // Count prescriptions by status
+    long countByStatus(String status);
+
     @Query("SELECT p FROM Prescription p WHERE " +
             "(:status IS NULL OR p.status = :status) AND " +
             "(:doctorId IS NULL OR p.doctor.id = :doctorId) AND " +

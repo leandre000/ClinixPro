@@ -7,7 +7,6 @@ import com.hospital.pharmacy.model.Company;
 import com.hospital.pharmacy.model.Distributor;
 import com.hospital.pharmacy.model.Medicine;
 import com.hospital.pharmacy.model.Prescription;
-import com.hospital.pharmacy.model.User;
 import com.hospital.pharmacy.repository.CompanyRepository;
 import com.hospital.pharmacy.repository.DistributorRepository;
 import com.hospital.pharmacy.repository.MedicineRepository;
@@ -15,7 +14,6 @@ import com.hospital.pharmacy.repository.PrescriptionRepository;
 import com.hospital.pharmacy.service.CompanyService;
 import com.hospital.pharmacy.service.DistributorService;
 import com.hospital.pharmacy.service.MedicineService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,15 +58,13 @@ public class PharmacistController {
     // Pharmacist Dashboard Statistics
     @GetMapping("/dashboard")
     public ResponseEntity<?> getPharmacistDashboard(Authentication authentication) {
-        User pharmacist = (User) authentication.getPrincipal();
-
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalMedicines", medicineRepository.count());
-        stats.put("lowStockMedicines", medicineRepository.findByStockStatus("Low").size() +
-                medicineRepository.findByStockStatus("Critical").size());
         stats.put("totalCompanies", companyRepository.count());
         stats.put("totalDistributors", distributorRepository.count());
-        stats.put("pendingPrescriptions", prescriptionRepository.findByStatus("ACTIVE").size());
+        stats.put("activePrescriptions", prescriptionRepository.countByStatus("ACTIVE"));
+        stats.put("completedPrescriptions", prescriptionRepository.countByStatus("COMPLETED"));
+        stats.put("lowStockMedicines", medicineService.getLowStatusMedicines().size());
 
         return ResponseEntity.ok(stats);
     }
@@ -122,7 +119,7 @@ public class PharmacistController {
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String name) {
 
-        List<Company> companies = companyRepository.findWithFilters(name, status);
+        List<Company> companies = companyService.findAllCompanies();
         return ResponseEntity.ok(companies);
     }
 
@@ -192,11 +189,81 @@ public class PharmacistController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Get low stock medicines
     @GetMapping("/medicines/low-stock")
     public ResponseEntity<?> getLowStockMedicines() {
-        List<Medicine> medicines = medicineService.getLowStatusMedicines();
+        List<MedicineDTO> medicines = medicineService.getLowStatusMedicines();
         logger.info("this is the low_Stock medicine " + medicines);
         return ResponseEntity.ok(medicines);
+    }
+
+    // Get expired medicines
+    @GetMapping("/medicines/expired")
+    public ResponseEntity<?> getExpiredMedicines() {
+        List<MedicineDTO> medicines = medicineService.getExpiredMedicines();
+        return ResponseEntity.ok(medicines);
+    }
+
+    // Get medicine categories
+    @GetMapping("/medicine-categories")
+    public ResponseEntity<?> getMedicineCategories() {
+        List<String> categories = medicineService.getAllCategories();
+        return ResponseEntity.ok(categories);
+    }
+
+    // Get inventory summary
+    @GetMapping("/inventory")
+    public ResponseEntity<?> getInventorySummary() {
+        Map<String, Object> inventory = new HashMap<>();
+        inventory.put("totalMedicines", medicineRepository.count());
+        inventory.put("lowStockCount", medicineService.getLowStatusMedicines().size());
+        inventory.put("expiredCount", medicineService.getExpiredMedicines().size());
+        inventory.put("categories", medicineService.getAllCategories());
+        return ResponseEntity.ok(inventory);
+    }
+
+    // Get reports
+    @GetMapping("/reports")
+    public ResponseEntity<?> getReports(
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        
+        Map<String, Object> reports = new HashMap<>();
+        
+        if ("inventory".equals(type)) {
+            reports.put("lowStock", medicineService.getLowStatusMedicines());
+            reports.put("expired", medicineService.getExpiredMedicines());
+        } else if ("prescriptions".equals(type)) {
+            reports.put("active", prescriptionRepository.findByStatus("ACTIVE"));
+            reports.put("completed", prescriptionRepository.findByStatus("COMPLETED"));
+        } else {
+            // Default report with all data
+            reports.put("inventory", Map.of(
+                "lowStock", medicineService.getLowStatusMedicines(),
+                "expired", medicineService.getExpiredMedicines()
+            ));
+            reports.put("prescriptions", Map.of(
+                "active", prescriptionRepository.findByStatus("ACTIVE"),
+                "completed", prescriptionRepository.findByStatus("COMPLETED")
+            ));
+        }
+        
+        return ResponseEntity.ok(reports);
+    }
+
+    // Get orders (placeholder - can be expanded later)
+    @GetMapping("/orders")
+    public ResponseEntity<?> getOrders() {
+        // Placeholder for orders functionality
+        return ResponseEntity.ok(Map.of("message", "Orders functionality coming soon"));
+    }
+
+    // Create order (placeholder - can be expanded later)
+    @PostMapping("/orders")
+    public ResponseEntity<?> createOrder(@RequestBody Map<String, Object> orderData) {
+        // Placeholder for order creation functionality
+        return ResponseEntity.ok(Map.of("message", "Order creation functionality coming soon"));
     }
 
     // Get active prescriptions to be filled

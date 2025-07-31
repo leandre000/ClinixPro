@@ -28,6 +28,12 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
         // Find beds by bed ID
         Bed findByBedId(String bedId);
 
+        // Count beds by status
+        long countByStatus(String status);
+
+        // Count beds by ward name
+        long countByWardName(String wardName);
+
         // Custom query to find beds with filtering
         @Query("SELECT b FROM Bed b WHERE " +
                         "(:ward IS NULL OR b.wardName = :ward) AND " +

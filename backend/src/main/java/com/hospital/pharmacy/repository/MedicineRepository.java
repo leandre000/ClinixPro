@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,8 +34,6 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
             "(:prescriptionFilter IS NULL OR " +
             "(:prescriptionFilter = 'required' AND m.requiresPrescription = true) OR " +
             "(:prescriptionFilter = 'not-required' AND m.requiresPrescription = false))")
-
-            
     List<Medicine> findWithFilters(
             @Param("category") String category,
             @Param("stockStatus") String stockStatus,
@@ -43,4 +42,8 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
     List<Medicine> findByExpiryDateBefore(java.time.LocalDate date);
 
     List<Medicine> findByStockLessThan(Integer stockThreshold);
+
+    // Find expired medicines (expiry date before today)
+    @Query("SELECT m FROM Medicine m WHERE m.expiryDate < CURRENT_DATE")
+    List<Medicine> findExpiredMedicines();
 }

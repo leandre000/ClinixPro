@@ -4,7 +4,7 @@ export const API_URL =
 
 // API endpoints
 export const API_ENDPOINTS = {
-  COMPANIES: "/api/companies",
+  COMPANIES: "/companies",
   MEDICINES: "/pharmacist/medicines",
   PRESCRIPTIONS: "/pharmacist/prescriptions",
   ORDERS: "/pharmacist/orders",
@@ -19,7 +19,7 @@ export const API_ENDPOINTS = {
 };
 
 // Other configuration constants
-export const APP_NAME = "Pharmacy Management System";
+export const APP_NAME = "ClinixPro - Hospital Management System";
 export const APP_VERSION = "1.0.0";
 
 // UI configuration

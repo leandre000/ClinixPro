@@ -27,42 +27,9 @@ public class MedicineServiceImpl implements MedicineService {
     }
 
     @Override
-    public List<MedicineDTO> getAllMedicines() {
-        return medicineRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public MedicineDTO getMedicineById(Long id) {
-        Medicine medicine = medicineRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Medicine not found with id: " + id));
-        return convertToDTO(medicine);
-    }
-
-    @Override
-    public MedicineDTO getMedicineByMedicineId(String medicineId) {
-        Medicine medicine = medicineRepository.findByMedicineId(medicineId)
-                .orElseThrow(() -> new EntityNotFoundException("Medicine not found with medicineId: " + medicineId));
-        return convertToDTO(medicine);
-    }
-
-    @Override
     @Transactional
     public MedicineDTO createMedicine(MedicineDTO medicineDTO) {
         Medicine medicine = convertToEntity(medicineDTO);
-
-        // Set stock status based on stock level
-        if (medicine.getStock() <= 10) {
-            medicine.setStockStatus("Critical");
-        } else if (medicine.getStock() <= 30) {
-            medicine.setStockStatus("Low");
-        } else if (medicine.getStock() <= 100) {
-            medicine.setStockStatus("Normal");
-        } else {
-            medicine.setStockStatus("High");
-        }
-
         Medicine savedMedicine = medicineRepository.save(medicine);
         return convertToDTO(savedMedicine);
     }
@@ -81,23 +48,13 @@ public class MedicineServiceImpl implements MedicineService {
         existingMedicine.setBatchNumber(medicineDTO.getBatchNumber());
         existingMedicine.setExpiryDate(medicineDTO.getExpiryDate());
         existingMedicine.setStock(medicineDTO.getStock());
+        existingMedicine.setStockStatus(medicineDTO.getStockStatus());
         existingMedicine.setPrice(medicineDTO.getPrice());
         existingMedicine.setRequiresPrescription(medicineDTO.isRequiresPrescription());
         existingMedicine.setDosageForm(medicineDTO.getDosageForm());
         existingMedicine.setStrength(medicineDTO.getStrength());
         existingMedicine.setInteractions(medicineDTO.getInteractions());
         existingMedicine.setSideEffects(medicineDTO.getSideEffects());
-
-        // Set stock status based on stock level
-        if (existingMedicine.getStock() <= 10) {
-            existingMedicine.setStockStatus("Critical");
-        } else if (existingMedicine.getStock() <= 30) {
-            existingMedicine.setStockStatus("Low");
-        } else if (existingMedicine.getStock() <= 100) {
-            existingMedicine.setStockStatus("Normal");
-        } else {
-            existingMedicine.setStockStatus("High");
-        }
 
         // Update company if provided
         if (medicineDTO.getCompanyId() != null) {
@@ -127,8 +84,17 @@ public class MedicineServiceImpl implements MedicineService {
     }
 
     @Override
-    public List<Medicine> getLowStatusMedicines() {
-        return medicineRepository.findByStockStatus("Low");
+    public List<MedicineDTO> getLowStatusMedicines() {
+        return medicineRepository.findByStockStatus("Low").stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MedicineDTO> getExpiredMedicines() {
+        return medicineRepository.findExpiredMedicines().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
