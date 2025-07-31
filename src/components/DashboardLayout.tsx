@@ -127,19 +127,8 @@ export default function DashboardLayout({
                 <h2 className="text-2xl font-bold text-gray-900 hidden md:block">{title}</h2>
               </div>
               
-              {/* Right section with logout and profile */}
-              <div className="flex items-center space-x-6">
-                {/* Logout button */}
-                <button 
-                  onClick={handleLogout}
-                  className="flex items-center space-x-3 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors focus:outline-none font-semibold text-base"
-                >
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  <span className="font-semibold">Logout</span>
-                </button>
-
+              {/* Right section with profile */}
+              <div className="flex items-center">
                 {/* Profile dropdown */}
                 <div className="relative">
                   <button 
