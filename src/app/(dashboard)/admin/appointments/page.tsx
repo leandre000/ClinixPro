@@ -3,93 +3,31 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { 
-  FaCalendarAlt, 
   FaSearch, 
   FaFilter, 
   FaPlus, 
   FaEye, 
   FaEdit, 
-  FaTrash,
-  FaClock,
-  FaUser,
-  FaUserMd,
-  FaHospital,
   FaCheckCircle,
   FaTimesCircle,
   FaExclamationTriangle,
-  FaCalendarCheck,
-  FaCalendarTimes,
-  FaCalendarDay,
   FaPhone,
-  FaEnvelope,
-  FaMapMarkerAlt,
   FaStethoscope,
-  FaNotesMedical,
-  FaProcedures,
   FaHeartbeat,
   FaBrain,
   FaBaby,
   FaBone,
   FaEye as FaEyeIcon,
-  FaEdit as FaEditIcon,
-  FaTrash as FaTrashIcon,
   FaHistory,
   FaPrint,
-  FaDownload,
-  FaShare,
-  FaBell,
   FaClock as FaTimeIcon,
   FaCalendar as FaCalendarIcon,
-  FaUser as FaUserIcon,
   FaUserMd as FaDoctorIcon,
-  FaHospital as FaHospitalIcon,
-  FaCheck as FaCheckIcon,
-  FaTimes as FaTimesIcon,
-  FaExclamation as FaExclamationIcon,
-  FaQuestion as FaQuestionIcon,
-  FaInfo as FaInfoIcon,
-  FaWarning as FaWarningIcon,
-  FaSuccess as FaSuccessIcon,
-  FaError as FaErrorIcon,
-  FaLoading as FaLoadingIcon,
-  FaRedo as FaRefreshIcon,
-  FaSync as FaSyncIcon,
-  FaCog as FaCogIcon,
-  FaSettings as FaSettingsIcon,
-  FaUserCog as FaUserCogIcon,
-  FaUserEdit as FaUserEditIcon,
-  FaUserPlus as FaUserPlusIcon,
-  FaUserMinus as FaUserMinusIcon,
-  FaUserCheck as FaUserCheckIcon,
-  FaUserTimes as FaUserTimesIcon,
-  FaUserLock as FaUserLockIcon,
-  FaUserUnlock as FaUserUnlockIcon,
-  FaUserShield as FaUserShieldIcon,
-  FaUserSecret as FaUserSecretIcon,
-  FaUserTie as FaUserTieIcon,
-  FaUserGraduate as FaUserGraduateIcon,
-  FaUserNurse as FaUserNurseIcon,
-  FaUserInjured as FaUserInjuredIcon,
-  FaUserFriends as FaUserFriendsIcon,
-  FaUserCheck as FaUserCheckIcon2,
-  FaUserClock as FaUserClockIcon,
-  FaUserCog as FaUserCogIcon2,
-  FaUserEdit as FaUserEditIcon2,
-  FaUserGraduate as FaUserGraduateIcon2,
-  FaUserInjured as FaUserInjuredIcon2,
-  FaUserLock as FaUserLockIcon2,
-  FaUserMinus as FaUserMinusIcon2,
-  FaUserNurse as FaUserNurseIcon2,
-  FaUserPlus as FaUserPlusIcon2,
-  FaUserSecret as FaUserSecretIcon2,
-  FaUserShield as FaUserShieldIcon2,
-  FaUserTie as FaUserTieIcon2,
-  FaUserTimes as FaUserTimesIcon2,
-  FaUserUnlock as FaUserUnlockIcon2,
-  FaInfoCircle
+  FaTimes as FaTimesIcon
 } from "react-icons/fa";
 import DashboardLayout from "@/components/DashboardLayout";
 import DataService from "@/services/data.service";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 export default function AppointmentsManagement() {
   const router = useRouter();
@@ -106,75 +44,7 @@ export default function AppointmentsManagement() {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
-  // Sample data for demonstration
-  const sampleAppointments = [
-    { 
-      id: "APT-2001", 
-      patient: { name: "John Smith", id: "P-10045", phone: "+1-555-0123", email: "john.smith@email.com" },
-      doctor: { name: "Dr. Michael Chen", id: "DOC-1001", department: "Cardiology" },
-      date: "2023-12-01",
-      time: "09:00 AM",
-      type: "Consultation",
-      status: "Confirmed",
-      notes: "Follow-up consultation for heart condition",
-      department: "Cardiology"
-    },
-    { 
-      id: "APT-2002", 
-      patient: { name: "Maria Garcia", id: "P-10089", phone: "+1-555-0124", email: "maria.garcia@email.com" },
-      doctor: { name: "Dr. Emily Rodriguez", id: "DOC-1002", department: "Pediatrics" },
-      date: "2023-12-01",
-      time: "10:30 AM",
-      type: "Check-up",
-      status: "Confirmed",
-      notes: "Annual pediatric check-up",
-      department: "Pediatrics"
-    },
-    { 
-      id: "APT-2003", 
-      patient: { name: "Robert Johnson", id: "P-10123", phone: "+1-555-0125", email: "robert.johnson@email.com" },
-      doctor: { name: "Dr. Sarah Jefferson", id: "DOC-1003", department: "Neurology" },
-      date: "2023-12-02",
-      time: "11:15 AM",
-      type: "Consultation",
-      status: "Cancelled",
-      notes: "Neurological consultation cancelled by patient",
-      department: "Neurology"
-    },
-    { 
-      id: "APT-2004", 
-      patient: { name: "Jennifer Lee", id: "P-10056", phone: "+1-555-0126", email: "jennifer.lee@email.com" },
-      doctor: { name: "Dr. James Wilson", id: "DOC-1004", department: "Orthopedics" },
-      date: "2023-12-02",
-      time: "02:00 PM",
-      type: "Surgery Consultation",
-      status: "Confirmed",
-      notes: "Pre-surgery consultation for knee replacement",
-      department: "Orthopedics"
-    },
-    { 
-      id: "APT-2005", 
-      patient: { name: "William Brown", id: "P-10078", phone: "+1-555-0127", email: "william.brown@email.com" },
-      doctor: { name: "Dr. Olivia Parker", id: "DOC-1005", department: "Dermatology" },
-      date: "2023-12-03",
-      time: "03:30 PM",
-      type: "Check-up",
-      status: "Pending",
-      notes: "Skin condition evaluation",
-      department: "Dermatology"
-    },
-    { 
-      id: "APT-2006", 
-      patient: { name: "Emma Wilson", id: "P-10032", phone: "+1-555-0128", email: "emma.wilson@email.com" },
-      doctor: { name: "Dr. Michael Chen", id: "DOC-1001", department: "Cardiology" },
-      date: "2023-12-03",
-      time: "11:00 AM",
-      type: "Consultation",
-      status: "Confirmed",
-      notes: "Cardiac consultation",
-      department: "Cardiology"
-    }
-  ];
+
 
   const doctors = [
     "All Doctors",
@@ -194,23 +64,19 @@ export default function AppointmentsManagement() {
     "No Show"
   ];
 
-  const departments = [
-    "Cardiology",
-    "Pediatrics", 
-    "Neurology",
-    "Orthopedics",
-    "Dermatology",
-    "General Medicine"
-  ];
+
 
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
         setLoading(true);
+        setError("");
+        
         const data = await DataService.getAllAppointments();
         setAppointments(data);
       } catch (error) {
         console.error('Error fetching appointments:', error);
+        setError("Failed to load appointments. Please try again.");
         setAppointments([]);
       } finally {
         setLoading(false);
@@ -288,10 +154,10 @@ export default function AppointmentsManagement() {
   };
 
   const confirmCancelAppointment = async () => {
+    if (!selectedAppointment) return;
+    
     try {
-      // API call to cancel appointment
-      // await DataService.cancelAppointment(selectedAppointment.id);
-      console.log('Appointment cancelled:', selectedAppointment.id);
+      await DataService.cancelAppointment(selectedAppointment.id);
       
       // Update local state
       setAppointments(prev => prev.map(apt => 
@@ -299,10 +165,11 @@ export default function AppointmentsManagement() {
           ? { ...apt, status: 'Cancelled' }
           : apt
       ));
-      setShowCancelConfirm(false);
+      
       setSelectedAppointment(null);
     } catch (error) {
       console.error('Error cancelling appointment:', error);
+      setError("Failed to cancel appointment. Please try again.");
     }
   };
 
@@ -310,9 +177,7 @@ export default function AppointmentsManagement() {
     router.push(`/admin/appointments/${appointment.id}/history`);
   };
 
-  const handleLogout = () => {
-    setShowLogoutConfirm(true);
-  };
+
 
   const confirmLogout = () => {
     localStorage.removeItem("token");
@@ -535,7 +400,7 @@ export default function AppointmentsManagement() {
                           className="px-3 py-2 bg-red-600 text-white text-lg font-bold rounded-lg hover:bg-red-700 transition-colors"
                           title="Cancel Appointment"
                         >
-                          <FaTimes className="text-xl" />
+                          <FaTimesIcon className="text-xl" />
                         </button>
                       )}
                     </div>
@@ -583,77 +448,28 @@ export default function AppointmentsManagement() {
       </div>
 
       {/* Cancel Appointment Confirmation Modal */}
-      {showCancelConfirm && selectedAppointment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowCancelConfirm(false)}></div>
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 border-2 border-gray-200 shadow-2xl">
-            <div className="flex items-center mb-6">
-              <div className="flex-shrink-0">
-                <FaExclamationTriangle className="h-8 w-8 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <h3 className="text-2xl font-bold text-gray-900">Cancel Appointment</h3>
-              </div>
-            </div>
-            <div className="mb-8">
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Are you sure you want to cancel appointment <strong>{selectedAppointment.id}</strong> for 
-                <strong> {selectedAppointment.patient.name}</strong>? This action cannot be undone.
-              </p>
-            </div>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={() => setShowCancelConfirm(false)}
-                className="px-6 py-3 text-lg font-bold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmCancelAppointment}
-                className="px-6 py-3 text-lg font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Cancel Appointment
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        isOpen={showCancelConfirm}
+        onClose={() => setShowCancelConfirm(false)}
+        onConfirm={confirmCancelAppointment}
+        title="Cancel Appointment"
+        message={`Are you sure you want to cancel appointment ${selectedAppointment?.id}?`}
+        confirmText="Cancel Appointment"
+        cancelText="Keep Appointment"
+        type="warning"
+      />
 
       {/* Logout Confirmation Modal */}
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={cancelLogout}></div>
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 border-2 border-gray-200 shadow-2xl">
-            <div className="flex items-center mb-6">
-              <div className="flex-shrink-0">
-                <FaExclamationTriangle className="h-8 w-8 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <h3 className="text-2xl font-bold text-gray-900">Confirm Logout</h3>
-              </div>
-            </div>
-            <div className="mb-8">
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Are you sure you want to logout? You will need to sign in again to access your account.
-              </p>
-            </div>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={cancelLogout}
-                className="px-6 py-3 text-lg font-bold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmLogout}
-                className="px-6 py-3 text-lg font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        isOpen={showLogoutConfirm}
+        onClose={cancelLogout}
+        onConfirm={confirmLogout}
+        title="Confirm Logout"
+        message="Are you sure you want to logout? You will need to sign in again to access your account."
+        confirmText="Logout"
+        cancelText="Cancel"
+        type="danger"
+      />
     </DashboardLayout>
   );
 } 

@@ -100,7 +100,7 @@ export default function PharmacistMedicines() {
         setError("");
       } catch (err) {
         console.error("Error fetching medicines:", err);
-        setError("No medicine data available. Please check your connection.");
+        setError(getErrorMessage(err as Error) || "Failed to load medicines data.");
         setMedicines([]);
         setCategories(["all"]);
       } finally {

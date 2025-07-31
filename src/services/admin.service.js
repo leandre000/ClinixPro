@@ -83,6 +83,11 @@ const AdminService = {
     return response.data;
   },
 
+  deletePatient: async (id) => {
+    const response = await api.delete(`/admin/patients/${id}`);
+    return response.data;
+  },
+
   getPatients: async () => {
     try {
       // Try to get patients from the API first

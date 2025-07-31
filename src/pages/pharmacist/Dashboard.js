@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import PharmacistService from "../../services/pharmacist.service";
 import MedicineForm from "../../components/forms/MedicineForm";
 import CompanyForm from "../../components/forms/CompanyForm";
-import DistributorForm from "../../components/forms/DistributorForm";
+
 
 const PharmacistDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -287,11 +287,18 @@ const PharmacistDashboard = () => {
 
               {/* Add Distributor Modal */}
               {activeModal === "addDistributor" && (
-                <DistributorForm
-                  onSuccess={handleFormSuccess}
-                  onCancel={closeModal}
-                  {...modalProps}
-                />
+                <div className="p-6">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">Add Distributor</h3>
+                  <p className="text-gray-600">Distributor form will be implemented here.</p>
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={closeModal}
+                      className="px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-100"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>

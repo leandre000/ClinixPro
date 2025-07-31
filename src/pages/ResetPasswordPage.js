@@ -14,8 +14,7 @@ import {
   IconButton,
   InputAdornment,
 } from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import AuthService from "../services/auth.service";
 
 const ResetPasswordPage = () => {
@@ -139,9 +138,9 @@ const ResetPasswordPage = () => {
                         edge="end"
                       >
                         {showPassword ? (
-                          <VisibilityOffIcon />
+                          <FaEyeSlash />
                         ) : (
-                          <VisibilityIcon />
+                                                      <FaEye />
                         )}
                       </IconButton>
                     </InputAdornment>

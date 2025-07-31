@@ -20,41 +20,9 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaPrint,
-  FaDownload,
   FaRedo,
   FaShoppingCart,
-  FaHistory,
-  FaUserEdit,
-  FaUserCheck,
-  FaUserTimes,
-  FaUserClock,
-  FaUserInjured,
-  FaUserFriends,
-  FaUserGraduate,
-  FaUserNurse,
-  FaUserTie,
-  FaUserShield,
-  FaUserSecret,
-  FaUserLock,
-  FaUserUnlock,
-  FaUserMinus,
-  FaUserCog,
-  FaUserEditIcon,
-  FaUserPlusIcon,
-  FaUserMinusIcon,
-  FaUserCheckIcon,
-  FaUserTimesIcon,
-  FaUserLockIcon,
-  FaUserUnlockIcon,
-  FaUserShieldIcon,
-  FaUserSecretIcon,
-  FaUserTieIcon,
-  FaUserGraduateIcon,
-  FaUserNurseIcon,
-  FaUserInjuredIcon,
-  FaUserFriendsIcon,
-  FaUserClockIcon,
-  FaUserCogIcon
+  FaHistory
 } from "react-icons/fa";
 
 export default function MedicinesPage() {
@@ -222,8 +190,7 @@ export default function MedicinesPage() {
       }
     };
 
-    // Fetch medicines on initial load or when refresh parameter changes
-    const refreshParam = searchParams.get('refresh');
+    // Fetch medicines on initial load
     fetchMedicines();
   }, [searchParams, error]);
   
@@ -283,9 +250,7 @@ export default function MedicinesPage() {
     }
   };
 
-  const handleLogout = () => {
-    setShowLogoutConfirm(true);
-  };
+
 
   const confirmLogout = () => {
     localStorage.removeItem("token");

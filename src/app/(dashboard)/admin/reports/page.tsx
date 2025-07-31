@@ -12,8 +12,7 @@ import {
   FaDollarSign,
   FaDownload,
   FaFilter,
-  FaEye,
-  FaInfoCircle
+  FaEye
 } from 'react-icons/fa';
 import DataService from '@/services/data.service';
 
@@ -30,12 +29,11 @@ export default function ReportsPage() {
         const dashboardStats = await DataService.getDashboardStats();
         setStats(dashboardStats);
         
-        // For now, we'll use empty activity data until backend provides it
-        setRecentActivity([]);
+        // Fetch recent activity from backend
+        const activityData = await DataService.getRecentActivity();
+        setRecentActivity(activityData);
       } catch (error) {
         console.error('Error fetching report data:', error);
-        setStats({});
-        setRecentActivity([]);
       } finally {
         setLoading(false);
       }
@@ -44,25 +42,25 @@ export default function ReportsPage() {
     fetchReportData();
   }, []);
 
-  // Mock chart data
+  // Chart data from backend stats
   const patientGrowthData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    values: [120, 150, 180, 220, 280, 320]
+    values: stats.patientGrowth || [0, 0, 0, 0, 0, 0]
   };
 
   const appointmentTrendsData = {
     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    values: [45, 52, 38, 61, 55, 42, 28]
+    values: stats.appointmentTrends || [0, 0, 0, 0, 0, 0, 0]
   };
 
   const revenueData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    values: [15000, 18000, 22000, 25000, 28000, 32000]
+    values: stats.revenueData || [0, 0, 0, 0, 0, 0]
   };
 
   const medicineDistributionData = {
     labels: ['Antibiotics', 'Painkillers', 'Vitamins', 'Antihistamines', 'Others'],
-    values: [25, 30, 20, 15, 10]
+    values: stats.medicineDistribution || [0, 0, 0, 0, 0]
   };
 
   const activityColumns = [
@@ -117,14 +115,6 @@ export default function ReportsPage() {
               <FaDownload className="h-5 w-5" />
               <span>Export Report</span>
             </button>
-          </div>
-        </div>
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-center">
-            <FaInfoCircle className="text-blue-600 mr-2" />
-            <span className="text-blue-800 text-sm">
-              <strong>Demo Mode:</strong> You're viewing sample data. Start the backend server to connect to real data.
-            </span>
           </div>
         </div>
       </div>

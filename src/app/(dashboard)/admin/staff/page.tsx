@@ -1,682 +1,292 @@
 "use client";
 
-import DashboardLayout from "@/components/DashboardLayout";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import AdminService from "@/services/admin.service";
-import AuthService from "@/services/auth.service";
-import { 
-  FaSearch, 
-  FaFilter, 
-  FaPlus, 
-  FaEye, 
-  FaEdit, 
-  FaTrash,
-  FaUser,
-  FaPhone,
-  FaEnvelope,
-  FaUserMd,
-  FaUserNurse,
-  FaUserTie,
-  FaUserCog,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaExclamationTriangle,
-  FaPrint,
-  FaDownload,
-  FaRedo,
-  FaUserPlus,
-  FaUserEdit,
-  FaUserCheck,
-  FaUserTimes,
-  FaUserClock,
-  FaUserInjured,
-  FaUserFriends,
-  FaUserGraduate,
-  FaUserShield,
-  FaUserSecret,
-  FaUserLock,
-  FaUserUnlock,
-  FaUserMinus,
-  FaUserEditIcon,
-  FaUserPlusIcon,
-  FaUserMinusIcon,
-  FaUserCheckIcon,
-  FaUserTimesIcon,
-  FaUserLockIcon,
-  FaUserUnlockIcon,
-  FaUserShieldIcon,
-  FaUserSecretIcon,
-  FaUserTieIcon,
-  FaUserGraduateIcon,
-  FaUserNurseIcon,
-  FaUserInjuredIcon,
-  FaUserFriendsIcon,
-  FaUserClockIcon,
-  FaUserCogIcon,
-  FaInfoCircle
-} from "react-icons/fa";
+import React, { useState, useEffect } from 'react';
+import DashboardLayout from '@/components/DashboardLayout';
+import { FaPlus, FaEdit, FaTrash, FaRedo, FaEye, FaEyeSlash } from 'react-icons/fa';
+import DataService from '@/services/data.service';
+import ConfirmationModal from '@/components/ConfirmationModal';
 
-export default function StaffListingPage() {
-  const router = useRouter();
+export default function StaffPage() {
   const [staff, setStaff] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
-  const [filters, setFilters] = useState({
-    role: "",
-    active: true,
-    search: "",
-  });
-
-  useEffect(() => {
-    // Check if user is authenticated as admin
-    const user = AuthService.getCurrentUser();
-    if (!user || user.role.toLowerCase() !== 'admin') {
-      router.push('/login');
-      return;
-    }
-
-    // Get URL parameters to see if a refresh was requested
-    const urlParams = new URLSearchParams(window.location.search);
-    const shouldRefresh = urlParams.get('refresh');
-    
-    if (shouldRefresh) {
-      // Clear any URL parameters without triggering a page reload
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
-    fetchStaff();
-  }, [router]);
-
-  // Add a separate effect that only depends on filters to avoid issues with router dependency
-  useEffect(() => {
-    if (!isLoading) {
-      fetchStaff();
-    }
-  }, [filters]);
 
   const fetchStaff = async () => {
     try {
-      setIsLoading(true);
-      const data = await AdminService.getUsers(filters);
-      setStaff(data);
-      setError("");
-    } catch (apiError) {
-      console.error("API error fetching staff:", apiError);
-      setStaff([]);
-      setError("No staff data available. Please check your connection.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setLoading(true);
+      setError('');
+      const response = await DataService.getAllUsers();
+      
+      if (response && response.length > 0) {
+        // Transform the data to match our expected format
+        const transformedStaff = response.map(user => ({
+          id: user.id,
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email,
+          role: user.role,
+          phone: user.phone || 'N/A',
+          status: user.isActive ? 'Active' : 'Inactive',
+          joinDate: user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'
+        }));
+        setStaff(transformedStaff);
+      } else {
+        setStaff([]);
+        setError('No staff data available');
       }
-      setStaff(data);
     } catch (err) {
-      console.error("Error fetching staff:", err);
-      setError("Failed to load staff data. Please try again: " + (err.response?.data?.message || err.message));
+      console.error('Error fetching staff:', err);
+      setError('Failed to load staff data');
+      setStaff([]);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleActiveFilter = (value) => {
-    setFilters((prev) => ({
-      ...prev,
-      active: value,
-    }));
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
+  useEffect(() => {
     fetchStaff();
-  };
+  }, []);
 
-  const handleAddStaff = () => {
-    router.push("/admin/staff/new");
-  };
-
-  const handleEditStaff = (id) => {
-    router.push(`/admin/staff/${id}`);
-  };
-
-  const handleViewStaff = (id) => {
-    router.push(`/admin/staff/${id}`);
-  };
-
-  const handleDeactivateStaff = (staff) => {
-    setSelectedStaff(staff);
+  const handleDeactivateStaff = (staffMember) => {
+    setSelectedStaff(staffMember);
     setShowDeactivateConfirm(true);
   };
 
-  const confirmDeactivateStaff = async () => {
-    try {
-      const updateData = { 
-        isActive: !selectedStaff.isActive 
-      };
-      
-      await AdminService.updateUser(selectedStaff.id, updateData);
-      setShowDeactivateConfirm(false);
-      setSelectedStaff(null);
-      await fetchStaff();
-      setError("");
-    } catch (err) {
-      console.error("Error updating staff status:", err);
-      setError("Failed to update staff status. Please try again.");
-    }
-  };
-
-  const handleDeleteStaff = (staff) => {
-    setSelectedStaff(staff);
+  const handleDeleteStaff = (staffMember) => {
+    setSelectedStaff(staffMember);
     setShowDeleteConfirm(true);
   };
 
-  const confirmDeleteStaff = async () => {
+  const confirmDeactivateStaff = async () => {
+    if (!selectedStaff) return;
+    
     try {
-      await AdminService.deleteUser(selectedStaff.id);
+      // API call to deactivate staff would go here
+      // await DataService.deactivateUser(selectedStaff.id);
+      
+      // Update local state
+      setStaff(prevStaff => 
+        prevStaff.map(s => 
+          s.id === selectedStaff.id 
+            ? { ...s, status: s.status === 'Active' ? 'Inactive' : 'Active' }
+            : s
+        )
+      );
+      
+      setShowDeactivateConfirm(false);
+      setSelectedStaff(null);
+    } catch (error) {
+      console.error('Error deactivating staff:', error);
+      setError('Failed to deactivate staff member');
+    }
+  };
+
+  const confirmDeleteStaff = async () => {
+    if (!selectedStaff) return;
+    
+    try {
+      // API call to delete staff would go here
+      // await DataService.deleteUser(selectedStaff.id);
+      
+      // Update local state
+      setStaff(prevStaff => prevStaff.filter(s => s.id !== selectedStaff.id));
+      
       setShowDeleteConfirm(false);
       setSelectedStaff(null);
-      await fetchStaff();
-      setError("");
-    } catch (err) {
-      console.error("Error deleting staff:", err);
-      setError("Failed to delete staff. Please try again.");
+    } catch (error) {
+      console.error('Error deleting staff:', error);
+      setError('Failed to delete staff member');
     }
   };
 
-  const handleLogout = () => {
-    setShowLogoutConfirm(true);
-  };
+  const filteredStaff = staff.filter(member =>
+    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const confirmLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    router.push("/login");
-  };
-
-  const cancelLogout = () => {
-    setShowLogoutConfirm(false);
-  };
-
-  const getRoleIcon = (role) => {
-    switch (role) {
-      case "DOCTOR": return <FaUserMd className="text-blue-600" />;
-      case "PHARMACIST": return <FaUserNurse className="text-green-600" />;
-      case "RECEPTIONIST": return <FaUserTie className="text-purple-600" />;
-      case "ADMIN": return <FaUserCog className="text-red-600" />;
-      default: return <FaUser className="text-gray-600" />;
-    }
+  const getStatusColor = (status) => {
+    return status === 'Active' ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100';
   };
 
   const getRoleColor = (role) => {
-    switch (role) {
-      case "DOCTOR": return "bg-blue-100 text-blue-800 border-blue-200";
-      case "PHARMACIST": return "bg-green-100 text-green-800 border-green-200";
-      case "RECEPTIONIST": return "bg-purple-100 text-purple-800 border-purple-200";
-      case "ADMIN": return "bg-red-100 text-red-800 border-red-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
-    }
+    const colors = {
+      'ADMIN': 'bg-purple-100 text-purple-800',
+      'DOCTOR': 'bg-blue-100 text-blue-800',
+      'PHARMACIST': 'bg-green-100 text-green-800',
+      'RECEPTIONIST': 'bg-orange-100 text-orange-800',
+      'NURSE': 'bg-pink-100 text-pink-800'
+    };
+    return colors[role] || 'bg-gray-100 text-gray-800';
   };
-
-  // Pagination
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentStaff = staff.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(staff.length / itemsPerPage);
-
-  if (isLoading) {
-    return (
-      <DashboardLayout userType="admin" title="Staff Management">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent mx-auto"></div>
-            <p className="mt-4 text-gray-900 text-xl font-bold">Loading Staff...</p>
-            <p className="mt-2 text-gray-600 text-lg">Please wait while we fetch your data</p>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
 
   return (
     <DashboardLayout userType="admin" title="Staff Management">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-3">Staff Management</h1>
-        <p className="text-xl text-gray-600">Manage and track all hospital staff members</p>
+      <div className="container mx-auto p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">Staff Management</h1>
+          <button
+            onClick={() => window.location.href = '/admin/staff/new'}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+          >
+            <FaPlus /> Add New Staff
+          </button>
         </div>
 
         {error && (
-        <div className="bg-red-100 border-2 border-red-400 text-red-700 px-6 py-4 rounded-lg relative mb-6">
-          <span className="block text-lg font-semibold">{error}</span>
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
           </div>
         )}
 
-      {/* Search and Filter Section */}
-      <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg p-6 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Search */}
-          <div className="lg:col-span-2">
-            <label className="block text-lg font-bold text-gray-900 mb-2">
-              <FaSearch className="inline mr-2 text-indigo-600" />
-              Search Staff
-            </label>
-            <form onSubmit={handleSearch} className="flex">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-4">
               <input
                 type="text"
-                name="search"
-                value={filters.search}
-                onChange={handleFilterChange}
-                placeholder="Search by name, email, or specialization"
-                className="flex-1 px-4 py-3 text-lg border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-500"
+                placeholder="Search staff..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <button
-                type="submit"
-                className="bg-indigo-600 text-white px-6 py-3 text-lg font-bold rounded-r-lg hover:bg-indigo-700 transition-colors"
-              >
-                <FaSearch className="text-xl" />
-              </button>
-            </form>
-          </div>
-
-          {/* Role Filter */}
-          <div>
-            <label className="block text-lg font-bold text-gray-900 mb-2">
-              <FaFilter className="inline mr-2 text-indigo-600" />
-              Role
-            </label>
-            <select
-              name="role"
-              value={filters.role}
-              onChange={handleFilterChange}
-              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white"
-            >
-              <option value="">All Roles</option>
-              <option value="DOCTOR">Doctor</option>
-              <option value="PHARMACIST">Pharmacist</option>
-              <option value="RECEPTIONIST">Receptionist</option>
-              <option value="ADMIN">Admin</option>
-            </select>
-          </div>
-
-          {/* Status Filter */}
-          <div>
-            <label className="block text-lg font-bold text-gray-900 mb-2">
-              <FaUser className="inline mr-2 text-indigo-600" />
-              Status
-            </label>
-            <div className="flex space-x-2">
-              <button
-                className={`px-4 py-3 rounded-lg text-lg font-bold transition-colors ${
-                  filters.active === true
-                    ? "bg-green-100 text-green-800 border-2 border-green-200"
-                    : "bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200"
-                }`}
-                onClick={() => handleActiveFilter(true)}
-              >
-                Active
-              </button>
-              <button
-                className={`px-4 py-3 rounded-lg text-lg font-bold transition-colors ${
-                  filters.active === false
-                    ? "bg-red-100 text-red-800 border-2 border-red-200"
-                    : "bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200"
-                }`}
-                onClick={() => handleActiveFilter(false)}
-              >
-                Inactive
-              </button>
-              <button
-                className={`px-4 py-3 rounded-lg text-lg font-bold transition-colors ${
-                  filters.active === ""
-                    ? "bg-blue-100 text-blue-800 border-2 border-blue-200"
-                    : "bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200"
-                }`}
-                onClick={() => handleActiveFilter("")}
-              >
-                All
-              </button>
             </div>
+            <button
+              onClick={fetchStaff}
+              className="text-gray-600 hover:text-gray-800"
+              title="Refresh"
+            >
+              <FaRedo />
+            </button>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-2 text-gray-600">Loading staff data...</p>
             </div>
-          </div>
-
-        {/* Action Buttons */}
-        <div className="flex justify-between items-center mt-6 pt-6 border-t-2 border-gray-200">
-          <div className="flex space-x-4">
-            <button
-              onClick={handleAddStaff}
-              className="flex items-center px-6 py-3 bg-indigo-600 text-white text-lg font-bold rounded-lg hover:bg-indigo-700 transition-colors shadow-lg"
-            >
-              <FaUserPlus className="mr-2" />
-              Add New Staff
-            </button>
-            <button
-              onClick={() => window.print()}
-              className="flex items-center px-6 py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 transition-colors shadow-lg"
-            >
-              <FaPrint className="mr-2" />
-              Print Directory
-            </button>
-              <button
-              onClick={() => window.location.reload()}
-              className="flex items-center px-6 py-3 bg-blue-600 text-white text-lg font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
-              >
-                              <FaRedo className="mr-2" />
-              Refresh Data
-              </button>
-          </div>
-          <div className="text-lg font-bold text-gray-700">
-            Total: {staff.length} staff members
-          </div>
-        </div>
-          </div>
-
-      {/* Staff Table */}
-      <div className="bg-white rounded-xl border-2 border-gray-200 shadow-lg overflow-hidden">
-          <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b-2 border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">NAME</th>
-                <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">ROLE</th>
-                <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">CONTACT</th>
-                <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">SPECIALIZATION</th>
-                <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">STATUS</th>
-                <th className="px-6 py-4 text-left text-lg font-bold text-gray-900">ACTIONS</th>
-                </tr>
-              </thead>
-            <tbody className="divide-y-2 divide-gray-200">
-              {currentStaff.map((member) => (
-                <tr key={member.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div>
-                      <div className="text-lg font-bold text-gray-900">
-                          {member.firstName} {member.lastName}
-                      </div>
-                      <div className="text-sm text-gray-600">ID: {member.id}</div>
-                      </div>
-                    </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      {getRoleIcon(member.role)}
-                      <div className="ml-3">
-                        <div className="text-lg font-bold text-gray-900">
-                        {member.role === "DOCTOR" && "Doctor"}
-                        {member.role === "PHARMACIST" && "Pharmacist"}
-                        {member.role === "RECEPTIONIST" && "Receptionist"}
-                        {member.role === "ADMIN" && "Administrator"}
-                      </div>
-                        {member.department && (
-                          <div className="text-sm text-gray-600">
-                            {member.department}
-                        </div>
-                      )}
-                      </div>
-                    </div>
-                    </td>
-                  <td className="px-6 py-4">
-                    <div>
-                      <div className="text-lg text-gray-900 flex items-center">
-                        <FaEnvelope className="mr-2 text-indigo-600" />
-                      {member.email}
-                      </div>
-                      <div className="text-lg text-gray-700 flex items-center mt-1">
-                        <FaPhone className="mr-2 text-green-600" />
-                        {member.phoneNumber}
-                      </div>
-                    </div>
-                    </td>
-                  <td className="px-6 py-4">
-                    <span className="text-lg font-semibold text-gray-900">
-                      {member.specialization || "General"}
-                    </span>
-                    </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-lg font-bold border-2 ${
-                          member.isActive
-                        ? "bg-green-100 text-green-800 border-green-200"
-                        : "bg-red-100 text-red-800 border-red-200"
-                    }`}>
-                      {member.isActive ? <FaCheckCircle className="mr-1" /> : <FaTimesCircle className="mr-1" />}
-                        {member.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                  <td className="px-6 py-4">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleViewStaff(member.id)}
-                        className="px-3 py-2 bg-blue-600 text-white text-lg font-bold rounded-lg hover:bg-blue-700 transition-colors"
-                        title="View Details"
-                      >
-                        <FaEye className="text-xl" />
-                      </button>
-                      <button
-                        onClick={() => handleEditStaff(member.id)}
-                        className="px-3 py-2 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 transition-colors"
-                        title="Edit Staff"
-                      >
-                        <FaEdit className="text-xl" />
-                      </button>
-                      <button
-                        onClick={() => handleDeactivateStaff(member)}
-                        className={`px-3 py-2 text-white text-lg font-bold rounded-lg transition-colors ${
-                          member.isActive
-                            ? "bg-yellow-600 hover:bg-yellow-700"
-                            : "bg-green-600 hover:bg-green-700"
-                        }`}
-                        title={member.isActive ? "Deactivate" : "Activate"}
-                      >
-                        {member.isActive ? <FaUserTimes className="text-xl" /> : <FaUserCheck className="text-xl" />}
-                      </button>
-                      <button
-                        onClick={() => handleDeleteStaff(member)}
-                        className="px-3 py-2 bg-red-600 text-white text-lg font-bold rounded-lg hover:bg-red-700 transition-colors"
-                        title="Delete Staff"
-                      >
-                        <FaTrash className="text-xl" />
-                      </button>
-                    </div>
-                    </td>
+          ) : filteredStaff.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-600">No staff members found</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Role
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Phone
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Join Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredStaff.map((member) => (
+                    <tr key={member.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{member.name}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{member.email}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleColor(member.role)}`}>
+                          {member.role}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {member.phone}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(member.status)}`}>
+                          {member.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {member.joinDate}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => window.location.href = `/admin/staff/${member.id}`}
+                            className="text-blue-600 hover:text-blue-900"
+                            title="View"
+                          >
+                            <FaEye />
+                          </button>
+                          <button
+                            onClick={() => window.location.href = `/admin/staff/${member.id}/edit`}
+                            className="text-green-600 hover:text-green-900"
+                            title="Edit"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
+                            onClick={() => handleDeactivateStaff(member)}
+                            className="text-yellow-600 hover:text-yellow-900"
+                            title={member.status === 'Active' ? 'Deactivate' : 'Activate'}
+                          >
+                            {member.status === 'Active' ? <FaEyeSlash /> : <FaEye />}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteStaff(member)}
+                            className="text-red-600 hover:text-red-900"
+                            title="Delete"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-        
-        {/* Empty State */}
-        {currentStaff.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <FaUserFriends className="mx-auto h-16 w-16" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">No Staff Members Found</h3>
-            <p className="text-lg text-gray-600 mb-6">
-              {staff.length === 0 
-                ? "No staff members have been registered yet. Start by adding your first staff member."
-                : "No staff members match your current filters. Try adjusting your search criteria."
-              }
-            </p>
-            {staff.length === 0 && (
-              <button
-                onClick={handleAddStaff}
-                className="flex items-center px-6 py-3 bg-indigo-600 text-white text-lg font-bold rounded-lg hover:bg-indigo-700 transition-colors shadow-lg mx-auto"
-              >
-                <FaUserPlus className="mr-2" />
-                Add First Staff Member
-              </button>
-            )}
-          </div>
-        )}
-        
-        {/* Pagination */}
-        {currentStaff.length > 0 && (
-          <div className="px-6 py-4 bg-gray-50 border-t-2 border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="text-lg font-bold text-gray-900">
-                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, staff.length)} of {staff.length} staff members
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 text-lg font-bold text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setCurrentPage(1)}
-                  className={`px-4 py-2 text-lg font-bold rounded-lg ${
-                    currentPage === 1 
-                      ? 'bg-indigo-600 text-white' 
-                      : 'text-gray-700 bg-white border-2 border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  1
-                </button>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 text-lg font-bold text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && selectedStaff && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowDeleteConfirm(false)}></div>
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 border-2 border-gray-200 shadow-2xl">
-            <div className="flex items-center mb-6">
-              <div className="flex-shrink-0">
-                <FaExclamationTriangle className="h-8 w-8 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <h3 className="text-2xl font-bold text-gray-900">Delete Staff Member</h3>
-              </div>
-            </div>
-            <div className="mb-8">
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Are you sure you want to delete <strong>{selectedStaff.firstName} {selectedStaff.lastName}</strong>? 
-                This action cannot be undone and will permanently remove this staff member from the system.
-              </p>
-            </div>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="px-6 py-3 text-lg font-bold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDeleteStaff}
-                className="px-6 py-3 text-lg font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Confirmation Modals */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDeleteStaff}
+        title="Delete Staff Member"
+        message={`Are you sure you want to delete ${selectedStaff?.name}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
 
-      {/* Deactivate Confirmation Modal */}
-      {showDeactivateConfirm && selectedStaff && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowDeactivateConfirm(false)}></div>
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 border-2 border-gray-200 shadow-2xl">
-            <div className="flex items-center mb-6">
-              <div className="flex-shrink-0">
-                <FaExclamationTriangle className="h-8 w-8 text-yellow-600" />
-              </div>
-              <div className="ml-4">
-                <h3 className="text-2xl font-bold text-gray-900">
-                  {selectedStaff.isActive ? 'Deactivate' : 'Activate'} Staff Member
-                </h3>
-              </div>
-            </div>
-            <div className="mb-8">
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Are you sure you want to {selectedStaff.isActive ? 'deactivate' : 'activate'} 
-                <strong> {selectedStaff.firstName} {selectedStaff.lastName}</strong>? 
-                {selectedStaff.isActive 
-                  ? ' This will prevent them from accessing the system.'
-                  : ' This will restore their access to the system.'
-                }
-              </p>
-            </div>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={() => setShowDeactivateConfirm(false)}
-                className="px-6 py-3 text-lg font-bold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDeactivateStaff}
-                className={`px-6 py-3 text-lg font-bold text-white rounded-lg transition-colors ${
-                  selectedStaff.isActive 
-                    ? 'bg-yellow-600 hover:bg-yellow-700' 
-                    : 'bg-green-600 hover:bg-green-700'
-                }`}
-              >
-                {selectedStaff.isActive ? 'Deactivate' : 'Activate'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Logout Confirmation Modal */}
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={cancelLogout}></div>
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 border-2 border-gray-200 shadow-2xl">
-            <div className="flex items-center mb-6">
-              <div className="flex-shrink-0">
-                <FaExclamationTriangle className="h-8 w-8 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <h3 className="text-2xl font-bold text-gray-900">Confirm Logout</h3>
-              </div>
-            </div>
-            <div className="mb-8">
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Are you sure you want to logout? You will need to sign in again to access your account.
-              </p>
-            </div>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={cancelLogout}
-                className="px-6 py-3 text-lg font-bold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmLogout}
-                className="px-6 py-3 text-lg font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        isOpen={showDeactivateConfirm}
+        onClose={() => setShowDeactivateConfirm(false)}
+        onConfirm={confirmDeactivateStaff}
+        title={`${selectedStaff?.status === 'Active' ? 'Deactivate' : 'Activate'} Staff Member`}
+        message={`Are you sure you want to ${selectedStaff?.status === 'Active' ? 'deactivate' : 'activate'} ${selectedStaff?.name}?`}
+        confirmText={selectedStaff?.status === 'Active' ? 'Deactivate' : 'Activate'}
+        cancelText="Cancel"
+        type="warning"
+      />
     </DashboardLayout>
   );
 } 

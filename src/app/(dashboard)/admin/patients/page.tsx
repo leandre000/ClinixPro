@@ -56,9 +56,9 @@ import {
   FaUserInjuredIcon,
   FaUserFriendsIcon,
   FaUserClockIcon,
-  FaUserCogIcon,
-  FaInfoCircle
+  FaUserCogIcon
 } from "react-icons/fa";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 export default function PatientsPage() {
   const router = useRouter();
@@ -93,53 +93,9 @@ export default function PatientsPage() {
     const fetchPatients = async () => {
       try {
         setLoading(true);
-        const response = await AdminService.getPatients();
-        setPatients(response);
         setError("");
-      } catch (apiError) {
-        console.error("API error fetching patients:", apiError);
-        setPatients([]);
-        setError("No patient data available. Please check your connection.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchPatients();
-  }, []);
-              doctorName: "Dr. Michael Chen"
-            },
-            { 
-              patientId: "P-1007", 
-              firstName: "David",
-              lastName: "Wilson",
-              email: "david.wilson@example.com", 
-              phoneNumber: "555-707-8901", 
-              dateOfBirth: "1978-11-30",
-              gender: "Male",
-              bloodGroup: "B-",
-              status: "Inactive",
-              lastVisitDate: "2023-09-15",
-              doctorName: "Dr. Emily Rodriguez"
-            },
-            { 
-              patientId: "P-1008", 
-              firstName: "Lisa",
-              lastName: "Anderson",
-              email: "lisa.anderson@example.com", 
-              phoneNumber: "555-808-9012", 
-              dateOfBirth: "1985-02-14",
-              gender: "Female",
-              bloodGroup: "AB+",
-              status: "Active",
-              lastVisitDate: "2023-11-28",
-              doctorName: "Dr. Sarah Jefferson"
-            }
-          ];
-          setError("Using sample data for demonstration. API connection not available.");
-        }
         
-        console.log("Fetched patients:", response);
+        const response = await AdminService.getPatients();
         
         // Transform the patients data to match the expected structure
         const formattedPatients = response.map(patient => ({
@@ -158,12 +114,11 @@ export default function PatientsPage() {
           originalPatient: patient
         }));
         
-        console.log("Formatted patients:", formattedPatients);
         setPatients(formattedPatients);
-        
-      } catch (err) {
-        console.error("Error processing patients data:", err);
-          setError("Failed to process patients data. Please try again.");
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+        setError("Failed to load patients. Please try again.");
+        setPatients([]);
       } finally {
         setLoading(false);
       }
@@ -222,17 +177,17 @@ export default function PatientsPage() {
   };
 
   const confirmDeletePatient = async () => {
+    if (!selectedPatient) return;
+    
     try {
-      // API call to delete patient
-      // await AdminService.deletePatient(selectedPatient.id);
-      console.log('Patient deleted:', selectedPatient.id);
+      await AdminService.deletePatient(selectedPatient.id);
       
-      // Update local state
+      // Remove from local state
       setPatients(prev => prev.filter(p => p.id !== selectedPatient.id));
-      setShowDeleteConfirm(false);
+      
       setSelectedPatient(null);
     } catch (error) {
-      console.error('Error deleting patient:', error);
+      console.error("Error deleting patient:", error);
       setError("Failed to delete patient. Please try again.");
     }
   };
@@ -580,78 +535,29 @@ export default function PatientsPage() {
         )}
       </div>
 
-      {/* Delete Patient Confirmation Modal */}
-      {showDeleteConfirm && selectedPatient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowDeleteConfirm(false)}></div>
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 border-2 border-gray-200 shadow-2xl">
-            <div className="flex items-center mb-6">
-              <div className="flex-shrink-0">
-                <FaExclamationTriangle className="h-8 w-8 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <h3 className="text-2xl font-bold text-gray-900">Delete Patient</h3>
-              </div>
-            </div>
-            <div className="mb-8">
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Are you sure you want to delete <strong>{selectedPatient.name}</strong>? 
-                This action cannot be undone and will permanently remove this patient from the system.
-              </p>
-            </div>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="px-6 py-3 text-lg font-bold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDeletePatient}
-                className="px-6 py-3 text-lg font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDeletePatient}
+        title="Delete Patient"
+        message={`Are you sure you want to delete ${selectedPatient?.name}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
 
       {/* Logout Confirmation Modal */}
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={cancelLogout}></div>
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 border-2 border-gray-200 shadow-2xl">
-            <div className="flex items-center mb-6">
-              <div className="flex-shrink-0">
-                <FaExclamationTriangle className="h-8 w-8 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <h3 className="text-2xl font-bold text-gray-900">Confirm Logout</h3>
-              </div>
-            </div>
-            <div className="mb-8">
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Are you sure you want to logout? You will need to sign in again to access your account.
-              </p>
-            </div>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={cancelLogout}
-                className="px-6 py-3 text-lg font-bold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmLogout}
-                className="px-6 py-3 text-lg font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        isOpen={showLogoutConfirm}
+        onClose={cancelLogout}
+        onConfirm={confirmLogout}
+        title="Confirm Logout"
+        message="Are you sure you want to logout? You will need to sign in again to access your account."
+        confirmText="Logout"
+        cancelText="Cancel"
+        type="danger"
+      />
     </DashboardLayout>
   );
 } 

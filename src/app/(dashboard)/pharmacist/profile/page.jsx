@@ -1,8 +1,5 @@
 import React from 'react';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
+import DashboardLayout from '@/components/DashboardLayout';
 import { 
   User, 
   Mail, 

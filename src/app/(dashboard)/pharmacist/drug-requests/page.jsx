@@ -3,10 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Check, X, Eye, Filter, Calendar } from 'lucide-react';
 import PharmacistService from '@/services/pharmacist.service';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { Dialog } from '@/components/ui/Dialog';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
+import DashboardLayout from '@/components/DashboardLayout';
+import ConfirmationModal from '@/components/ConfirmationModal';
 import { formatDistanceToNow } from 'date-fns';
 
 export default function DrugRequests() {

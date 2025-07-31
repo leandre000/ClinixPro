@@ -3,10 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Eye, Filter } from 'lucide-react';
 import PharmacistService from '@/services/pharmacist.service';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { Dialog } from '@/components/ui/Dialog';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
+import DashboardLayout from '@/components/DashboardLayout';
+import ConfirmationModal from '@/components/ConfirmationModal';
 
 export default function Inventory() {
   const [inventory, setInventory] = useState([]);
@@ -35,12 +33,15 @@ export default function Inventory() {
   const fetchInventory = async () => {
     setLoading(true);
     try {
+      setError('');
       const data = await PharmacistService.getInventory();
       setInventory(data);
       setFilteredInventory(data);
     } catch (err) {
       console.error('Failed to fetch inventory:', err);
       setError('Failed to load inventory. Please try again later.');
+      setInventory([]);
+      setFilteredInventory([]);
     } finally {
       setLoading(false);
     }

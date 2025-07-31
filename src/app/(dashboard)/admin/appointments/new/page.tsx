@@ -26,7 +26,7 @@ export default function AddAppointmentPage() {
     }
   }, [router]);
 
-  const handleSuccess = (appointmentData) => {
+  const handleSuccess = () => {
     // Show success message
     alert(`Appointment has been scheduled successfully!`);
     

@@ -130,27 +130,27 @@ const DataService = {
       return response.data;
     } catch (error) {
       console.error("Error fetching appointments:", error);
-      // Return fallback data
-      return [
-        {
-          id: 1,
-          patientName: "John Doe",
-          doctorName: "Dr. Sarah Johnson",
-          date: "2024-01-15",
-          time: "10:00 AM",
-          status: "SCHEDULED",
-          type: "CONSULTATION"
-        },
-        {
-          id: 2,
-          patientName: "Jane Smith",
-          doctorName: "Dr. Michael Chen",
-          date: "2024-01-15",
-          time: "2:30 PM",
-          status: "SCHEDULED",
-          type: "FOLLOW_UP"
-        }
-      ];
+      return [];
+    }
+  },
+
+  getRecentActivity: async () => {
+    try {
+      const response = await api.get("/admin/recent-activity");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching recent activity:", error);
+      return [];
+    }
+  },
+
+  cancelAppointment: async (id) => {
+    try {
+      const response = await api.put(`/receptionist/appointments/${id}/cancel`);
+      return response.data;
+    } catch (error) {
+      console.error("Error cancelling appointment:", error);
+      throw error;
     }
   },
 };
