@@ -20,6 +20,7 @@ export default function DashboardLayout({
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
 
@@ -70,8 +71,16 @@ export default function DashboardLayout({
   };
 
   const handleLogout = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
     AuthService.logout();
     router.push('/login');
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   if (!user) {
@@ -81,7 +90,7 @@ export default function DashboardLayout({
   const fullName = `${user.firstName}`;
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-white">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div 
@@ -100,7 +109,7 @@ export default function DashboardLayout({
       
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white shadow-sm z-10">
+        <header className="bg-white border-b border-gray-200 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex justify-between items-center">
               {/* Left section with logo and title */}
@@ -115,19 +124,37 @@ export default function DashboardLayout({
                   </svg>
                 </button>
                 
-                {/* Logo and title */}
-                {/* <Link href={`/${userType}`} className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-                  <div className="relative h-8 w-8">
-                    <Image src="/logo.svg" alt="Hospinix Logo" fill className="rounded-lg" />
-                  </div>
-                  <h1 className="text-xl font-bold text-indigo-600">Hospinix</h1>
-                </Link> */}
-                
                 <h2 className="text-lg font-medium text-gray-700 hidden md:block">{title}</h2>
               </div>
               
-              {/* Right section with profile and logout */}
+              {/* Right section with icons and profile */}
               <div className="flex items-center space-x-4">
+                {/* Bell icon for notifications */}
+                <button className="text-gray-500 hover:text-gray-700 focus:outline-none transition-colors">
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-5 5v-5zM10.5 3.75a6 6 0 0 1 6 6v3.75a2.25 2.25 0 0 0 4.5 0V9.75a6 6 0 0 0-12 0v3.75a2.25 2.25 0 0 0 4.5 0V9.75Z" />
+                  </svg>
+                </button>
+
+                {/* Gear icon for settings */}
+                <button className="text-gray-500 hover:text-gray-700 focus:outline-none transition-colors">
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 0 1 0 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 0 1 0-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281Z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                  </svg>
+                </button>
+
+                {/* Logout button */}
+                <button 
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors focus:outline-none"
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="font-medium">Logout</span>
+                </button>
+
                 {/* Profile dropdown */}
                 <div className="relative">
                   <button 
@@ -172,11 +199,11 @@ export default function DashboardLayout({
 
                   {/* Profile dropdown menu */}
                   {isProfileOpen && (
-                    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <div className="absolute right-0 mt-2 w-48 rounded-md border border-gray-200 bg-white">
                       <div className="py-1" role="menu" aria-orientation="vertical">
                         <button
                           onClick={handleLogout}
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           role="menuitem"
                         >
                           Sign out
@@ -190,12 +217,50 @@ export default function DashboardLayout({
           </div>
         </header>
         
-        <main className="flex-1 overflow-y-auto bg-gray-100 p-4 sm:p-6">
+        <main className="flex-1 overflow-y-auto bg-white p-4 sm:p-6">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
         </main>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={cancelLogout}></div>
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 border border-gray-200">
+            <div className="flex items-center mb-4">
+              <div className="flex-shrink-0">
+                <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-lg font-medium text-gray-900">Confirm Logout</h3>
+              </div>
+            </div>
+            <div className="mb-6">
+              <p className="text-sm text-gray-500">
+                Are you sure you want to logout? You will need to sign in again to access your account.
+              </p>
+            </div>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelLogout}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
