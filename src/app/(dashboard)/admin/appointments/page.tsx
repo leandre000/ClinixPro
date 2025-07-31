@@ -52,7 +52,7 @@ import {
   FaSuccess as FaSuccessIcon,
   FaError as FaErrorIcon,
   FaLoading as FaLoadingIcon,
-  FaRefresh as FaRefreshIcon,
+  FaRedo as FaRefreshIcon,
   FaSync as FaSyncIcon,
   FaCog as FaCogIcon,
   FaSettings as FaSettingsIcon,

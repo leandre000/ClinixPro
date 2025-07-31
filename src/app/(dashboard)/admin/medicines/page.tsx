@@ -21,7 +21,7 @@ import {
   FaTimesCircle,
   FaPrint,
   FaDownload,
-  FaRefresh,
+  FaRedo,
   FaShoppingCart,
   FaHistory,
   FaUserEdit,
@@ -434,7 +434,7 @@ export default function MedicinesPage() {
               onClick={() => window.location.reload()}
               className="flex items-center px-6 py-3 bg-purple-600 text-white text-lg font-bold rounded-lg hover:bg-purple-700 transition-colors shadow-lg"
             >
-              <FaRefresh className="mr-2" />
+                              <FaRedo className="mr-2" />
               Refresh Data
             </button>
           </div>
