@@ -55,6 +55,7 @@ import {
   MdAssessment,
   MdSecurity
 } from "react-icons/md";
+import DashboardLayout from "@/components/DashboardLayout";
 import DataService from "@/services/data.service";
 import AdminService from "@/services/admin.service";
 
@@ -65,7 +66,7 @@ export default function AdminDashboard() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -104,9 +105,17 @@ export default function AdminDashboard() {
   }, [router]);
 
   const handleLogout = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     router.push("/login");
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   const handleDeleteStaff = async (id) => {
@@ -121,6 +130,25 @@ export default function AdminDashboard() {
         console.error("Error deleting staff:", err);
         setError("Failed to deactivate staff. Please try again.");
       }
+    }
+  };
+
+  const handleQuickAction = (action) => {
+    switch (action) {
+      case 'add-staff':
+        router.push('/admin/staff/new');
+        break;
+      case 'add-patient':
+        router.push('/admin/patients/register');
+        break;
+      case 'schedule-appointment':
+        router.push('/admin/appointments/new');
+        break;
+      case 'add-medicine':
+        router.push('/admin/medicines/add');
+        break;
+      default:
+        break;
     }
   };
 
@@ -197,278 +225,253 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-20 w-20 border-4 border-blue-600 border-t-transparent mx-auto"></div>
-          <p className="mt-6 text-gray-700 text-xl font-semibold">Loading Your Dashboard...</p>
-          <p className="mt-2 text-gray-500 text-lg">Please wait while we prepare everything for you</p>
+      <DashboardLayout userType="admin" title="Dashboard">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent mx-auto"></div>
+            <p className="mt-4 text-gray-700 text-lg font-semibold">Loading Your Dashboard...</p>
+            <p className="mt-2 text-gray-500">Please wait while we prepare everything for you</p>
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <header className="bg-white shadow-lg border-b-4 border-blue-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-3 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-            >
-              {sidebarOpen ? <MdClose size={28} /> : <MdMenu size={28} />}
-            </button>
+    <DashboardLayout userType="admin" title="Dashboard">
+      {error && (
+        <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <FaExclamationTriangle className="text-red-500 text-xl mr-3" />
+            <div>
+              <h3 className="text-lg font-semibold text-red-800">Connection Error</h3>
+              <p className="text-red-700">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <FaHospital className="h-12 w-12 text-blue-600" />
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, Administrator!</h2>
+        <p className="text-lg text-gray-600">Here's what's happening with your hospital today.</p>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {statCards.map((stat, index) => (
+          <div key={index} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-all duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <div className={`p-3 rounded-lg ${stat.color} text-white`}>
+                {stat.icon}
               </div>
-              <div className="ml-4">
-                <h1 className="text-2xl font-bold text-gray-900">ClinixPro</h1>
-                <p className="text-sm text-gray-600">Hospital Management System</p>
+              <div className="text-right">
+                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-sm text-gray-500">{stat.description}</p>
               </div>
             </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{stat.title}</h3>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className={`h-2 rounded-full ${stat.color.replace('bg-gradient-to-br', 'bg')}`} style={{width: `${Math.min((stat.value / 10) * 100, 100)}%`}}></div>
+            </div>
+          </div>
+        ))}
+      </div>
 
-            <div className="flex items-center space-x-4">
-              <button className="p-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors">
-                <FaBell size={24} />
+      {/* Recent Staff and Appointments */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Recent Staff */}
+        <div className="bg-white rounded-lg border border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Recent Staff</h3>
+                <p className="text-gray-600">Latest registered team members</p>
+              </div>
+              <button 
+                onClick={() => router.push('/admin/staff')}
+                className="text-indigo-600 hover:text-indigo-700 font-semibold"
+              >
+                View All
               </button>
-              <button className="p-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors">
-                <FaCog size={24} />
+            </div>
+          </div>
+          <div className="p-6">
+            {recentStaff.length > 0 ? (
+              <div className="space-y-4">
+                {recentStaff.map((staff) => (
+                  <div key={staff.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        {getRoleIcon(staff.role)}
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900">
+                          {staff.firstName} {staff.lastName}
+                        </p>
+                        <p className="text-gray-600">{staff.email}</p>
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold border ${getRoleColor(staff.role)}`}>
+                          {staff.role}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button 
+                        onClick={() => router.push(`/admin/staff/${staff.id}`)}
+                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
+                      >
+                        <FaEdit size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteStaff(staff.id)}
+                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <FaTrash size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <FaUsers className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+                <p className="text-lg text-gray-600 font-semibold">No staff members found</p>
+                <p className="text-gray-500">Add your first team member to get started</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Recent Appointments */}
+        <div className="bg-white rounded-lg border border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Recent Appointments</h3>
+                <p className="text-gray-600">Latest scheduled visits</p>
+              </div>
+              <button 
+                onClick={() => router.push('/admin/appointments')}
+                className="text-indigo-600 hover:text-indigo-700 font-semibold"
+              >
+                View All
+              </button>
+            </div>
+          </div>
+          <div className="p-6">
+            {appointments.length > 0 ? (
+              <div className="space-y-4">
+                {appointments.map((appointment) => (
+                  <div key={appointment.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <FaCalendarAlt className="text-green-600 text-xl" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900">{appointment.patientName || 'Patient Name'}</p>
+                        <p className="text-gray-600">{appointment.doctorName || 'Doctor Name'}</p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <FaClock className="text-gray-400 text-sm" />
+                          <span className="text-sm text-gray-600">
+                            {appointment.appointmentDate || 'Date'} at {appointment.appointmentTime || 'Time'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+                        Scheduled
+                      </span>
+                      <button 
+                        onClick={() => router.push(`/admin/appointments/${appointment.id}`)}
+                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
+                      >
+                        <FaEye size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <FaCalendarAlt className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+                <p className="text-lg text-gray-600 font-semibold">No appointments found</p>
+                <p className="text-gray-500">Schedule appointments to see them here</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <button 
+            onClick={() => handleQuickAction('add-staff')}
+            className="flex flex-col items-center justify-center p-6 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1"
+          >
+            <FaPlus className="text-2xl text-blue-600 mb-2" />
+            <span className="text-blue-600 font-bold">Add Staff</span>
+          </button>
+          <button 
+            onClick={() => handleQuickAction('add-patient')}
+            className="flex flex-col items-center justify-center p-6 bg-green-50 hover:bg-green-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1"
+          >
+            <FaHospital className="text-2xl text-green-600 mb-2" />
+            <span className="text-green-600 font-bold">Add Patient</span>
+          </button>
+          <button 
+            onClick={() => handleQuickAction('schedule-appointment')}
+            className="flex flex-col items-center justify-center p-6 bg-purple-50 hover:bg-purple-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1"
+          >
+            <FaCalendarAlt className="text-2xl text-purple-600 mb-2" />
+            <span className="text-purple-600 font-bold">Schedule Appointment</span>
+          </button>
+          <button 
+            onClick={() => handleQuickAction('add-medicine')}
+            className="flex flex-col items-center justify-center p-6 bg-orange-50 hover:bg-orange-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1"
+          >
+            <FaPills className="text-2xl text-orange-600 mb-2" />
+            <span className="text-orange-600 font-bold">Add Medicine</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={cancelLogout}></div>
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 border border-gray-200">
+            <div className="flex items-center mb-4">
+              <div className="flex-shrink-0">
+                <FaExclamationTriangle className="h-6 w-6 text-red-600" />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-lg font-medium text-gray-900">Confirm Logout</h3>
+              </div>
+            </div>
+            <div className="mb-6">
+              <p className="text-sm text-gray-500">
+                Are you sure you want to logout? You will need to sign in again to access your account.
+              </p>
+            </div>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelLogout}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              >
+                Cancel
               </button>
               <button
-                onClick={handleLogout}
-                className="flex items-center px-4 py-2 text-lg font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                onClick={confirmLogout}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
               >
-                <FaSignOutAlt className="mr-2" />
                 Logout
               </button>
             </div>
           </div>
         </div>
-      </header>
-
-      <div className="flex">
-        {/* Sidebar */}
-        <div className={`fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-xl transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0 transition duration-300 ease-in-out`}>
-          <div className="h-full flex flex-col">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">Admin Panel</h2>
-              <p className="text-gray-600">Manage your hospital</p>
-            </div>
-            <nav className="flex-1 px-6 py-8 space-y-3">
-              <a href="#" className="flex items-center px-4 py-3 text-lg font-semibold text-blue-600 bg-blue-50 rounded-xl border-2 border-blue-200">
-                <MdDashboard className="mr-4 text-2xl" />
-                Dashboard
-              </a>
-              <a href="#" className="flex items-center px-4 py-3 text-lg font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors">
-                <MdPeople className="mr-4 text-2xl" />
-                Staff Management
-              </a>
-              <a href="#" className="flex items-center px-4 py-3 text-lg font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors">
-                <MdLocalHospital className="mr-4 text-2xl" />
-                Patients
-              </a>
-              <a href="#" className="flex items-center px-4 py-3 text-lg font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors">
-                <MdLocalPharmacy className="mr-4 text-2xl" />
-                Pharmacy
-              </a>
-              <a href="#" className="flex items-center px-4 py-3 text-lg font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors">
-                <MdEvent className="mr-4 text-2xl" />
-                Appointments
-              </a>
-              <a href="#" className="flex items-center px-4 py-3 text-lg font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors">
-                <MdAssessment className="mr-4 text-2xl" />
-                Reports
-              </a>
-              <a href="#" className="flex items-center px-4 py-3 text-lg font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors">
-                <MdSettings className="mr-4 text-2xl" />
-                Settings
-              </a>
-            </nav>
-          </div>
-        </div>
-
-        {/* Main content */}
-        <div className="flex-1 lg:ml-0">
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {error && (
-              <div className="mb-8 bg-red-50 border-2 border-red-200 rounded-xl p-6">
-                <div className="flex items-center">
-                  <FaExclamationTriangle className="text-red-500 text-2xl mr-4" />
-                  <div>
-                    <h3 className="text-lg font-semibold text-red-800">Connection Error</h3>
-                    <p className="text-red-700">{error}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="mb-10">
-              <h2 className="text-4xl font-bold text-gray-900 mb-3">Welcome back, Administrator!</h2>
-              <p className="text-xl text-gray-600">Here's what's happening with your hospital today.</p>
-            </div>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
-              {statCards.map((stat, index) => (
-                <div key={index} className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`p-4 rounded-xl ${stat.color} text-white shadow-lg`}>
-                      {stat.icon}
-                    </div>
-                    <div className="text-right">
-                      <p className="text-4xl font-bold text-gray-900">{stat.value}</p>
-                      <p className="text-sm text-gray-500">{stat.description}</p>
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{stat.title}</h3>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className={`h-2 rounded-full ${stat.color.replace('bg-gradient-to-br', 'bg')}`} style={{width: `${Math.min((stat.value / 10) * 100, 100)}%`}}></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Recent Staff and Appointments */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-              {/* Recent Staff */}
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
-                <div className="px-8 py-6 border-b-2 border-gray-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900">Recent Staff</h3>
-                      <p className="text-gray-600">Latest registered team members</p>
-                    </div>
-                    <button className="text-blue-600 hover:text-blue-700 text-lg font-semibold">
-                      View All
-                    </button>
-                  </div>
-                </div>
-                <div className="p-8">
-                  {recentStaff.length > 0 ? (
-                    <div className="space-y-6">
-                      {recentStaff.map((staff) => (
-                        <div key={staff.id} className="flex items-center justify-between p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                              {getRoleIcon(staff.role)}
-                            </div>
-                            <div>
-                              <p className="text-xl font-bold text-gray-900">
-                                {staff.firstName} {staff.lastName}
-                              </p>
-                              <p className="text-lg text-gray-600">{staff.email}</p>
-                              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border-2 ${getRoleColor(staff.role)}`}>
-                                {staff.role}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors">
-                              <FaEdit size={18} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteStaff(staff.id)}
-                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            >
-                              <FaTrash size={18} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <FaUsers className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-                      <p className="text-xl text-gray-600 font-semibold">No staff members found</p>
-                      <p className="text-gray-500">Add your first team member to get started</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Recent Appointments */}
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
-                <div className="px-8 py-6 border-b-2 border-gray-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900">Recent Appointments</h3>
-                      <p className="text-gray-600">Latest scheduled visits</p>
-                    </div>
-                    <button className="text-blue-600 hover:text-blue-700 text-lg font-semibold">
-                      View All
-                    </button>
-                  </div>
-                </div>
-                <div className="p-8">
-                  {appointments.length > 0 ? (
-                    <div className="space-y-6">
-                      {appointments.map((appointment) => (
-                        <div key={appointment.id} className="flex items-center justify-between p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                              <FaCalendarAlt className="text-green-600 text-2xl" />
-                            </div>
-                            <div>
-                              <p className="text-xl font-bold text-gray-900">{appointment.patientName || 'Patient Name'}</p>
-                              <p className="text-lg text-gray-600">{appointment.doctorName || 'Doctor Name'}</p>
-                              <div className="flex items-center space-x-2 mt-2">
-                                <FaClock className="text-gray-400" />
-                                <span className="text-gray-600">
-                                  {appointment.appointmentDate || 'Date'} at {appointment.appointmentTime || 'Time'}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 border-2 border-blue-200">
-                              Scheduled
-                            </span>
-                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors">
-                              <FaEye size={18} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <FaCalendarAlt className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-                      <p className="text-xl text-gray-600 font-semibold">No appointments found</p>
-                      <p className="text-gray-500">Schedule appointments to see them here</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="mt-12 bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <button className="flex flex-col items-center justify-center p-6 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg">
-                  <FaPlus className="text-3xl text-blue-600 mb-3" />
-                  <span className="text-blue-600 font-bold text-lg">Add Staff</span>
-                </button>
-                <button className="flex flex-col items-center justify-center p-6 bg-green-50 hover:bg-green-100 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg">
-                  <FaHospital className="text-3xl text-green-600 mb-3" />
-                  <span className="text-green-600 font-bold text-lg">Add Patient</span>
-                </button>
-                <button className="flex flex-col items-center justify-center p-6 bg-purple-50 hover:bg-purple-100 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg">
-                  <FaCalendarAlt className="text-3xl text-purple-600 mb-3" />
-                  <span className="text-purple-600 font-bold text-lg">Schedule Appointment</span>
-                </button>
-                <button className="flex flex-col items-center justify-center p-6 bg-orange-50 hover:bg-orange-100 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg">
-                  <FaPills className="text-3xl text-orange-600 mb-3" />
-                  <span className="text-orange-600 font-bold text-lg">Add Medicine</span>
-                </button>
-              </div>
-            </div>
-          </main>
-        </div>
-      </div>
-    </div>
+      )}
+    </DashboardLayout>
   );
 }

@@ -16,14 +16,12 @@ export default function Sidebar({ userType, userName = 'User', userImage, onImag
   
   const adminLinks = [
     { href: '/admin', label: 'Dashboard', icon: 'home' },
-    { href: '/admin/doctors', label: 'Doctors', icon: 'user-md' },
-    { href: '/admin/pharmacists', label: 'Pharmacists', icon: 'pills' },
-    { href: '/admin/receptionists', label: 'Receptionists', icon: 'user' },
+    { href: '/admin/staff', label: 'Staff Management', icon: 'user-md' },
     { href: '/admin/patients', label: 'Patients', icon: 'procedures' },
-    { href: '/admin/medicines', label: 'Medicines', icon: 'capsules' },
-    { href: '/admin/companies', label: 'Companies', icon: 'building' },
-    { href: '/admin/distributors', label: 'Distributors', icon: 'truck' },
-    { href: '/admin/rooms', label: 'Rooms', icon: 'door-open' },
+    { href: '/admin/medicines', label: 'Pharmacy', icon: 'capsules' },
+    { href: '/admin/appointments', label: 'Appointments', icon: 'calendar' },
+    { href: '/admin/reports', label: 'Reports', icon: 'chart-bar' },
+    { href: '/admin/settings', label: 'Settings', icon: 'cog' },
   ];
   
   const doctorLinks = [
@@ -163,6 +161,13 @@ export default function Sidebar({ userType, userName = 'User', userImage, onImag
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
           </svg>
         );
+      case 'cog':
+        return (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        );
       default:
         return (
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -181,7 +186,12 @@ export default function Sidebar({ userType, userName = 'User', userImage, onImag
         </div>
         <div className="min-w-0 flex-1">
           <h1 className="text-white text-lg font-bold truncate">ClinixPro</h1>
-          <p className="text-indigo-200 text-xs truncate">{userType.charAt(0).toUpperCase() + userType.slice(1)} Portal</p>
+          <p className="text-indigo-200 text-xs truncate">
+            {userType === 'admin' ? 'Admin Panel' : 
+             userType === 'doctor' ? 'Doctor Portal' :
+             userType === 'pharmacist' ? 'Pharmacy Portal' :
+             'Receptionist Portal'}
+          </p>
         </div>
       </Link>
       
