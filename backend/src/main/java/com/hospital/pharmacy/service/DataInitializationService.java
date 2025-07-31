@@ -20,10 +20,9 @@ public class DataInitializationService {
 
     @PostConstruct
     public void initData() {
-        // Check if any users exist
-        if (userRepository.count() == 0) {
-            createUsers();
-        }
+        // Clear existing users and recreate with proper hashing
+        userRepository.deleteAll();
+        createUsers();
     }
 
     private void createUsers() {
