@@ -44,11 +44,11 @@ export default function AdminDashboard() {
     fetchDashboardData();
   }, []);
 
-  const fetchDashboardData = async () => {
-    try {
+    const fetchDashboardData = async () => {
+      try {
       const dashboardStats = await apiService.getDashboardStats();
-      setStats(dashboardStats);
-    } catch (err) {
+        setStats(dashboardStats);
+        } catch (err) {
       console.error("Error fetching dashboard stats:", err);
     } finally {
       setLoading(false);
@@ -59,22 +59,22 @@ export default function AdminDashboard() {
     try {
       // Mock data for recent activities
       const activities: RecentActivity[] = [
-        {
-          id: 1,
+            {
+              id: 1,
           type: "appointment",
           description: "New appointment scheduled for John Doe",
           timestamp: "2024-01-15T10:30:00Z",
           user: "Dr. Smith",
-        },
-        {
-          id: 2,
+            },
+            {
+              id: 2,
           type: "prescription",
           description: "Prescription created for Jane Smith",
           timestamp: "2024-01-15T09:15:00Z",
           user: "Dr. Johnson",
-        },
-        {
-          id: 3,
+            },
+            {
+              id: 3,
           type: "medicine",
           description: "Medicine stock updated",
           timestamp: "2024-01-15T08:45:00Z",
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
         },
       ];
       setRecentActivities(activities);
-    } catch (err) {
+      } catch (err) {
       console.error("Error fetching recent activities:", err);
     }
   };
@@ -130,12 +130,12 @@ export default function AdminDashboard() {
   return (
     <DashboardLayout>
       <div className="p-6">
-        <div className="mb-8">
+      <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
           <p className="text-gray-600 mt-2">Welcome back! Here's what's happening today.</p>
-        </div>
+      </div>
 
-        {/* Stats Grid */}
+            {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Total Doctors"
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
             icon={FaMoneyBillWave}
             color="border-red-500"
           />
-        </div>
+                    </div>
 
         {/* Additional Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -189,24 +189,24 @@ export default function AdminDashboard() {
             icon={FaCheckCircle}
             color="border-teal-500"
           />
-        </div>
+            </div>
 
         {/* Recent Activities */}
         <div className="bg-white rounded-lg shadow-md">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Recent Activities</h2>
-          </div>
+                </div>
           <div className="p-6">
             {recentActivities.length > 0 ? (
               <div className="space-y-2">
                 {recentActivities.map((activity) => (
                   <ActivityItem key={activity.id} activity={activity} />
-                ))}
-              </div>
-            ) : (
+                      ))}
+                    </div>
+                  ) : (
               <p className="text-gray-500 text-center py-4">No recent activities</p>
-            )}
-          </div>
+                  )}
+                </div>
         </div>
       </div>
     </DashboardLayout>

@@ -7,18 +7,18 @@ services:
     container_name: clinixpro-postgres
     environment:
       POSTGRES_DB: clinixpro
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-leandre}
+      POSTGRES_USER: leandre
+      POSTGRES_PASSWORD: leandre
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/src/main/resources/db/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "5434:5432"
+      - "5432:5432"
     networks:
       - clinixpro-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d clinixpro"]
+      test: ["CMD-SHELL", "pg_isready -U leandre -d clinixpro"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -32,8 +32,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - DATABASE_URL=jdbc:postgresql://postgres:5432/clinixpro
-      - DATABASE_USERNAME=postgres
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-leandre}
+      - DATABASE_USERNAME=leandre
+      - DATABASE_PASSWORD=leandre
       - JWT_SECRET=${JWT_SECRET:-clinixpro-hospital-management-system-jwt-secret-key-2024-enterprise-grade-security-production}
       - ALLOWED_ORIGINS=http://localhost:3000,https://clinixpro.com
     ports:

@@ -3,6 +3,7 @@
 
 -- Connect to the database (run this as superuser)
 -- psql -U postgres -d clinixpro -f reset-database.sql
+-- Or connect to default PostgreSQL port: psql -U postgres -d clinixpro -f reset-database.sql
 
 -- Drop and recreate the database
 DROP DATABASE IF EXISTS clinixpro;

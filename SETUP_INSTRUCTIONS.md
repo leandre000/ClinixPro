@@ -24,7 +24,7 @@ Your PostgreSQL is configured with:
 psql -h localhost -p 5434 -U postgres
 
 -- Create the database
-CREATE DATABASE pharmacydb;
+CREATE DATABASE clinixpro;
 
 -- Verify the database was created
 \l
@@ -120,7 +120,7 @@ After the first startup, the following accounts are automatically created:
 #### 1. Database Connection Failed
 - Ensure PostgreSQL is running on port 5434
 - Verify username: `postgres` and password: `leandre`
-- Check if the `pharmacydb` database exists
+- Check if the `clinixpro` database exists
 
 #### 2. Maven Build Failed
 - Ensure Java 17+ is installed and in PATH
@@ -145,8 +145,8 @@ If you need to reset the database:
 psql -h localhost -p 5434 -U postgres
 
 -- Drop and recreate the database
-DROP DATABASE IF EXISTS pharmacydb;
-CREATE DATABASE pharmacydb;
+DROP DATABASE IF EXISTS clinixpro;
+CREATE DATABASE clinixpro;
 
 -- Exit
 \q

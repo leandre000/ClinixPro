@@ -51,10 +51,10 @@ Write-Host ""
 # Step 4: Create database if it doesn't exist
 Write-Host "Step 4: Creating database if it doesn't exist..." -ForegroundColor Yellow
 try {
-    $createDB = psql -h localhost -p 5434 -U postgres -d postgres -c "CREATE DATABASE pharmacydb;" 2>$null
-    Write-Host "Database 'pharmacydb' created successfully!" -ForegroundColor Green
+    $createDB = psql -h localhost -p 5434 -U postgres -d postgres -c "CREATE DATABASE clinixpro;" 2>$null
+    Write-Host "Database 'clinixpro' created successfully!" -ForegroundColor Green
 } catch {
-    Write-Host "Database 'pharmacydb' already exists or creation failed" -ForegroundColor Yellow
+    Write-Host "Database 'clinixpro' already exists or creation failed" -ForegroundColor Yellow
 }
 Write-Host ""
 

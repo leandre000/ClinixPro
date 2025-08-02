@@ -41,11 +41,11 @@ echo PostgreSQL connection successful!
 echo.
 
 echo Step 4: Creating database if it doesn't exist...
-psql -h localhost -p 5434 -U postgres -d postgres -c "CREATE DATABASE pharmacydb;" > nul 2>&1
+psql -h localhost -p 5434 -U postgres -d postgres -c "CREATE DATABASE clinixpro;" > nul 2>&1
 if %errorlevel% equ 0 (
-    echo Database 'pharmacydb' created successfully!
+    echo Database 'clinixpro' created successfully!
 ) else (
-    echo Database 'pharmacydb' already exists or creation failed
+    echo Database 'clinixpro' already exists or creation failed
 )
 echo.
 
