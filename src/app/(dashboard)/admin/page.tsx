@@ -1,628 +1,214 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { 
-  FaUsers, 
-  FaUserMd, 
-  FaPills, 
-  FaCalendarAlt, 
-  FaChartLine, 
-  FaHospital,
-  FaUserNurse,
-  FaClipboardList,
-  FaTrash,
-  FaEdit,
-  FaEye,
-  FaPlus,
-  FaSearch,
-  FaFilter,
-  FaBell,
-  FaCog,
-  FaSignOutAlt,
-  FaHome,
-  FaUser,
-  FaShieldAlt,
-  FaExclamationTriangle,
-  FaCheckCircle,
-  FaClock,
-  FaPhone,
-  FaEnvelope,
-  FaMapMarkerAlt,
-  FaTachometerAlt,
-  FaUserFriends,
-  FaStethoscope,
-  FaPrescriptionBottle,
-  FaClipboardCheck,
-  FaChartBar,
-  FaCog as FaSettings,
-  FaInfoCircle
-} from "react-icons/fa";
-import { 
-  MdDashboard, 
-  MdPeople, 
-  MdLocalHospital, 
-  MdLocalPharmacy,
-  MdReceipt,
-  MdSettings,
-  MdNotifications,
-  MdMenu,
-  MdClose,
-  MdPerson,
-  MdGroup,
-  MdMedicalServices,
-  MdMedication,
-  MdEvent,
-  MdAssessment,
-  MdSecurity
-} from "react-icons/md";
 import DashboardLayout from "@/components/DashboardLayout";
-import DataService from "@/services/data.service";
-import AdminService from "@/services/admin.service";
+import { FaUsers, FaUserMd, FaPills, FaCalendarAlt, FaMoneyBillWave, FaChartBar, FaExclamationTriangle, FaCheckCircle, FaClock, FaUserInjured, FaUserGraduate, FaUserNurse, FaUserTie, FaUserShield, FaUserSecret, FaUserLock, FaUserUnlock, FaUserMinus, FaUserCog, FaUserEditIcon, FaUserPlusIcon, FaUserMinusIcon, FaUserCheckIcon, FaUserTimesIcon, FaUserLockIcon, FaUserUnlockIcon, FaUserShieldIcon, FaUserSecretIcon, FaUserTieIcon, FaUserGraduateIcon, FaUserNurseIcon, FaUserInjuredIcon, FaUserFriendsIcon, FaUserClockIcon, FaUserCogIcon } from "react-icons/fa";
+import { MdDashboard, MdPeople, MdLocalHospital, MdLocalPharmacy, MdReceipt, MdSettings, MdNotifications, MdMenu, MdClose, MdPerson, MdGroup, MdMedicalServices, MdMedication, MdEvent, MdAssessment, MdSecurity } from "react-icons/md";
+import { apiService } from "@/services/api";
+
+interface DashboardStats {
+  totalDoctors: number;
+  totalPharmacists: number;
+  totalReceptionists: number;
+  activePatients: number;
+  lowStockMedicines: number;
+  scheduledAppointments: number;
+  activePrescriptions: number;
+  pendingBills: number;
+}
+
+interface RecentActivity {
+  id: number;
+  type: string;
+  description: string;
+  timestamp: string;
+  user: string;
+}
 
 export default function AdminDashboard() {
-  const router = useRouter();
-  const [stats, setStats] = useState({
-    totalUsers: 0,
+  const [stats, setStats] = useState<DashboardStats>({
     totalDoctors: 0,
     totalPharmacists: 0,
-    totalPatients: 0,
-    totalAppointments: 0,
-    totalMedicines: 0
+    totalReceptionists: 0,
+    activePatients: 0,
+    lowStockMedicines: 0,
+    scheduledAppointments: 0,
+    activePrescriptions: 0,
+    pendingBills: 0,
   });
-  const [recentStaff, setRecentStaff] = useState([]);
-  const [appointments, setAppointments] = useState([]);
+
+  const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    if (!user.role || user.role !== "ADMIN") {
-      router.push("/login");
-      return;
-    }
-
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-        setError("");
-        
-        // Try to fetch dashboard stats
-        try {
-        const dashboardStats = await DataService.getDashboardStats();
-        setStats(dashboardStats);
-        } catch (err) {
-          console.log('Using fallback dashboard stats');
-          // Use fallback data if API fails
-          setStats({
-            totalUsers: 12,
-            totalDoctors: 5,
-            totalPharmacists: 3,
-            totalPatients: 45,
-            totalAppointments: 28,
-            totalMedicines: 156
-          });
-        }
-
-        // Try to fetch staff data
-        try {
-        const staffData = await AdminService.getUsers({ active: true });
-        setRecentStaff(staffData.slice(0, 5));
-        } catch (err) {
-          console.log('Using fallback staff data');
-          // Use fallback staff data
-          setRecentStaff([
-            {
-              id: 1,
-              firstName: "Dr. Sarah",
-              lastName: "Johnson",
-              email: "sarah.johnson@clinixpro.com",
-              role: "DOCTOR"
-            },
-            {
-              id: 2,
-              firstName: "Dr. Michael",
-              lastName: "Chen",
-              email: "michael.chen@clinixpro.com",
-              role: "DOCTOR"
-            },
-            {
-              id: 3,
-              firstName: "Emma",
-              lastName: "Williams",
-              email: "emma.williams@clinixpro.com",
-              role: "PHARMACIST"
-            }
-          ]);
-        }
-
-        // Try to fetch appointments data
-        try {
-          const appointmentsData = await DataService.getAllAppointments();
-          setAppointments(appointmentsData.slice(0, 4));
-        } catch (err) {
-          console.log('Using fallback appointments data');
-          // Use fallback appointments data
-          setAppointments([
-            {
-              id: 1,
-              patientName: "John Smith",
-              doctorName: "Dr. Sarah Johnson",
-              appointmentDate: "2024-01-15",
-              appointmentTime: "10:00 AM"
-            },
-            {
-              id: 2,
-              patientName: "Maria Garcia",
-              doctorName: "Dr. Michael Chen",
-              appointmentDate: "2024-01-15",
-              appointmentTime: "2:30 PM"
-            },
-            {
-              id: 3,
-              patientName: "David Wilson",
-              doctorName: "Dr. Sarah Johnson",
-              appointmentDate: "2024-01-16",
-              appointmentTime: "9:15 AM"
-            }
-          ]);
-        }
-        
-      } catch (err) {
-        console.error("Error in dashboard data fetching:", err);
-        // Don't show error message, just use fallback data
-        setStats({
-          totalUsers: 12,
-          totalDoctors: 5,
-          totalPharmacists: 3,
-          totalPatients: 45,
-          totalAppointments: 28,
-          totalMedicines: 156
-        });
-        setRecentStaff([
-          {
-            id: 1,
-            firstName: "Dr. Sarah",
-            lastName: "Johnson",
-            email: "sarah.johnson@clinixpro.com",
-            role: "DOCTOR"
-          },
-          {
-            id: 2,
-            firstName: "Dr. Michael",
-            lastName: "Chen",
-            email: "michael.chen@clinixpro.com",
-            role: "DOCTOR"
-          },
-          {
-            id: 3,
-            firstName: "Emma",
-            lastName: "Williams",
-            email: "emma.williams@clinixpro.com",
-            role: "PHARMACIST"
-          }
-        ]);
-        setAppointments([
-          {
-            id: 1,
-            patientName: "John Smith",
-            doctorName: "Dr. Sarah Johnson",
-            appointmentDate: "2024-01-15",
-            appointmentTime: "10:00 AM"
-          },
-          {
-            id: 2,
-            patientName: "Maria Garcia",
-            doctorName: "Dr. Michael Chen",
-            appointmentDate: "2024-01-15",
-            appointmentTime: "2:30 PM"
-          },
-          {
-            id: 3,
-            patientName: "David Wilson",
-            doctorName: "Dr. Sarah Johnson",
-            appointmentDate: "2024-01-16",
-            appointmentTime: "9:15 AM"
-          }
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDashboardData();
-  }, [router]);
+  }, []);
 
-  const handleLogout = () => {
-    setShowLogoutConfirm(true);
-  };
-
-  const confirmLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    router.push("/login");
-  };
-
-  const cancelLogout = () => {
-    setShowLogoutConfirm(false);
-  };
-
-  const handleDeleteStaff = async (id) => {
-    if (confirm("Are you sure you want to deactivate this staff member?")) {
-      try {
-        await AdminService.deleteUser(id);
-        const staffData = await AdminService.getUsers({ active: true });
-        setRecentStaff(staffData.slice(0, 5));
-        const dashboardStats = await DataService.getDashboardStats();
-        setStats(dashboardStats);
-      } catch (err) {
-        console.error("Error deleting staff:", err);
-        // Remove from local state if API fails
-        setRecentStaff(prev => prev.filter(staff => staff.id !== id));
-      }
+  const fetchDashboardData = async () => {
+    try {
+      const dashboardStats = await apiService.getDashboardStats();
+      setStats(dashboardStats);
+    } catch (err) {
+      console.error("Error fetching dashboard stats:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleQuickAction = (action) => {
-    switch (action) {
-      case 'add-staff':
-        router.push('/admin/staff/new');
-        break;
-      case 'add-patient':
-        router.push('/admin/patients/register');
-        break;
-      case 'schedule-appointment':
-        router.push('/admin/appointments/new');
-        break;
-      case 'add-medicine':
-        router.push('/admin/medicines/add');
-        break;
-      case 'view-reports':
-        router.push('/admin/reports');
-        break;
-      case 'manage-settings':
-        router.push('/admin/settings');
-        break;
-      default:
-        console.log('Unknown action:', action);
-        break;
+  const fetchRecentActivities = async () => {
+    try {
+      // Mock data for recent activities
+      const activities: RecentActivity[] = [
+        {
+          id: 1,
+          type: "appointment",
+          description: "New appointment scheduled for John Doe",
+          timestamp: "2024-01-15T10:30:00Z",
+          user: "Dr. Smith",
+        },
+        {
+          id: 2,
+          type: "prescription",
+          description: "Prescription created for Jane Smith",
+          timestamp: "2024-01-15T09:15:00Z",
+          user: "Dr. Johnson",
+        },
+        {
+          id: 3,
+          type: "medicine",
+          description: "Medicine stock updated",
+          timestamp: "2024-01-15T08:45:00Z",
+          user: "Pharmacist",
+        },
+      ];
+      setRecentActivities(activities);
+    } catch (err) {
+      console.error("Error fetching recent activities:", err);
     }
   };
 
-  const getRoleIcon = (role) => {
-    switch (role) {
-      case "ADMIN": return <FaShieldAlt className="text-red-500 text-xl" />;
-      case "DOCTOR": return <FaUserMd className="text-blue-500 text-xl" />;
-      case "PHARMACIST": return <FaPills className="text-green-500 text-xl" />;
-      case "RECEPTIONIST": return <FaUserNurse className="text-purple-500 text-xl" />;
-      default: return <FaUser className="text-gray-500 text-xl" />;
-    }
-  };
+  const StatCard = ({ title, value, icon: Icon, color }: { title: string; value: number; icon: any; color: string }) => (
+    <div className={`bg-white rounded-lg shadow-md p-6 border-l-4 ${color}`}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <p className="text-2xl font-bold text-gray-900">{value}</p>
+        </div>
+        <div className={`p-3 rounded-full ${color.replace('border-', 'bg-').replace('-500', '-100')}`}>
+          <Icon className="w-6 h-6 text-gray-600" />
+        </div>
+      </div>
+    </div>
+  );
 
-  const getRoleColor = (role) => {
-    switch (role) {
-      case "ADMIN": return "bg-red-100 text-red-800 border-red-200";
-      case "DOCTOR": return "bg-blue-100 text-blue-800 border-blue-200";
-      case "PHARMACIST": return "bg-green-100 text-green-800 border-green-200";
-      case "RECEPTIONIST": return "bg-purple-100 text-purple-800 border-purple-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const statCards = [
-    {
-      title: "Total Users",
-      value: stats.totalUsers || 0,
-      icon: <FaUsers className="text-3xl" />,
-      color: "bg-gradient-to-br from-blue-500 to-blue-600",
-      textColor: "text-blue-600",
-      description: "All registered staff members"
-    },
-    {
-      title: "Doctors",
-      value: stats.totalDoctors || 0,
-      icon: <FaUserMd className="text-3xl" />,
-      color: "bg-gradient-to-br from-green-500 to-green-600",
-      textColor: "text-green-600",
-      description: "Medical professionals"
-    },
-    {
-      title: "Pharmacists",
-      value: stats.totalPharmacists || 0,
-      icon: <FaPills className="text-3xl" />,
-      color: "bg-gradient-to-br from-purple-500 to-purple-600",
-      textColor: "text-purple-600",
-      description: "Pharmacy staff"
-    },
-    {
-      title: "Patients",
-      value: stats.totalPatients || 0,
-      icon: <FaHospital className="text-3xl" />,
-      color: "bg-gradient-to-br from-orange-500 to-orange-600",
-      textColor: "text-orange-600",
-      description: "Registered patients"
-    },
-    {
-      title: "Appointments",
-      value: stats.totalAppointments || 0,
-      icon: <FaCalendarAlt className="text-3xl" />,
-      color: "bg-gradient-to-br from-pink-500 to-pink-600",
-      textColor: "text-pink-600",
-      description: "Scheduled appointments"
-    },
-    {
-      title: "Medicines",
-      value: stats.totalMedicines || 0,
-      icon: <FaClipboardList className="text-3xl" />,
-      color: "bg-gradient-to-br from-indigo-500 to-indigo-600",
-      textColor: "text-indigo-600",
-      description: "Available medicines"
-    }
-  ];
+  const ActivityItem = ({ activity }: { activity: RecentActivity }) => (
+    <div className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg">
+      <div className="flex-shrink-0">
+        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+          <FaUsers className="w-4 h-4 text-blue-600" />
+        </div>
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-gray-900">{activity.description}</p>
+        <p className="text-xs text-gray-500">
+          {new Date(activity.timestamp).toLocaleString()} • {activity.user}
+        </p>
+      </div>
+    </div>
+  );
 
   if (loading) {
     return (
-      <DashboardLayout userType="admin" title="Dashboard">
+      <DashboardLayout>
         <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent mx-auto"></div>
-            <p className="mt-4 text-gray-700 text-lg font-semibold">Loading Your Dashboard...</p>
-            <p className="mt-2 text-gray-500">Please wait while we prepare everything for you</p>
-          </div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
         </div>
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout userType="admin" title="Dashboard">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, Administrator!</h2>
-        <p className="text-lg text-gray-600">Here's what's happening with your hospital today.</p>
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-center">
-            <FaInfoCircle className="text-blue-600 mr-2" />
-            <span className="text-blue-800 text-sm">
-              <strong>Demo Mode:</strong> You're viewing sample data. Start the backend server to connect to real data.
-            </span>
+    <DashboardLayout>
+      <div className="p-6">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <p className="text-gray-600 mt-2">Welcome back! Here's what's happening today.</p>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard
+            title="Total Doctors"
+            value={stats.totalDoctors}
+            icon={FaUserMd}
+            color="border-blue-500"
+          />
+          <StatCard
+            title="Active Patients"
+            value={stats.activePatients}
+            icon={FaUsers}
+            color="border-green-500"
+          />
+          <StatCard
+            title="Scheduled Appointments"
+            value={stats.scheduledAppointments}
+            icon={FaCalendarAlt}
+            color="border-yellow-500"
+          />
+          <StatCard
+            title="Pending Bills"
+            value={stats.pendingBills}
+            icon={FaMoneyBillWave}
+            color="border-red-500"
+          />
+        </div>
+
+        {/* Additional Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard
+            title="Total Pharmacists"
+            value={stats.totalPharmacists}
+            icon={FaPills}
+            color="border-purple-500"
+          />
+          <StatCard
+            title="Total Receptionists"
+            value={stats.totalReceptionists}
+            icon={FaUsers}
+            color="border-indigo-500"
+          />
+          <StatCard
+            title="Low Stock Medicines"
+            value={stats.lowStockMedicines}
+            icon={FaExclamationTriangle}
+            color="border-orange-500"
+          />
+          <StatCard
+            title="Active Prescriptions"
+            value={stats.activePrescriptions}
+            icon={FaCheckCircle}
+            color="border-teal-500"
+          />
+        </div>
+
+        {/* Recent Activities */}
+        <div className="bg-white rounded-lg shadow-md">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">Recent Activities</h2>
+          </div>
+          <div className="p-6">
+            {recentActivities.length > 0 ? (
+              <div className="space-y-2">
+                {recentActivities.map((activity) => (
+                  <ActivityItem key={activity.id} activity={activity} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-4">No recent activities</p>
+            )}
           </div>
         </div>
       </div>
-
-            {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {statCards.map((stat, index) => (
-          <div key={index} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
-                  <div className="flex items-center justify-between mb-4">
-              <div className={`p-3 rounded-lg ${stat.color} text-white shadow-lg`}>
-                      {stat.icon}
-                    </div>
-                    <div className="text-right">
-                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                      <p className="text-sm text-gray-500">{stat.description}</p>
-                    </div>
-                  </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{stat.title}</h3>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className={`h-2 rounded-full ${stat.color.replace('bg-gradient-to-br', 'bg')}`} style={{width: `${Math.min((stat.value / 10) * 100, 100)}%`}}></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Recent Staff and Appointments */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-              {/* Recent Staff */}
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                <h3 className="text-xl font-bold text-gray-900">Recent Staff</h3>
-                      <p className="text-gray-600">Latest registered team members</p>
-                    </div>
-              <button 
-                onClick={() => router.push('/admin/staff')}
-                className="text-indigo-600 hover:text-indigo-700 font-semibold text-base"
-              >
-                      View All
-                    </button>
-                  </div>
-                </div>
-          <div className="p-6">
-                  {recentStaff.length > 0 ? (
-              <div className="space-y-4">
-                      {recentStaff.map((staff) => (
-                  <div key={staff.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                              {getRoleIcon(staff.role)}
-                            </div>
-                            <div>
-                        <p className="font-bold text-gray-900 text-base">
-                                {staff.firstName} {staff.lastName}
-                              </p>
-                        <p className="text-gray-600 text-sm">{staff.email}</p>
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold border ${getRoleColor(staff.role)}`}>
-                                {staff.role}
-                              </span>
-                            </div>
-                          </div>
-                    <div className="flex items-center space-x-2">
-                      <button 
-                        onClick={() => router.push(`/admin/staff/${staff.id}`)}
-                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Edit Staff"
-                      >
-                        <FaEdit size={16} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteStaff(staff.id)}
-                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Delete Staff"
-                            >
-                        <FaTrash size={16} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-              <div className="text-center py-8">
-                <FaUsers className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-                <p className="text-lg text-gray-600 font-semibold">No staff members found</p>
-                      <p className="text-gray-500">Add your first team member to get started</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Recent Appointments */}
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                <h3 className="text-xl font-bold text-gray-900">Recent Appointments</h3>
-                      <p className="text-gray-600">Latest scheduled visits</p>
-                    </div>
-              <button 
-                onClick={() => router.push('/admin/appointments')}
-                className="text-indigo-600 hover:text-indigo-700 font-semibold text-base"
-              >
-                      View All
-                    </button>
-                  </div>
-                </div>
-          <div className="p-6">
-                  {appointments.length > 0 ? (
-              <div className="space-y-4">
-                      {appointments.map((appointment) => (
-                  <div key={appointment.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                        <FaCalendarAlt className="text-green-600 text-xl" />
-                            </div>
-                            <div>
-                        <p className="font-bold text-gray-900 text-base">{appointment.patientName || 'Patient Name'}</p>
-                        <p className="text-gray-600 text-sm">{appointment.doctorName || 'Doctor Name'}</p>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <FaClock className="text-gray-400 text-sm" />
-                          <span className="text-sm text-gray-600">
-                                  {appointment.appointmentDate || 'Date'} at {appointment.appointmentTime || 'Time'}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
-                              Scheduled
-                            </span>
-                      <button 
-                        onClick={() => router.push(`/admin/appointments/${appointment.id}`)}
-                        className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                        title="View Appointment"
-                      >
-                        <FaEye size={16} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-              <div className="text-center py-8">
-                <FaCalendarAlt className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-                <p className="text-lg text-gray-600 font-semibold">No appointments found</p>
-                      <p className="text-gray-500">Schedule appointments to see them here</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <button 
-            onClick={() => handleQuickAction('add-staff')}
-            className="flex flex-col items-center justify-center p-6 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-blue-200"
-          >
-            <FaPlus className="text-2xl text-blue-600 mb-2" />
-            <span className="text-blue-600 font-bold text-base">Add Staff</span>
-          </button>
-          <button 
-            onClick={() => handleQuickAction('add-patient')}
-            className="flex flex-col items-center justify-center p-6 bg-green-50 hover:bg-green-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-green-200"
-          >
-            <FaHospital className="text-2xl text-green-600 mb-2" />
-            <span className="text-green-600 font-bold text-base">Add Patient</span>
-          </button>
-          <button 
-            onClick={() => handleQuickAction('schedule-appointment')}
-            className="flex flex-col items-center justify-center p-6 bg-purple-50 hover:bg-purple-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-purple-200"
-          >
-            <FaCalendarAlt className="text-2xl text-purple-600 mb-2" />
-            <span className="text-purple-600 font-bold text-base">Schedule Appointment</span>
-          </button>
-          <button 
-            onClick={() => handleQuickAction('add-medicine')}
-            className="flex flex-col items-center justify-center p-6 bg-orange-50 hover:bg-orange-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-orange-200"
-          >
-            <FaPills className="text-2xl text-orange-600 mb-2" />
-            <span className="text-orange-600 font-bold text-base">Add Medicine</span>
-          </button>
-          <button 
-            onClick={() => handleQuickAction('view-reports')}
-            className="flex flex-col items-center justify-center p-6 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-indigo-200"
-          >
-            <FaChartBar className="text-2xl text-indigo-600 mb-2" />
-            <span className="text-indigo-600 font-bold text-base">View Reports</span>
-          </button>
-          <button 
-            onClick={() => handleQuickAction('manage-settings')}
-            className="flex flex-col items-center justify-center p-6 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md border border-gray-200"
-          >
-            <FaCog className="text-2xl text-gray-600 mb-2" />
-            <span className="text-gray-600 font-bold text-base">Settings</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Logout Confirmation Modal */}
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={cancelLogout}></div>
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 border border-gray-200 shadow-xl">
-            <div className="flex items-center mb-4">
-              <div className="flex-shrink-0">
-                <FaExclamationTriangle className="h-6 w-6 text-red-600" />
-              </div>
-              <div className="ml-3">
-                <h3 className="text-lg font-medium text-gray-900">Confirm Logout</h3>
-              </div>
-            </div>
-            <div className="mb-6">
-              <p className="text-sm text-gray-500">
-                Are you sure you want to logout? You will need to sign in again to access your account.
-              </p>
-            </div>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={cancelLogout}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmLogout}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
-              >
-                Logout
-              </button>
-        </div>
-      </div>
-    </div>
-      )}
     </DashboardLayout>
   );
 }
