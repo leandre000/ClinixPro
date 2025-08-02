@@ -1,7 +1,11 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-// API Configuration
+// API Configuration with environment support
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
+console.log(`API Service initialized with URL: ${API_URL}`);
+console.log(`Environment: ${process.env.NODE_ENV}`);
 
 // Types
 export interface User {
