@@ -7,11 +7,15 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install dependencies with platform-specific binaries
+RUN npm ci --omit=dev --platform=linux --arch=x64
 
 # Copy source code
 COPY . .
+
+# Set environment for cross-platform build
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 
 # Build the application
 RUN npm run build
