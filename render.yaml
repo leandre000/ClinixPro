@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: clinixpro-backend
+    env: java
+    buildCommand: ./mvnw clean install -DskipTests
+    startCommand: java -jar target/*.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SERVER_PORT
+        value: 8080
+      - key: SERVER_SERVLET_CONTEXT_PATH
+        value: /api
+      - key: JWT_SECRET
+        value: 364115689b626958012b9d7feb17d295d8889060cd1806a1a42d155898d52188d1ceada7ed4709073cdd26572bdc
+      - key: JWT_EXPIRATION
+        value: 86400000
+      - key: JWT_REFRESH_EXPIRATION
+        value: 604800000
+      - key: APP_NAME
+        value: ClinixPro
+      - key: APP_VERSION
+        value: 1.0.0
+      - key: APP_ENVIRONMENT
+        value: production
+      - key: SPRING_WEB_CORS_ALLOWED_METHODS
+        value: GET,POST,PUT,DELETE,OPTIONS,PATCH
+      - key: SPRING_WEB_CORS_ALLOWED_HEADERS
+        value: "*"
+      - key: SPRING_WEB_CORS_ALLOW_CREDENTIALS
+        value: "true"
+    healthCheckPath: /api/health
+    autoDeploy: true 
