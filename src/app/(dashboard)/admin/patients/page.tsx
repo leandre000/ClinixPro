@@ -1,7 +1,7 @@
 "use client";
 
 import DashboardLayout from "@/components/DashboardLayout";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import AdminService from "@/services/admin.service";
 import { 
@@ -60,7 +60,7 @@ import {
 } from "react-icons/fa";
 import ConfirmationModal from "@/components/ConfirmationModal";
 
-export default function PatientsPage() {
+function PatientsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
@@ -559,5 +559,19 @@ export default function PatientsPage() {
         type="danger"
       />
     </DashboardLayout>
+  );
+}
+
+export default function PatientsPage() {
+  return (
+    <Suspense fallback={
+      <DashboardLayout userType="admin" title="Patients">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        </div>
+      </DashboardLayout>
+    }>
+      <PatientsContent />
+    </Suspense>
   );
 } 

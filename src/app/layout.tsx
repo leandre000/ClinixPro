@@ -15,13 +15,13 @@ const geistMono = Geist_Mono({
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  themeColor: "#2563eb",
 };
 
 export const metadata: Metadata = {
   title: "ClinixPro - Hospital Management System",
   description: "Modern healthcare management solution for hospitals and clinics nationwide",
   manifest: "/manifest.json",
-  themeColor: "#2563eb",
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
 import DoctorService from "@/services/doctor.service";
 
-export default function CreatePrescriptionPage() {
+function NewPrescriptionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const patientIdParam = searchParams.get("patientId");
@@ -333,5 +333,19 @@ export default function CreatePrescriptionPage() {
         </form>
       </div>
     </DashboardLayout>
+  );
+}
+
+export default function NewPrescriptionPage() {
+  return (
+    <Suspense fallback={
+      <DashboardLayout userType="doctor" title="New Prescription">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        </div>
+      </DashboardLayout>
+    }>
+      <NewPrescriptionContent />
+    </Suspense>
   );
 } 

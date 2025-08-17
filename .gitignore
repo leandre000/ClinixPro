@@ -130,3 +130,4 @@ application-*.properties
 *.tmp
 *.temp
 maven.zip 
+.vercel

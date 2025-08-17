@@ -5,6 +5,9 @@ import { Search, Plus, Edit, Trash2, Eye, Filter } from 'lucide-react';
 import PharmacistService from '@/services/pharmacist.service';
 import DashboardLayout from '@/components/DashboardLayout';
 import ConfirmationModal from '@/components/ConfirmationModal';
+import Button from '@/components/Button';
+import Badge from '@/components/Badge';
+import Dialog from '@/components/Dialog';
 
 export default function Inventory() {
   const [inventory, setInventory] = useState([]);

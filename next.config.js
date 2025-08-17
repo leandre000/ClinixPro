@@ -3,7 +3,6 @@ const nextConfig = {
   // Production optimizations
   poweredByHeader: false,
   compress: true,
-  generateEtags: false,
   
   // Image configuration
   images: {
@@ -76,11 +75,6 @@ const nextConfig = {
     return config;
   },
 
-  // Experimental features for better performance
-  experimental: {
-    scrollRestoration: true,
-  },
-
   // TypeScript configuration
   typescript: {
     ignoreBuildErrors: true,
@@ -90,6 +84,14 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+
+  // Experimental features
+  experimental: {
+    scrollRestoration: true,
+  },
+
+  // Output configuration
+  output: 'standalone',
 };
 
 module.exports = nextConfig;

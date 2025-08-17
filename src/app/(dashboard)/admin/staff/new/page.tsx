@@ -2,7 +2,7 @@
 
 import DashboardLayout from "@/components/DashboardLayout";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import AuthService from "@/services/auth.service";
 import dynamic from "next/dynamic";
 
@@ -11,7 +11,7 @@ const UserForm = dynamic(() => import("@/components/forms/UserForm"), {
   ssr: false,
 });
 
-export default function AddStaffPage() {
+function AddStaffContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [roleFromUrl, setRoleFromUrl] = useState(null);
@@ -65,5 +65,21 @@ export default function AddStaffPage() {
         />
       </div>
     </DashboardLayout>
+  );
+}
+
+export default function AddStaffPage() {
+  return (
+    <Suspense fallback={
+      <DashboardLayout userType="admin" title="Add New Staff Member">
+        <div className="bg-white shadow rounded-lg p-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+          </div>
+        </div>
+      </DashboardLayout>
+    }>
+      <AddStaffContent />
+    </Suspense>
   );
 } 

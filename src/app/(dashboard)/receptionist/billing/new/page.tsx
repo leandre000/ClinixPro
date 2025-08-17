@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
 import ReceptionistService from "@/services/receptionist.service";
 
-export default function NewBillingPage() {
+function NewBillingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const appointmentId = searchParams.get("appointmentId");
@@ -382,5 +382,19 @@ export default function NewBillingPage() {
         )}
       </div>
     </DashboardLayout>
+  );
+}
+
+export default function NewBillingPage() {
+  return (
+    <Suspense fallback={
+      <DashboardLayout userType="receptionist" title="New Billing">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        </div>
+      </DashboardLayout>
+    }>
+      <NewBillingContent />
+    </Suspense>
   );
 } 

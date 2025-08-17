@@ -5,6 +5,8 @@ import { Search, Check, X, Eye, Filter, Calendar } from 'lucide-react';
 import PharmacistService from '@/services/pharmacist.service';
 import DashboardLayout from '@/components/DashboardLayout';
 import ConfirmationModal from '@/components/ConfirmationModal';
+import Button from '@/components/Button';
+import Dialog from '@/components/Dialog';
 import { formatDistanceToNow } from 'date-fns';
 
 export default function DrugRequests() {

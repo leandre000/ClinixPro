@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { FaUsers, FaUserMd, FaPills, FaCalendarAlt, FaMoneyBillWave, FaChartBar, FaExclamationTriangle, FaCheckCircle, FaClock, FaUserInjured, FaUserGraduate, FaUserNurse, FaUserTie, FaUserShield, FaUserSecret, FaUserLock, FaUserUnlock, FaUserMinus, FaUserCog, FaUserEditIcon, FaUserPlusIcon, FaUserMinusIcon, FaUserCheckIcon, FaUserTimesIcon, FaUserLockIcon, FaUserUnlockIcon, FaUserShieldIcon, FaUserSecretIcon, FaUserTieIcon, FaUserGraduateIcon, FaUserNurseIcon, FaUserInjuredIcon, FaUserFriendsIcon, FaUserClockIcon, FaUserCogIcon } from "react-icons/fa";
 import { MdDashboard, MdPeople, MdLocalHospital, MdLocalPharmacy, MdReceipt, MdSettings, MdNotifications, MdMenu, MdClose, MdPerson, MdGroup, MdMedicalServices, MdMedication, MdEvent, MdAssessment, MdSecurity } from "react-icons/md";
-import { apiService } from "@/services/api";
+// import { apiService } from "@/services/api";
 
 interface DashboardStats {
   totalDoctors: number;
@@ -46,14 +46,24 @@ export default function AdminDashboard() {
 
     const fetchDashboardData = async () => {
       try {
-      const dashboardStats = await apiService.getDashboardStats();
-        setStats(dashboardStats);
-        } catch (err) {
-      console.error("Error fetching dashboard stats:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+        // Mock data for now - replace with actual API call when backend is ready
+        const mockStats: DashboardStats = {
+          totalDoctors: 25,
+          totalPharmacists: 12,
+          totalReceptionists: 18,
+          activePatients: 150,
+          lowStockMedicines: 8,
+          scheduledAppointments: 45,
+          activePrescriptions: 67,
+          pendingBills: 23,
+        };
+        setStats(mockStats);
+      } catch (err) {
+        console.error("Error fetching dashboard stats:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   const fetchRecentActivities = async () => {
     try {
