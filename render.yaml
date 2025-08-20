@@ -7,8 +7,6 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: production
-      - key: SERVER_PORT
-        value: 8080
       - key: SERVER_SERVLET_CONTEXT_PATH
         value: /api
       - key: JWT_SECRET
@@ -49,8 +47,6 @@ services:
         value: update
       - key: SPRING_JPA_SHOW_SQL
         value: false
-      - key: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
-        value: org.hibernate.dialect.PostgreSQLDialect
       - key: MAIL_HOST
         value: smtp.gmail.com
       - key: MAIL_PORT
