@@ -31,18 +31,26 @@ services:
         value: "true"
       - key: ALLOWED_ORIGINS
         value: "https://clinixpro.vercel.app,https://clinixpro.com,http://localhost:3000"
-      - key: DATABASE_URL
+      - key: SPRING_DATASOURCE_URL
         fromDatabase:
           name: clinixpro-db
           property: connectionString
-      - key: DATABASE_USERNAME
+      - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: clinixpro-db
           property: user
-      - key: DATABASE_PASSWORD
+      - key: SPRING_DATASOURCE_PASSWORD
         fromDatabase:
           name: clinixpro-db
           property: password
+      - key: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+        value: org.postgresql.Driver
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: SPRING_JPA_SHOW_SQL
+        value: false
+      - key: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+        value: org.hibernate.dialect.PostgreSQLDialect
       - key: MAIL_HOST
         value: smtp.gmail.com
       - key: MAIL_PORT
