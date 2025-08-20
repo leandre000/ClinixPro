@@ -29,6 +29,18 @@ services:
         value: "true"
       - key: ALLOWED_ORIGINS
         value: "https://clinixpro.vercel.app,https://clinixpro.com,http://localhost:3000"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: clinixpro-db
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: clinixpro-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: clinixpro-db
+          property: password
       - key: SPRING_DATASOURCE_DRIVER_CLASS_NAME
         value: org.postgresql.Driver
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
