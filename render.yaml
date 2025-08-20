@@ -61,6 +61,6 @@ services:
 
 databases:
   - name: clinixpro-db
-    databaseName: clinixpro
+    databaseName: clinixpro_db
     user: clinixpro_user
     plan: starter 
