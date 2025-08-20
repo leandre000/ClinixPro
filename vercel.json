@@ -6,19 +6,8 @@
       "use": "@vercel/next"
     }
   ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    }
-  ],
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://your-backend-url.com/api"
-  },
-  "functions": {
-    "app/api/**/*.ts": {
-      "maxDuration": 30
-    }
+    "NEXT_PUBLIC_API_URL": "https://clinixpro-backend.onrender.com/api"
   },
   "headers": [
     {
@@ -37,6 +26,12 @@
           "value": "origin-when-cross-origin"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://clinixpro-backend.onrender.com/api/$1"
     }
   ]
 } 

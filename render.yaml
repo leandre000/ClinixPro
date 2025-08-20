@@ -2,7 +2,7 @@ services:
   - type: web
     name: clinixpro-backend
     env: java
-    buildCommand: ./mvnw clean install -DskipTests
+    buildCommand: ./mvnw clean package -DskipTests
     startCommand: java -jar target/*.jar
     envVars:
       - key: SPRING_PROFILES_ACTIVE
@@ -29,5 +29,34 @@ services:
         value: "*"
       - key: SPRING_WEB_CORS_ALLOW_CREDENTIALS
         value: "true"
+      - key: ALLOWED_ORIGINS
+        value: "https://clinixpro.vercel.app,https://clinixpro.com,http://localhost:3000"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: clinixpro-db
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: clinixpro-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: clinixpro-db
+          property: password
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: 587
+      - key: MAIL_USERNAME
+        value: clinixpro@hospital.com
+      - key: MAIL_PASSWORD
+        value: your-app-password
     healthCheckPath: /api/health
-    autoDeploy: true 
+    autoDeploy: true
+    plan: starter
+
+databases:
+  - name: clinixpro-db
+    databaseName: clinixpro
+    user: clinixpro_user
+    plan: starter 
