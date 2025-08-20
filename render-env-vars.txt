@@ -1,0 +1,97 @@
+# ClinixPro Render Environment Variables
+# Copy each line into Render Environment Variables section
+
+# ==================== APPLICATION CONFIGURATION ====================
+APP_NAME=ClinixPro
+APP_VERSION=1.0.0
+APP_ENVIRONMENT=production
+NODE_ENV=production
+
+# ==================== SERVER CONFIGURATION ====================
+SERVER_PORT=8080
+SERVER_SERVLET_CONTEXT_PATH=/api
+SPRING_PROFILES_ACTIVE=production
+
+# ==================== JWT CONFIGURATION ====================
+JWT_SECRET=364115689b626958012b9d7feb17d295d8889060cd1806a1a42d155898d52188d1ceada7ed4709073cdd26572bdc
+JWT_EXPIRATION=86400000
+JWT_REFRESH_EXPIRATION=604800000
+
+# ==================== CORS CONFIGURATION ====================
+ALLOWED_ORIGINS=https://clinix-am6u4to10-leandre000s-projects.vercel.app,https://clinixpro.com,http://localhost:3000
+SPRING_WEB_CORS_ALLOWED_METHODS=GET,POST,PUT,DELETE,OPTIONS,PATCH
+SPRING_WEB_CORS_ALLOWED_HEADERS=*
+SPRING_WEB_CORS_ALLOW_CREDENTIALS=true
+
+# ==================== EMAIL CONFIGURATION ====================
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=clinixpro@hospital.com
+MAIL_PASSWORD=your-app-password
+MAIL_FROM=clinixpro@hospital.com
+MAIL_FROM_NAME=ClinixPro System
+
+# ==================== SECURITY CONFIGURATION ====================
+SECURITY_USER=admin
+SECURITY_PASSWORD=admin123
+BCRYPT_ROUNDS=12
+
+# ==================== FILE UPLOAD CONFIGURATION ====================
+MAX_FILE_SIZE=10485760
+MAX_REQUEST_SIZE=10485760
+UPLOAD_DIRECTORY=uploads
+ALLOWED_FILE_TYPES=jpg,jpeg,png,gif,pdf,doc,docx
+
+# ==================== LOGGING CONFIGURATION ====================
+LOG_LEVEL=WARN
+LOG_FILE_PATH=logs/clinixpro.log
+LOG_MAX_SIZE=10MB
+LOG_MAX_FILES=5
+
+# ==================== CACHE CONFIGURATION ====================
+CACHE_TYPE=caffeine
+CACHE_MAX_SIZE=1000
+CACHE_EXPIRE_AFTER_WRITE=1800
+CACHE_EXPIRE_AFTER_ACCESS=900
+
+# ==================== MONITORING CONFIGURATION ====================
+ENABLE_HEALTH_CHECK=true
+ENABLE_METRICS=true
+ENABLE_ACTUATOR=true
+HEALTH_CHECK_PATH=/api/health
+
+# ==================== DEVELOPMENT TOOLS (DISABLED IN PRODUCTION) ====================
+ENABLE_DEV_TOOLS=false
+ENABLE_H2_CONSOLE=false
+ENABLE_SWAGGER=false
+
+# ==================== PERFORMANCE CONFIGURATION ====================
+DATABASE_CONNECTION_POOL_SIZE=20
+DATABASE_CONNECTION_TIMEOUT=30000
+DATABASE_IDLE_TIMEOUT=600000
+DATABASE_MAX_LIFETIME=1800000
+
+# ==================== FEATURE FLAGS ====================
+ENABLE_USER_REGISTRATION=true
+ENABLE_EMAIL_VERIFICATION=true
+ENABLE_PASSWORD_RESET=true
+ENABLE_TWO_FACTOR_AUTH=false
+ENABLE_AUDIT_LOGGING=true
+
+# ==================== DATABASE CONFIGURATION (UPDATE WITH YOUR RENDER DB DETAILS) ====================
+# ⚠️  IMPORTANT: You must get these values from your Render PostgreSQL database!
+# Go to your Render dashboard → PostgreSQL database → Copy connection details
+SPRING_DATASOURCE_URL=jdbc:postgresql://YOUR_DATABASE_HOST:5432/clinixpro
+SPRING_DATASOURCE_USERNAME=YOUR_DATABASE_USERNAME
+SPRING_DATASOURCE_PASSWORD=YOUR_DATABASE_PASSWORD
+SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+SPRING_JPA_SHOW_SQL=false
+SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+
+# ==================== INSTRUCTIONS ====================
+# 1. Copy each KEY=VALUE pair into Render Environment Variables
+# 2. For database variables (SPRING_DATASOURCE_*), get actual values from your Render PostgreSQL database
+# 3. Click "Save Changes" after adding all variables
+# 4. Redeploy your service
+# 5. Check logs for successful startup
