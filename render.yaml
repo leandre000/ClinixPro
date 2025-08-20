@@ -43,6 +43,19 @@ services:
         value: clinixpro@hospital.com
       - key: MAIL_PASSWORD
         value: your-app-password
+      # Database environment variables with fromDatabase mapping
+      - key: DATABASE_URL
+        fromDatabase:
+          name: clinixpro-db
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: clinixpro-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: clinixpro-db
+          property: password
     healthCheckPath: /api/health
     autoDeploy: true
     plan: starter
